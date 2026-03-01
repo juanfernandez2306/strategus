@@ -24,5 +24,11 @@ export type SidebarData = {
   revision_planta: boolean;
 }
 
+export type RespuestaGeoJsonSidebarData  = {
+    data: GeoJSON.FeatureCollection<GeoJSON.Point>;
+    message: string;
+    success: boolean;
+}
+
 
 
