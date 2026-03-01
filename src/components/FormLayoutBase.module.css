@@ -1,0 +1,79 @@
+/* FormLayoutBase.module.css */
+
+.formContainer {
+    width: 100%; /* Ocupa todo el ancho disponible para centrar */
+    display: flex;
+    justify-content: center;
+    padding: 1rem; /* Espacio de seguridad para que no toque los bordes del móvil */
+}
+
+form.form {
+    background-color: var(--color-fondo);
+    box-shadow: 0 0 20px 5px #CBCBCB;
+    border-radius: 10px;
+    
+    width: 100%;           
+    
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    box-sizing: border-box; /* Crucial para que el padding no estire el form */
+}
+
+.groupInput {
+    width: 100%;           /* Ocupa todo el ancho interno del form */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.groupInput input {
+    width: 100%;           /* Obliga a todos los inputs a medir lo mismo */
+    font-size: 1.1rem;
+    padding: .7rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-primario);
+    /* El box-sizing de App.css hará que el padding no rompa este 100% */
+}
+
+button.submit {
+    width: 100%;           /* Botón del mismo ancho que los inputs */
+    padding: .8rem;
+    background-color: var(--color-primario);
+    color: var(--color-fondo);
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+figure.ContainerSvg svg{
+    fill: var(--color-negro);
+    margin: 0;
+    padding: 0;
+}
+
+.ContainerSvg{
+    margin: 0;
+}
+
+.groupInput label{
+    font-size: 1.2rem;
+}
+
+
+
+button.submit:disabled{
+    color: var(--color-negro);
+    background-color: #B6AE9F;
+    cursor: not-allowed;
+}
+
+.titulo{
+    margin: 0;
+    font-size: 1.3rem;
+    text-align: center;
+}

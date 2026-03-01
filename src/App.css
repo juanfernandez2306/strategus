@@ -1,0 +1,48 @@
+:root{
+  --color-primario: #386641;
+  --color-secundario: #E07A5F;
+  --color-terciario: #A7C957;
+
+  --color-fondo: #FFFCFB;
+  --color-error: #DD0303;
+  --color-negro: #1B211A;
+  --font-family-base: 'Roboto', 'Segoe UI', Arial, sans-serif;
+
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+body{
+  background-color: #F9F9F9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: var(--font-family-base);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  width: 100%; /* Asegura que root use todo el ancho */
+  gap: 1rem;
+  min-height: 100vh;
+  /*max-width: 400px;*/
+  padding: 10px;
+}
+
+main {
+  width: 100%; /* El main debe expandirse */
+  display: flex;
+  justify-content: center; /* Centra el Layout dentro del main */
+  padding: 16px;
+}
