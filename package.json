@@ -15,7 +15,9 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "@turf/turf": "^7.3.4",
+    "@types/maplibre-gl": "^1.13.2",
     "dayjs": "^1.11.19",
+    "maplibre-gl": "^5.19.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
