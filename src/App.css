@@ -37,6 +37,9 @@ body{
   gap: 1rem;
   min-height: 100vh;
   /*max-width: 400px;*/
+}
+
+body:not(:has(.mapa-contenedor-clase)) #root {
   padding: 10px;
 }
 

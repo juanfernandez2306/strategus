@@ -6,7 +6,7 @@ import './App.css';
 //import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 import DescargarRegistrosPosicionGEOJSON from './layouts/DescargaRegistrosPosicionGEOJSON';
 import UnirArchivosGeoJSON from './layouts/UnificarArchivosGEOJSON';
-import { MapaFullLayout } from './layouts/MapLeaflet';
+import { MapaLibreGL } from './layouts/MapLibreGL';
 import { useState } from 'react';
 import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 
@@ -23,7 +23,7 @@ function App() {
       case "UnificarArchivos":
         return <UnirArchivosGeoJSON />
       case "Mapa":
-        return <MapaFullLayout />
+        return <MapaLibreGL />
       default:
         return <RegistroPosicionLayout />;
     }
@@ -34,7 +34,7 @@ function App() {
   return (
     <>
       <Header onSelect={setSelectedView} />
-      <main style={selectedView === "Mapa" ? { padding: 0 } : {}}>
+      <main style={selectedView === "Mapa" ? { padding: 0, margin: 0, maxWidth: '100%', width: '100%' } : {}}>
         {renderContent()}
       </main>
     </>
