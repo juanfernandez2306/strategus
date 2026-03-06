@@ -11,6 +11,7 @@ export type RegistroPosicion = {
     fecha: string;
     hora: string;
     galeria: number;
+    precision: number;
     revision_planta: boolean;
     sincronizacion: boolean;
     fecha_revision: string | null;

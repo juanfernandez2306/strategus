@@ -7,8 +7,12 @@ const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Partial<Reg
 
         navigator.geolocation.getCurrentPosition(
             (posicion) => {
-                const { latitude, longitude } = posicion.coords;
+                const { latitude, longitude, accuracy } = posicion.coords;
                 const ahora = dayjs();
+
+                if (accuracy > 20) {
+                    return reject(new Error(`Precisión insuficiente (${accuracy.toFixed(1)}m). Intente, nuevamente.`));
+                }
                 
                 // Formateamos fecha y hora actual
                 const fecha = ahora.format("YYYY-MM-DD");
@@ -17,6 +21,7 @@ const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Partial<Reg
                 resolve({
                     latitud: latitude,
                     longitud: longitude,
+                    precision: accuracy,
                     fecha,
                     hora,
                     galeria,
