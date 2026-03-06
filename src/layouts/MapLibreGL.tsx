@@ -125,7 +125,7 @@ export const MapaLibreGL: React.FC = () => {
                     id="btn-confirmar-visita"
                     variant="contained" 
                     fullWidth 
-                    disabled={false} // Bloqueado por defecto hasta que useNavigation lo active
+                    disabled={false}
                     onClick={handleUpdateStatus}
                     sx={{ 
                         py: 1.5, 

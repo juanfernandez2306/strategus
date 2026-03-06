@@ -5,7 +5,6 @@ import { Box, Typography } from '@mui/material';
 export interface CompassHandle {
   updateAngle: (deg: number) => void;
   updateDistance: (dist: number) => void;
-  updateDisabled: (disabled: boolean) => void;
 }
 
 interface CompassProps {
@@ -30,12 +29,7 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
       if (distanceRef.current) {
         distanceRef.current.textContent = `${dist}`;
       }
-    },
-    updateDisabled: (disabled: boolean) => {
-    // Buscamos el botón por ID y le aplicamos el estado
-    const btn = document.getElementById('btn-confirmar-visita') as HTMLButtonElement;
-    if (btn) btn.disabled = disabled;
-  }
+    }
   }));
 
   const needleStyle: CSSProperties = {

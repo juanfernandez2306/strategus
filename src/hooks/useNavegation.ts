@@ -45,11 +45,6 @@ export const useNavigation = (
         compassRef.current?.updateAngle(result.anguloAguja);
         compassRef.current?.updateDistance(result.distancia);
 
-        // --- LÓGICA DE BLOQUEO DEL BOTÓN ---
-        // Si la distancia es mayor a 20, deshabilitamos (true)
-        const fueraDeRango = result.distancia > 20;
-        compassRef.current?.updateDisabled(fueraDeRango);
-
         // --- LÓGICA DE VIBRACIÓN CON TUS NUEVOS MÁRGENES ---
         // Si entra en el radio de 12m y no ha vibrado para ESTE punto
         if (result.distancia <= 12 && !hasVibratedRef.current) {

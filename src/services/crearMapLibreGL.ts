@@ -351,7 +351,7 @@ export const configurarClusteresEnMapa = (
             source: SOURCE_ID,
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': ['case', ['get', 'revision_planta'], '#386641', '#DD0303'],
+                'circle-color': ['case', ['get', 'revision_planta'], '#06D001', '#DD0303'],
                 'circle-radius': 8,
                 'circle-stroke-width': 2,
                 'circle-stroke-color': '#fff'
