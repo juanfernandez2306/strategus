@@ -1,0 +1,39 @@
+/* UserMarker.module.css */
+.container {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+.halo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 123, 255, 0.35) 0%,
+    rgba(0, 123, 255, 0.12) 60%,
+    transparent 80%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* Puedes ajustar la duración o el easing aquí:
+     - 0.6s para más responsivo
+     - 1.2s para más suavizado (más "low-pass")
+  */
+}
+
+.inner svg {
+  width: 32px;
+  height: 32px;
+}

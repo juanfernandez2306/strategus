@@ -9,6 +9,8 @@ import {
     type RespuestaGeoJsonSidebarData 
 } from '../services/tipos';
 
+
+
 /**
  * Obtiene los datos de IndexedDB y los transforma a GeoJSON usando Turf.
  */
@@ -49,9 +51,6 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
     }
 };
 
-/**
- * Crea e inicializa la instancia del mapa con controles de geolocalización.
- */
 
 export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     const map = new Map({
@@ -75,9 +74,13 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
 
     // Definimos el control de geolocalización
     const geolocate = new GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        showUserLocation: true,
-        trackUserLocation: true,
+        positionOptions: { 
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+         },
+        showUserLocation: false,
+        trackUserLocation: false,
         showAccuracyCircle: false    
     });
 
@@ -85,7 +88,17 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     map.addControl(geolocate, 'top-left');
     map.addControl(new NavigationControl(), 'top-left');
 
+    const userLocationGeoJSON: any = {
+        type: 'FeatureCollection',
+        features: [{
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [0, 0] },
+            properties: { heading: 0 }
+        }]
+    };
+
     const onFirstGeolocate = (e: any) => {
+        
         const { longitude, latitude } = e.coords;
 
         map.flyTo({
@@ -95,11 +108,68 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
             essential: true
         });
 
-        // 3. IMPORTANTE: Apagamos el evento después de la primera vez
+
+        // Opcional: remover el listener de todas formas (buena práctica)
         geolocate.off('geolocate', onFirstGeolocate);
     };
 
     geolocate.on('geolocate', onFirstGeolocate);
+
+    let alphaHeading = 0;
+    const suavizado = 0.2;
+    let ultimaCoordenada = [0, 0]
+    let mapaListo = false;
+
+    const actualizarCapaUsuario = (lngLat?: [number, number]) => {
+        if (!mapaListo || !map || !map.getSource('user-pos-source')) return;
+
+        if (lngLat) ultimaCoordenada = lngLat;
+        
+        // Prioridad: 1. Heading del GPS (si te mueves), 2. Brújula Alpha (si estás quieto)
+
+        userLocationGeoJSON.features[0].geometry.coordinates = ultimaCoordenada;
+        userLocationGeoJSON.features[0].properties.heading = alphaHeading;
+
+        const source = map.getSource('user-pos-source') as any;
+        if (source) {
+            source.setData(userLocationGeoJSON);
+        }
+    };
+
+    if (typeof window !== 'undefined') {
+        // Escuchamos ambos eventos para asegurar compatibilidad con PC y Móvil
+        const handleOrientation = (e: any) => {
+            // Prioridad: 1. Brújula iOS, 2. Valor absoluto (Android/PC), 3. Valor relativo
+            let directo = e.webkitCompassHeading || e.alpha;
+            
+            // En algunas emulaciones de PC, el alpha es relativo al inicio.
+            // Si usas el simulador de Chrome, este valor debería cambiar al mover 'Alpha'
+            if (directo !== undefined && directo !== null) {
+                let diff = directo - alphaHeading;
+                if (diff > 180) diff -= 360;
+                if (diff < -180) diff += 360;
+                alphaHeading += suavizado * diff;
+
+                // IMPORTANTE: Para que se mueva en PC sin GPS, 
+                // asegúrate de que ultimaCoordenada tenga el valor del centro del mapa inicialmente
+                if (mapaListo) {
+                    actualizarCapaUsuario(); 
+                }
+            }
+        };
+
+        window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+        // Si el 'absolute' no existe en esa PC, intentamos el normal
+        window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+
+    const onGeolocateUpdate = (e: any) => {
+        const { longitude, latitude } = e.coords;
+
+        actualizarCapaUsuario([longitude, latitude])
+    }
+
+    geolocate.on('geolocate', onGeolocateUpdate);
 
     map.on('load', () => {
 
@@ -109,6 +179,11 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
             minzoom: 0,
             maxzoom: 14,
             bounds: [-72.706, 9.851, -72.697, 9.874]
+        });
+
+        map.addSource('user-pos-source', {
+            type: 'geojson',
+            data: userLocationGeoJSON
         });
 
 
@@ -148,18 +223,63 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
             }
         });
 
+        
+
+        // 3. INDICADOR DE DIRECCIÓN (Usando texto en lugar de imagen)
+        map.addLayer({
+            id: 'user-heading-arrow',
+            type: 'symbol',
+            source: 'user-pos-source',
+            layout: {
+                'text-field': '▼', // Usamos el triángulo hacia abajo para invertir la posición
+                'text-size': 15,
+                // Sumamos 180 para invertir la dirección si fuera necesario
+                'text-rotate': ['+', ['get', 'heading'], 180], 
+                'text-rotation-alignment': 'map',
+                'text-allow-overlap': true,
+                'text-ignore-placement': true,
+                'text-offset': [0, 1] // Lo alejamos un poco del centro para que parezca un faro
+            },
+            paint: {
+                'text-color': '#007cff',
+                'text-halo-color': '#FBF6F6',
+                'text-halo-width': 3,
+                'text-opacity': 1.0,
+                'text-halo-blur': 1.5
+            }
+        });
+
+        map.addLayer({
+            id: 'user-halo',
+            type: 'circle',
+            source: 'user-pos-source',
+            paint: {
+                'circle-radius': 24,
+                'circle-color': '#007cff',
+                'circle-opacity': 0.3,
+                'circle-blur': 0.8 // Suaviza los bordes (low-pass filter visual)
+            }
+        });
+
+        map.addLayer({
+            id: 'user-dot',
+            type: 'circle',
+            source: 'user-pos-source',
+            paint: {
+                'circle-radius': 8,
+                'circle-color': '#007cff',
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#fff'
+            }
+        });
+
+        mapaListo = true;
+
         // 3. Disparar automáticamente cuando el mapa esté listo
         setTimeout(() => {
             geolocate.trigger();
         }, 500);
 
-    });
-
-    map.on('dragstart', () => {
-
-        if (geolocate.options.trackUserLocation) {
-            geolocate.trigger(); 
-        }
     });
 
     return map;
