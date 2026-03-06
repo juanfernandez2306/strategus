@@ -4,13 +4,18 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   base: '/pwa/',
+  assetsInclude: ['**/*.pbf'],
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
-        'logo_header.png'
+        'logo_header.png',
+        'tiles/**/*.pbf'
       ],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,pbf,png,svg}']
+      },
       manifest: {
         name: 'GeoApp',
         short_name: 'GeoApp',

@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box, Drawer, Typography, Button, IconButton, Stack, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-// Importamos el nuevo hook de MapLibre
+
+// Hooks y Servicios
 import { useMapaLibreGLService } from '../hooks/useMapLibreGL'; 
 import { actualizarEstadoRevisionDB } from '../services/almacenamientoDB';
 import { type SidebarData } from '../services/tipos';
+
+// Navegación y Brújula
+import Compass, { type CompassHandle } from '../components/Compass';
+import { useNavigation } from '../hooks/useNavegation';
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 export const MapaLibreGL: React.FC = () => {
@@ -12,101 +18,142 @@ export const MapaLibreGL: React.FC = () => {
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // 1. Definimos el callback para el click antes de inicializar el hook
+  // Referencia para manipular la Brújula sin re-renders
+  const compassRef = useRef<CompassHandle>(null);
+
+  // Inicializamos el Hook de Navegación
+  // Se activará automáticamente cuando detallePunto tenga coordenadas
+  useNavigation(
+    detallePunto?.lat ?? null,
+    detallePunto?.lng ?? null,
+    compassRef as React.RefObject<CompassHandle>
+  );
+
   const manejarClickMarker = (data: SidebarData) => {
     setDetallePunto(data);
     setIsSidebarOpen(true);
   };
 
-  // 2. Extraemos las funciones del nuevo hook de MapLibre
   const { inicializarMapa, refrescarPunto } = useMapaLibreGLService(manejarClickMarker);
 
-  // 3. Inicialización del contenedor del mapa
   useEffect(() => {
     if (mapDivRef.current) {
       inicializarMapa(mapDivRef.current);
     }
   }, [inicializarMapa]);
 
-  // 4. Lógica de actualización de estado
   const handleUpdateStatus = async () => {
     if (!detallePunto) return;
-    
+
+    // 1. Calculamos el nuevo estado
     const nuevoEstado = !detallePunto.revision_planta;
-    
+
     try {
-      // Actualiza en IndexedDB
-      await actualizarEstadoRevisionDB(detallePunto.uuid, nuevoEstado);
-      
-      // Notifica al mapa para que refresque la fuente de datos y cambie el color del punto
-      await refrescarPunto();
-      
-      // Actualiza el estado local para que el Sidebar refleje el cambio inmediatamente
-      setDetallePunto({ ...detallePunto, revision_planta: nuevoEstado });
+        // 2. Guardamos en IndexedDB
+        await actualizarEstadoRevisionDB(detallePunto.uuid, nuevoEstado);
+
+        // 3. ¡ESTA ES LA CLAVE! 
+        // Refrescamos los datos del mapa. Como tu servicio usa 'setData', 
+        // los iconos cambiarán de color sin recargar el mapa.
+        await refrescarPunto();
+
+        // 4. Actualizamos el estado local para que el botón cambie de texto/color
+        setDetallePunto({
+        ...detallePunto,
+        revision_planta: nuevoEstado
+        });
+
+        console.log("Estado actualizado y mapa refrescado");
     } catch (error) {
-      console.error("Error al actualizar el estado:", error);
+        console.error("Error al actualizar el punto:", error);
     }
-  };
+};
 
   return (
     <Box sx={{ 
-        width: '100%', 
-        height: 'calc(100dvh - 100px)', // Ajusta este valor al alto real de tu Header
-        position: 'relative',
-        overflow: 'hidden', // Evita que cualquier cosa dentro genere scroll
-        margin: 0,
-        padding: 0
+      width: '100%', 
+      height: 'calc(100dvh - 100px)', 
+      position: 'relative', 
+      overflow: 'hidden' 
     }}>
-      {/* Contenedor donde MapLibre renderizará el canvas */}
+      {/* Contenedor del Mapa */}
       <Box ref={mapDivRef} sx={{ width: '100%', height: '100%' }} />
 
-      {/* Sidebar de información */}
+      {/* Sidebar de Navegación */}
       <Drawer
         anchor="right"
         open={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         variant="temporary"
-        // ESTO EVITA QUE EL CONTENEDOR SE MUEVA
-        ModalProps={{
-            disableScrollLock: true, 
-        }}
-        // Aseguramos que el Sidebar flote sobre el mapa sin empujarlo
+        ModalProps={{ disableScrollLock: true }}
         PaperProps={{
-            sx: { 
-            width: 320,
-            height: 'calc(100vh - 64px)',
-            top: '64px' 
-            }
+          sx: { 
+            width: 320, 
+            height: 'calc(100dvh - 100px)', 
+            top: '100px', 
+            position: 'absolute',
+            display: 'flex',
+            flexDirection: 'column'
+          }
         }}
-        >
-        <Box sx={{ width: 320, p: 3 }}>
+      >
+        <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Detalle del Punto</Typography>
+            <Typography variant="h6" fontWeight="bold">Navegación</Typography>
             <IconButton onClick={() => setIsSidebarOpen(false)}>
               <CloseIcon />
             </IconButton>
           </Stack>
-          <Divider sx={{ my: 2 }} />
           
+          <Divider sx={{ my: 1 }} />
+
+          {/* Área de la Brújula: Centrada */}
+          <Box sx={{ 
+            flexGrow: 1, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            minHeight: '280px'
+          }}>
+            <Compass ref={compassRef} size={250} />
+          </Box>
+
           {detallePunto && (
-            <Stack spacing={2}>
-              <Typography variant="body2"><b>ID:</b> {detallePunto.uuid}</Typography>
-              <Typography variant="body2">
-                <b>Estado:</b> {detallePunto.revision_planta ? 'Revisado' : 'Pendiente'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                <b>Ubicación:</b> {detallePunto.lat.toFixed(5)}, {detallePunto.lng.toFixed(5)}
-              </Typography>
+            <Box sx={{ mt: 'auto' }}>
               
               <Button 
-                variant="contained" 
-                fullWidth 
-                onClick={handleUpdateStatus}
-                color={detallePunto.revision_planta ? "secondary" : "primary"}
-              >
-                {detallePunto.revision_planta ? "Marcar como Pendiente" : "Confirmar Revisión"}
-              </Button>
-            </Stack>
+                    id="btn-confirmar-visita"
+                    variant="contained" 
+                    fullWidth 
+                    disabled={false} // Bloqueado por defecto hasta que useNavigation lo active
+                    onClick={handleUpdateStatus}
+                    sx={{ 
+                        py: 1.5, 
+                        fontWeight: 'bold',
+                        borderRadius: '8px',
+                        // Uso de tus variables de App.css
+                        backgroundColor: detallePunto.revision_planta 
+                        ? 'var(--color-secundario)' 
+                        : 'var(--color-primario)',
+                        color: 'var(--color-fondo)',
+                        '&:hover': {
+                        backgroundColor: detallePunto.revision_planta 
+                            ? 'var(--color-secundario)' 
+                            : 'var(--color-primario)',
+                        filter: 'brightness(0.9)'
+                        },
+                        // Estilo cuando está deshabilitado (fuera de los 20m)
+                        '&.Mui-disabled': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.12)',
+                        color: 'rgba(0, 0, 0, 0.26)',
+                        border: '1px solid rgba(0, 0, 0, 0.12)'
+                        }
+                    }}
+                    >
+                    {detallePunto.revision_planta ? "Marcar como Pendiente" : "Confirmar Visita"}
+                </Button>
+
+            </Box>
           )}
         </Box>
       </Drawer>

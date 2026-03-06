@@ -8,6 +8,8 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography"
 
 import { useState } from "react";
 
@@ -84,6 +86,34 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
                 </ListItemButton>
             </ListItem>
         </List>
+
+        <Divider />
+          <Box sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+            <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', color: 'gray' }}>
+                DESARROLLADO POR:
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'var(--color-primario)', fontWeight: 500 }}>
+                Ing. Juan Fernandez
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                juanfernandez2306@gmail.com
+            </Typography>
+            <Typography 
+              variant="overline" 
+              display="block" 
+              sx={{ 
+                mt: 1, 
+                fontSize: '0.65rem', // Un pelín más grande para legibilidad
+                color: 'rgba(0, 0, 0, 0.54)', // Gris estándar de Material UI para texto secundario
+                letterSpacing: '0.5px',
+                fontWeight: 600,
+                lineHeight: 1.2
+              }}
+            >
+                SIGAL v1.0 - Gestión Palma Digital
+            </Typography>
+          </Box>
+
         </Box>
       </Drawer>
     </>

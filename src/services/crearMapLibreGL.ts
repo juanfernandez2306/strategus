@@ -52,35 +52,114 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
 /**
  * Crea e inicializa la instancia del mapa con controles de geolocalización.
  */
+
 export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     const map = new Map({
-      container: contenedor,
-      style: 'https://demotiles.maplibre.org/style.json',
-      center: [-66.90, 10.48],
-      zoom: 13
+        container: contenedor,
+        style: {
+            version: 8,
+            sources: {},
+            layers: [
+                {
+                    id: 'fondo-blanco',
+                    type: 'background',
+                    paint: {
+                        'background-color': '#FFFCFB' // Color blanco
+                    }
+                }
+            ]
+        },
+        center: [-72.70189279, 9.86245725],
+        zoom: 14
     });
 
+    // Definimos el control de geolocalización
     const geolocate = new GeolocateControl({
-        positionOptions: {
-            enableHighAccuracy: true 
-        },
-        trackUserLocation: false, // El punto se mueve, pero el mapa no persigue automáticamente
+        positionOptions: { enableHighAccuracy: true },
+        showUserLocation: true,
+        trackUserLocation: true,
         showAccuracyCircle: false    
     });
 
+    // Agregamos controles
     map.addControl(geolocate, 'top-left');
     map.addControl(new NavigationControl(), 'top-left');
 
+    const onFirstGeolocate = (e: any) => {
+        const { longitude, latitude } = e.coords;
+
+        map.flyTo({
+            center: [longitude, latitude],
+            zoom: 17,
+            speed: 1.2,
+            essential: true
+        });
+
+        // 3. IMPORTANTE: Apagamos el evento después de la primera vez
+        geolocate.off('geolocate', onFirstGeolocate);
+    };
+
+    geolocate.on('geolocate', onFirstGeolocate);
+
     map.on('load', () => {
-        geolocate.trigger(); 
+
+        map.addSource('finca-danubio-source', {
+            type: 'vector',
+            tiles: [`${window.location.origin}/pwa/tiles/{z}/{x}/{y}.pbf`],
+            minzoom: 0,
+            maxzoom: 14,
+            bounds: [-72.706, 9.851, -72.697, 9.874]
+        });
+
+
+        // Capa de Polígonos (Lotes)
+        map.addLayer({
+            'id': 'lotes-danubio',
+            'type': 'fill',
+            'source': 'finca-danubio-source',
+            'source-layer': 'plg_lotes_danubio_feb_2026_web_mercator',
+            'paint': {
+                'fill-color': [
+                    'concat', 
+                    'rgb(', 
+                    ['get', 'color'], 
+                    ')'
+                ],
+                'fill-opacity': 1,
+                'fill-outline-color': '#ffffff'
+            }
+        });
+
+        // 2. CAPA DE PUNTOS (15,000 PALMAS)
+        map.addLayer({
+            'id': 'palmas-puntos',
+            'type': 'circle',
+            'source': 'finca-danubio-source',
+            'source-layer': 'pts_palmas_danubio_feb_2026_web_mercator',
+            'paint': {
+                'circle-radius': [
+                    'interpolate', ['linear'], ['zoom'],
+                    8, 0.5, // Muy pequeños lejos
+                    14, 5    // Más visibles de cerca
+                ],
+                'circle-color': '#313647',
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#ffffff'
+            }
+        });
+
+        // 3. Disparar automáticamente cuando el mapa esté listo
+        setTimeout(() => {
+            geolocate.trigger();
+        }, 500);
+
     });
 
-    geolocate.on('geolocate', (e: any) => {
-        map.flyTo({
-            center: [e.coords.longitude, e.coords.latitude],
-            zoom: 15,
-            speed: 1.5
-        });
+    map.on('dragstart', () => {
+
+        if (geolocate.options.trackUserLocation) {
+            geolocate.trigger(); 
+        }
     });
 
     return map;
@@ -152,7 +231,7 @@ export const configurarClusteresEnMapa = (
             source: SOURCE_ID,
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': ['case', ['get', 'revision_planta'], '#2e7d32', '#1976d2'],
+                'circle-color': ['case', ['get', 'revision_planta'], '#386641', '#DD0303'],
                 'circle-radius': 8,
                 'circle-stroke-width': 2,
                 'circle-stroke-color': '#fff'
