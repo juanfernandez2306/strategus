@@ -11,7 +11,7 @@ const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Partial<Reg
                 const ahora = dayjs();
 
                 if (accuracy > 20) {
-                    return reject(new Error(`Precisión insuficiente (${accuracy.toFixed(1)}m). Intente, nuevamente.`));
+                    return reject(new Error(`Señal GPS débil: (${accuracy.toFixed(1)}m). Intente, nuevamente.`));
                 }
                 
                 // Formateamos fecha y hora actual
