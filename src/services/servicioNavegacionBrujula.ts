@@ -13,6 +13,19 @@ class NavigationService {
   private lastStoredDistance: number = 0;
   private alphaDistance: number = 0.25;
 
+  // Nuevo: Para el heading del teléfono
+  private currentHeading: number = 0; 
+  private readonly suavizadoOrientacion = 0.2;
+
+  procesarHeading(directo: number): number {
+    let diff = directo - this.currentHeading;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    
+    this.currentHeading += this.suavizadoOrientacion * diff;
+    return this.currentHeading;
+  }
+
   calcularNav(
     userLat: number, userLon: number, 
     destLat: number, destLon: number, 

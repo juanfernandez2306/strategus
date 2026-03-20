@@ -51,23 +51,6 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
     }
 };
 
-const configurarFuentes = (map: MapLibreMap, userLocationGeoJSON: any) => {
-    // Fuente de Vector Tiles (Lotes y Palmas)
-    map.addSource('finca-danubio-source', {
-        type: 'vector',
-        tiles: [`${window.location.origin}/pwa/tiles/{z}/{x}/{y}.pbf`],
-        minzoom: 0,
-        maxzoom: 14,
-        bounds: [-72.706, 9.851, -72.697, 9.874] //
-    });
-
-    // Fuente para la posición del usuario
-    map.addSource('user-pos-source', {
-        type: 'geojson',
-        data: userLocationGeoJSON
-    });
-};
-
 
 export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     const map = new Map({
