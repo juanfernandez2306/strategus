@@ -3,7 +3,7 @@ import {
     type SidebarData,
     DB_NAME, 
     DB_VERSION, 
-    STORE_NAME } from "./tipos";
+    STORE_NAME } from "./servicioTipos";
 import dayjs from "dayjs";
 
 export const abrirDB = (): Promise<IDBDatabase> => {

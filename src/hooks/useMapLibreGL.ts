@@ -6,7 +6,7 @@ import {
     datosGeoJsonSidebarData, 
     configurarClusteresEnMapa 
 } from '../services/crearMapLibreGL';
-import { type SidebarData } from '../services/tipos';
+import { type SidebarData } from '../services/servicioTipos';
 
 /**
  * Hook para gestionar la lógica del mapa MapLibre y su interacción con IndexedDB.

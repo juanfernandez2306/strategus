@@ -4,8 +4,8 @@ import CloseIcon from '@mui/icons-material/Close';
 
 // Hooks y Servicios
 import { useMapaLibreGLService } from '../hooks/useMapLibreGL'; 
-import { actualizarEstadoRevisionDB } from '../services/almacenamientoDB';
-import { type SidebarData } from '../services/tipos';
+import { actualizarEstadoRevisionDB } from '../services/servicioAlmacenamientoDB';
+import { type SidebarData } from '../services/servicioTipos';
 
 // Navegación y Brújula
 import Compass, { type CompassHandle } from '../components/Compass';

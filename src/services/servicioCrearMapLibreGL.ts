@@ -3,11 +3,11 @@ import {
 } from 'maplibre-gl';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { point, featureCollection } from '@turf/turf';
-import { obtenerRegistroSidebarData } from '../services/almacenamientoDB';
+import { obtenerRegistroSidebarData } from './servicioAlmacenamientoDB';
 import { 
     type SidebarData, 
     type RespuestaGeoJsonSidebarData 
-} from '../services/tipos';
+} from './servicioTipos';
 
 
 
@@ -49,6 +49,23 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
             success: false
         };
     }
+};
+
+const configurarFuentes = (map: MapLibreMap, userLocationGeoJSON: any) => {
+    // Fuente de Vector Tiles (Lotes y Palmas)
+    map.addSource('finca-danubio-source', {
+        type: 'vector',
+        tiles: [`${window.location.origin}/pwa/tiles/{z}/{x}/{y}.pbf`],
+        minzoom: 0,
+        maxzoom: 14,
+        bounds: [-72.706, 9.851, -72.697, 9.874] //
+    });
+
+    // Fuente para la posición del usuario
+    map.addSource('user-pos-source', {
+        type: 'geojson',
+        data: userLocationGeoJSON
+    });
 };
 
 

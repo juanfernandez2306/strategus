@@ -1,8 +1,8 @@
 // src/hooks/useRegistroPosicion.ts
 import { useState, useEffect } from "react";
-import obtenerRegistroPosicionGeografica from "../services/obtenerPosicionGeografica";
-import { guardarRegistroPosicionEnIndexedDB, obtenerConteoRegistrosDelDia } from "../services/almacenamientoDB";
-import { type RegistroPosicion } from "../services/tipos";
+import { obtenerRegistroPosicionGeografica } from "../services/servicioGeolocalizacion";
+import { guardarRegistroPosicionEnIndexedDB, obtenerConteoRegistrosDelDia } from "../services/servicioAlmacenamientoDB";
+import { type RegistroPosicion } from "../services/servicioTipos";
 
 export const useRegistroPosicion = () => {
   const [conteoDiario, setConteoDiario] = useState<number>(0);

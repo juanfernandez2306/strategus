@@ -1,5 +1,5 @@
-import { STORE_NAME } from "./tipos";
-import { abrirDB } from "./almacenamientoDB";
+import { STORE_NAME } from "./servicioTipos";
+import { abrirDB } from "./servicioAlmacenamientoDB";
 
 /**
  * Vacía la tabla de posiciones en IndexedDB después de confirmar con el usuario.

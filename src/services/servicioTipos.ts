@@ -8,8 +8,8 @@ export type RegistroPosicion = {
     uuid: string;
     latitud: number;
     longitud: number;
-    fecha: string;
-    hora: string;
+    fecha_registro: string;
+    hora_registro: string;
     galeria: number;
     precision: number;
     revision_planta: boolean;
@@ -29,6 +29,20 @@ export type RespuestaGeoJsonSidebarData  = {
     data: GeoJSON.FeatureCollection<GeoJSON.Point>;
     message: string;
     success: boolean;
+}
+
+export interface GpsConfig {
+    TOLERANCIA_METROS: number;
+    TIMEOUT_MS: number;
+    EDAD_MAXIMA_CACHE: number;
+    ALTA_PRECISION: boolean;
+}
+
+export const CONFIG_GPS: GpsConfig = {
+    TOLERANCIA_METROS: 20,       
+    TIMEOUT_MS: 15000,           
+    EDAD_MAXIMA_CACHE: 0,        
+    ALTA_PRECISION: true
 }
 
 

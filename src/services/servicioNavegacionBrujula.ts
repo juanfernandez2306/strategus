@@ -11,7 +11,7 @@ class NavigationService {
   private alphaAngle: number = 0.15;
   
   private lastStoredDistance: number = 0;
-  private alphaDistance: number = 0.25; // Un poco más rápido para ser fiel al GPS
+  private alphaDistance: number = 0.25;
 
   calcularNav(
     userLat: number, userLon: number, 

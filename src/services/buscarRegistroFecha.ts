@@ -1,5 +1,5 @@
-import { STORE_NAME, type RegistroPosicion } from "./tipos";
-import { abrirDB } from "./almacenamientoDB";
+import { STORE_NAME, type RegistroPosicion } from "./servicioTipos";
+import { abrirDB } from "./servicioAlmacenamientoDB";
 
 const obtenerRegistrosPosicionPorFecha = async (fecha: string): Promise<RegistroPosicion[]> => {
   const db = await abrirDB();
