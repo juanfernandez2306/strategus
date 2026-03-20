@@ -5,10 +5,11 @@ import './App.css';
 
 //import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 import DescargarRegistrosPosicionGEOJSON from './layouts/DescargaRegistrosPosicionGEOJSON';
-import UnirArchivosGeoJSON from './layouts/UnificarArchivosGEOJSON';
 import { MapaLibreGL } from './layouts/MapLibreGL';
 import { useState } from 'react';
 import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
+import UnirYguardarArchivosGeoJSON  from './layouts/UnificarYguardarArchivosGEOJSON';
+import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
 
 function App() {
 
@@ -20,8 +21,10 @@ function App() {
         return <RegistroPosicionLayout />;
       case "DescargarDatos":
         return <DescargarRegistrosPosicionGEOJSON />;
-      case "UnificarArchivos":
-        return <UnirArchivosGeoJSON />
+      case "UnificarYguardarArchivos":
+        return <UnirYguardarArchivosGeoJSON />
+      case "EliminarBD":
+        return <DeleteIndexeDBcapture />
       case "Mapa":
         return <MapaLibreGL />
       default:

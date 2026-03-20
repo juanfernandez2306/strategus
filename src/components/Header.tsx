@@ -76,8 +76,13 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("UnificarArchivos"); setOpen(false); }}>
-                <ListItemText primary="Unificar archivos" />
+                <ListItemButton onClick={() => { onSelect("UnificarYguardarArchivos"); setOpen(false); }}>
+                <ListItemText primary="Guardar archivos en BD" />
+                </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+                <ListItemButton onClick={() => { onSelect("EliminarBD"); setOpen(false); }}>
+                <ListItemText primary="Limpiar registros de la BD" />
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

@@ -120,6 +120,20 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     let ultimaCoordenada = [0, 0]
     let mapaListo = false;
 
+    const handleOrientation = (e: any) => {
+        let directo = e.webkitCompassHeading || e.alpha;
+        if (directo !== undefined && directo !== null) {
+            let diff = directo - alphaHeading;
+            if (diff > 180) diff -= 360;
+            if (diff < -180) diff += 360;
+            alphaHeading += suavizado * diff;
+
+            if (mapaListo) {
+                actualizarCapaUsuario(); 
+            }
+        }
+    };
+
     const actualizarCapaUsuario = (lngLat?: [number, number]) => {
         if (!mapaListo || !map || !map.getSource('user-pos-source')) return;
 
@@ -137,39 +151,36 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
     };
 
     if (typeof window !== 'undefined') {
-        // Escuchamos ambos eventos para asegurar compatibilidad con PC y Móvil
-        const handleOrientation = (e: any) => {
-            // Prioridad: 1. Brújula iOS, 2. Valor absoluto (Android/PC), 3. Valor relativo
-            let directo = e.webkitCompassHeading || e.alpha;
-            
-            // En algunas emulaciones de PC, el alpha es relativo al inicio.
-            // Si usas el simulador de Chrome, este valor debería cambiar al mover 'Alpha'
-            if (directo !== undefined && directo !== null) {
-                let diff = directo - alphaHeading;
-                if (diff > 180) diff -= 360;
-                if (diff < -180) diff += 360;
-                alphaHeading += suavizado * diff;
-
-                // IMPORTANTE: Para que se mueva en PC sin GPS, 
-                // asegúrate de que ultimaCoordenada tenga el valor del centro del mapa inicialmente
-                if (mapaListo) {
-                    actualizarCapaUsuario(); 
-                }
-            }
-        };
 
         window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         // Si el 'absolute' no existe en esa PC, intentamos el normal
         window.addEventListener('deviceorientation', handleOrientation, true);
     }
 
-    const onGeolocateUpdate = (e: any) => {
-        const { longitude, latitude } = e.coords;
+    let watchId: number | null = null;
 
-        actualizarCapaUsuario([longitude, latitude])
-    }
-
-    geolocate.on('geolocate', onGeolocateUpdate);
+    const iniciarSeguimientoNativo = () => {
+        if ("geolocation" in navigator) {
+            watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    const { longitude, latitude } = position.coords;
+                    // Usamos tu función existente que ya actualiza el GeoJSON y el Source
+                    actualizarCapaUsuario([longitude, latitude]);
+                    
+                    // Si es la primera vez que recibimos posición, podrías hacer un flyTo
+                    // si geolocate.trigger() no lo hizo.
+                },
+                (error) => {
+                    console.error("Error en Geolocation API:", error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+    };
 
     map.on('load', () => {
 
@@ -275,10 +286,25 @@ export const crearInstanciaMapa = (contenedor: HTMLDivElement): MapLibreMap => {
 
         mapaListo = true;
 
+        iniciarSeguimientoNativo()
+
         // 3. Disparar automáticamente cuando el mapa esté listo
         setTimeout(() => {
             geolocate.trigger();
         }, 500);
+
+    });
+
+    map.on('remove', () => {
+        
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+
+        // Limpiar sensores de orientación
+        window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+        window.removeEventListener('deviceorientation', handleOrientation, true);
 
     });
 

@@ -201,3 +201,37 @@ export const obtenerConteoRegistrosRevisadosDelDia = async (): Promise<number> =
     throw new Error("No se pudo obtener el conteo de hoy. Intente recargar.");
   }
 };
+
+
+export const upsertRegistroLuegoDeUnificar = async (registro: RegistroPosicion): Promise<void> => {
+  const db = await abrirDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const index = store.index("uuid_idx"); // Usamos el índice de UUID que ya tienes creado
+
+    // 1. Buscamos si ya existe ese UUID
+    const requestBusqueda = index.get(registro.uuid);
+
+    requestBusqueda.onsuccess = () => {
+      const registroExistente = requestBusqueda.result;
+
+      if (registroExistente) {
+        // 2. Si existe, actualizamos manteniendo el ID original de IndexedDB
+        const registroActualizado = { ...registro, id: registroExistente.id };
+        store.put(registroActualizado);
+      } else {
+        // 3. Si no existe, lo agregamos como nuevo
+        // Borramos el 'id' por si el GeoJSON trae uno, para que IndexedDB genere el suyo
+        const { id, ...nuevoSinId } = registro as any;
+        store.add(nuevoSinId);
+      }
+    };
+
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    transaction.onerror = () => reject(transaction.error);
+  });
+};

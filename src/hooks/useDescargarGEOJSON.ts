@@ -16,10 +16,11 @@ export const useDescargarGeoJSON = () => {
     // 2. Convertimos a Formato GeoJSON usando Turf
     // IMPORTANTE: Turf usa [longitud, latitud] (Igual que QGIS/GeoJSON estándar)
     const features = registrosRaw.map(r => {
+
+      const { longitud, latitud, ...propiedadesRestantes } = r;
+
       return point([Number(r.longitud), Number(r.latitud)], {
-        fecha: r.fecha,
-        galeria: r.galeria,
-        revision: false
+        ...propiedadesRestantes
       });
     });
 
