@@ -4,8 +4,8 @@ import { type Map as MapLibreMap } from 'maplibre-gl';
 import { 
     crearInstanciaMapa, 
     datosGeoJsonSidebarData, 
-    configurarClusteresEnMapa 
-} from '../services/crearMapLibreGL';
+} from '../services/servicioMapLibreGL';
+import { configurarClusteresEnMapa } from '../services/servicioCapasMapa';
 import { type SidebarData } from '../services/servicioTipos';
 
 /**
@@ -60,6 +60,6 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
     return {
         inicializarMapa,
         refrescarPunto,
-        mapaInstancia: mapRef.current // Opcional, por si se necesita acceso directo
+        mapaInstancia: mapRef.current
     };
 };

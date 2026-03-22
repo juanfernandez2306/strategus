@@ -86,3 +86,33 @@ export const iniciarSeguimientoGPS = (
         }
     );
 };
+
+/**
+ * Configura el sensor de orientación y retorna la función de limpieza.
+ * No guarda estado interno, delegando el control al llamador.
+ * @param onHeadingUpdate Callback con el valor RAW.
+ */
+export const watchOrientacionRaw = (
+    onHeadingUpdate: (heading: number) => void
+): (() => void) => {
+    
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+        // Valor raw: webkit para iOS, alpha para Android
+        const rawHeading = (e as any).webkitCompassHeading ?? e.alpha;
+        
+        if (rawHeading !== null && rawHeading !== undefined) {
+            onHeadingUpdate(rawHeading);
+        }
+    };
+
+    const eventName = 'ondeviceorientationabsolute' in window 
+        ? 'deviceorientationabsolute' 
+        : 'deviceorientation';
+
+    window.addEventListener(eventName, handleOrientation, true);
+
+    // Retornamos directamente la función de desuscripción
+    return () => {
+        window.removeEventListener(eventName, handleOrientation, true);
+    };
+};
