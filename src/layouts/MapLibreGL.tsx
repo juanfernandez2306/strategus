@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box, Drawer, Typography, Button, IconButton, Stack, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Snackbar, Alert } from '@mui/material';
 
 // Hooks y Servicios
 import { useMapaLibreGLService } from '../hooks/useMapLibreGL'; 
@@ -21,20 +22,36 @@ export const MapaLibreGL: React.FC = () => {
   // Referencia para manipular la Brújula sin re-renders
   const compassRef = useRef<CompassHandle>(null);
 
+  const btnConfirmarRef = useRef<HTMLButtonElement>(null);
+
   // Inicializamos el Hook de Navegación
   // Se activará automáticamente cuando detallePunto tenga coordenadas
   useNavigation(
     detallePunto?.lat ?? null,
     detallePunto?.lng ?? null,
-    compassRef as React.RefObject<CompassHandle>
+    compassRef as React.RefObject<CompassHandle>,
+    btnConfirmarRef
   );
 
+  const bloqueadoRef = useRef(false);
+
   const manejarClickMarker = (data: SidebarData) => {
+
+    if (bloqueadoRef.current) {
+      console.warn("Acceso al sidebar bloqueado: Acción bloqueada por estado del GPS/Área");
+      return; 
+    }
+
     setDetallePunto(data);
     setIsSidebarOpen(true);
   };
 
-  const { inicializarMapa, refrescarPunto } = useMapaLibreGLService(manejarClickMarker);
+  const { inicializarMapa, refrescarPunto, mensajeError } = useMapaLibreGLService(manejarClickMarker);
+
+  // 2. Efecto separado solo para sincronizar la referencia
+  useEffect(() => {
+    bloqueadoRef.current = Boolean(mensajeError);
+  }, [mensajeError]);
 
   useEffect(() => {
     if (mapDivRef.current) {
@@ -79,6 +96,7 @@ export const MapaLibreGL: React.FC = () => {
       {/* Contenedor del Mapa */}
       <Box ref={mapDivRef} sx={{ width: '100%', height: '100%' }} />
 
+      
       {/* Sidebar de Navegación */}
       <Drawer
         anchor="right"
@@ -123,40 +141,52 @@ export const MapaLibreGL: React.FC = () => {
               
               <Button 
                     id="btn-confirmar-visita"
+                    ref={btnConfirmarRef}
                     variant="contained" 
                     fullWidth 
-                    disabled={false}
+                    // Quitamos el 'true' fijo para que React no lo sobreescriba al actualizar el estado
+                    // El Hook se encargará de ponerlo en true o false inicialmente
                     onClick={handleUpdateStatus}
                     sx={{ 
                         py: 1.5, 
                         fontWeight: 'bold',
                         borderRadius: '8px',
-                        // Uso de tus variables de App.css
-                        backgroundColor: detallePunto.revision_planta 
-                        ? 'var(--color-secundario)' 
-                        : 'var(--color-primario)',
+                        // Aplicamos tu nueva lógica de colores: Rojo si NO está revisado
+                        backgroundColor: !detallePunto.revision_planta 
+                            ? 'var(--color-primario)' 
+                            : 'var(--color-secundario)',
                         color: 'var(--color-fondo)',
-                        '&:hover': {
-                        backgroundColor: detallePunto.revision_planta 
-                            ? 'var(--color-secundario)' 
-                            : 'var(--color-primario)',
-                        filter: 'brightness(0.9)'
-                        },
-                        // Estilo cuando está deshabilitado (fuera de los 20m)
                         '&.Mui-disabled': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.12)',
-                        color: 'rgba(0, 0, 0, 0.26)',
-                        border: '1px solid rgba(0, 0, 0, 0.12)'
+                            backgroundColor: 'rgba(0, 0, 0, 0.12)',
+                            color: 'rgba(0, 0, 0, 0.26)',
                         }
                     }}
-                    >
-                    {detallePunto.revision_planta ? "Marcar como Pendiente" : "Confirmar Visita"}
+                >
+                    {!detallePunto.revision_planta ? "Confirmar Visita" : "Marcar como Pendiente"}
                 </Button>
 
             </Box>
           )}
         </Box>
       </Drawer>
+
+      <Snackbar 
+            open={Boolean(mensajeError)} 
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            sx={{ mt: 2 }} // Un poco de margen superior para que no tape todo
+        >
+            <Alert severity="error" variant="filled" sx={{ 
+              width: '100%',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              '& .MuiAlert-icon': {
+                  fontSize: '1.5rem'
+              }
+                }}>
+                {mensajeError}
+            </Alert>
+        </Snackbar>
+
     </Box>
   );
 };

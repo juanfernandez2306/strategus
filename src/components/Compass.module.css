@@ -1,0 +1,52 @@
+/* Compass.module.css (Versión SONAR DOBLE) */
+
+/* Clase para el Círculo 1 (Onda principal) */
+.beaconAnimation {
+  /* Origen de transformación en el centro del círculo (cx=50, cy=100) */
+  transform-origin: 50px 100px;
+  
+  /* Animación de 3 segundos, infinita, suave al final */
+  animation: pulseSonar 3s infinite ease-out;
+}
+
+/* Clase para el Círculo 2 (Onda secundaria) */
+.beaconAnimation2 {
+  transform-origin: 50px 100px;
+  
+  /* Usamos la misma animación 'pulseSonar' */
+  animation: pulseSonar 3s infinite ease-out;
+  
+  /* AÑADIMOS UN RETRASO de 1 segundo (un tercio del ciclo) */
+  animation-delay: 1s;
+}
+
+/* Definición de la Animación Unificada 'pulseSonar' */
+@keyframes pulseSonar {
+  0% { 
+    /* Comienza pequeño e invisible */
+    transform: scale(0.8); 
+    opacity: 0; 
+  }
+  
+  10% {
+    /* Aparece rápido */
+    opacity: 0.7;
+  }
+  
+  60% { 
+    /* A mitad del ciclo sigue siendo visible mientras crece */
+    opacity: 0.4; 
+  }
+  
+  90% { 
+    /* Crece mucho (escala 3.5) y se desvanece casi al final */
+    transform: scale(3.5); 
+    opacity: 0; 
+  }
+  
+  100% { 
+    /* Reinicia invisible */
+    transform: scale(0.8); 
+    opacity: 0; 
+  }
+}

@@ -1,6 +1,7 @@
 import { type RegistroPosicion } from "./servicioTipos";
 import { CONFIG_GPS } from "./servicioTipos";
 import dayjs from "dayjs";
+import { point, polygon, booleanPointInPolygon } from '@turf/turf';
 
 
 export const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Partial<RegistroPosicion>> => {
@@ -67,14 +68,12 @@ export const iniciarSeguimientoGPS = (
         (posicion) => {
             const { latitude, longitude, accuracy } = posicion.coords;
             
-            // Filtro de precisión consistente
-            if (accuracy <= CONFIG_GPS.TOLERANCIA_METROS) { 
-                onLocationUpdate({
-                    latitud: latitude,
-                    longitud: longitude,
-                    precision: accuracy
-                });
-            }
+            onLocationUpdate({
+                latitud: latitude,
+                longitud: longitude,
+                precision: accuracy
+            });
+            
         },
         (error) => {
             onError(new Error(`Error GPS: ${error.message}`));
@@ -115,4 +114,48 @@ export const watchOrientacionRaw = (
     return () => {
         window.removeEventListener(eventName, handleOrientation, true);
     };
+};
+
+/**
+ * Evalúa si un punto [lng, lat] está dentro de una geometría (Coordenadas o GeoJSON).
+ * Soporta arrays de coordenadas, Features simples y FeatureCollections con múltiples islas.
+ */
+export const validarPuntoEnArea = (
+    lng: number, 
+    lat: number, 
+    geometria: any
+): boolean => {
+    try {
+        // 1. Validaciones de seguridad
+        if (!geometria || lng === undefined || lat === undefined) return false;
+
+        const p = point([lng, lat]);
+
+        // CASO A: Es un array de coordenadas (CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO)
+        if (Array.isArray(geometria)) {
+            // Turf requiere que el array de coordenadas esté dentro de otro array: [[coord1, coord2...]]
+            const poli = polygon([geometria]);
+            return booleanPointInPolygon(p, poli);
+        } 
+
+        // CASO B: Es un GeoJSON completo (FeatureCollection) - SOPORTE PARA ISLAS
+        if (geometria.type === 'FeatureCollection') {
+            // IMPORTANTE: Iteramos todas las "islas" o lotes del GeoJSON
+            // .some devuelve true en cuanto encuentra que está dentro de UNA de las geometrías
+            return geometria.features.some((f: any) => {
+                return booleanPointInPolygon(p, f);
+            });
+        } 
+
+        // CASO C: Es una Feature individual o una Geometry (MultiPolygon/Polygon)
+        if (geometria.type === 'Feature' || geometria.type === 'Polygon' || geometria.type === 'MultiPolygon') {
+            return booleanPointInPolygon(p, geometria);
+        }
+
+        return false;
+    } catch (error) {
+        console.error("Error crítico en validarPuntoEnArea:", error);
+        // En caso de error de formato, por seguridad devolvemos false (fuera del área)
+        return false;
+    }
 };

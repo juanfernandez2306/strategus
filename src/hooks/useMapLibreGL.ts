@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
-import { useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { 
     crearInstanciaMapa, 
     datosGeoJsonSidebarData, 
 } from '../services/servicioMapLibreGL';
 import { configurarClusteresEnMapa } from '../services/servicioCapasMapa';
-import { type SidebarData } from '../services/servicioTipos';
+import { type SidebarData, CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../services/servicioTipos';
+import { obtenerUltimaPosicion } from '../services/servicioMapLibreGL';
+import { validarPuntoEnArea } from '../services/servicioGeolocalizacion';
 
 /**
  * Hook para gestionar la lógica del mapa MapLibre y su interacción con IndexedDB.
@@ -16,10 +17,68 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
     // Referencia persistente para la instancia del mapa
     const mapRef = useRef<MapLibreMap | null>(null);
 
+    const ultimoMensajeRef = useRef<string | null>(null);
+
+    const [mensajeError, setMensajeError] = useState<string | null>(null);
+
+   
     useEffect(() => {
+        const monitorearGps = () => {
+            // CONSUMO DIRECTO DEL ORQUESTADOR
+            const datos = obtenerUltimaPosicion();
+
+            if (!datos) {
+                console.log("⏳ Esperando primera posición del GPS...");
+                return;
+            }
+
+            const errores: string[] = [];
+
+            // Validación A: Precisión
+            if (datos.precision > 20) {
+                errores.push("Señal GPS débil (>20m)");
+            }
+
+            // Validación B: Área de Trabajo (Usando tu función de islas/dissolve)
+            const estaDentro = validarPuntoEnArea(
+                datos.lng, 
+                datos.lat, 
+                CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO
+            );
+
+            if (!estaDentro) {
+                errores.push("Fuera del área de trabajo");
+            }
+
+            // 2. Creamos el string final (o null si no hay errores)
+            const mensajeActual = errores.length > 0 ? errores.join(" | ") : null;
+
+            // 3. --- FILTRO DE DISPARO INTELIGENTE ---
+            // Comparamos el mensaje completo. Si algo cambió (se añadió un error, 
+            // se quitó uno, o se limpiaron todos), entramos.
+            if (mensajeActual !== ultimoMensajeRef.current) {
+            
+                ultimoMensajeRef.current = mensajeActual;
+                setMensajeError(mensajeActual); // Actualiza la UI de MapLibreGL.tsx
+
+                if (mensajeActual) {
+                        console.warn(`ESTADO CRÍTICO: ${mensajeActual}`);
+                    } else {
+                        console.log("Sistema operativo: Posición y precisión OK.");
+                    }
+            }
+
+
+        };
+
+        monitorearGps();
+
+        const intervalId = setInterval(monitorearGps, 500); //
+
         return () => {
           mapRef.current?.remove();
           mapRef.current = null;
+          clearInterval(intervalId);
         };
       }, []);
 
@@ -60,6 +119,7 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
     return {
         inicializarMapa,
         refrescarPunto,
-        mapaInstancia: mapRef.current
+        mapaInstancia: mapRef.current,
+        mensajeError
     };
 };

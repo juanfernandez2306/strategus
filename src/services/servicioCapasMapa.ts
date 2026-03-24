@@ -70,7 +70,14 @@ export const configurarCapasBase = (map: MapLibreMap, userGeoJSON: any) => {
             'text-offset': [0, 1] // Lo alejamos un poco del centro para que parezca un faro
         },
         paint: {
-            'text-color': '#007cff',
+            //'text-color': '#007cff',
+            'text-color': [
+                'step',
+                ['get', 'precision'],
+                '#007cff', // Azul si la precisión es buena (< 20m)
+                20,        // Umbral de precisión
+                '#9e9e9e'  // Gris si la precisión es mala (> 20m)
+            ],
             'text-halo-color': '#FBF6F6',
             'text-halo-width': 3,
             'text-opacity': 1.0,
@@ -84,7 +91,13 @@ export const configurarCapasBase = (map: MapLibreMap, userGeoJSON: any) => {
         source: 'user-pos-source',
         paint: {
             'circle-radius': 24,
-            'circle-color': '#007cff',
+            'circle-color': [
+                'step',
+                ['get', 'precision'],
+                '#007cff', // Color base (buena precisión)
+                20,        // Umbral
+                '#9e9e9e'  // Color si supera el umbral
+            ],
             'circle-opacity': 0.3,
             'circle-blur': 0.8 // Suaviza los bordes (low-pass filter visual)
         }
@@ -96,7 +109,14 @@ export const configurarCapasBase = (map: MapLibreMap, userGeoJSON: any) => {
         source: 'user-pos-source',
         paint: {
             'circle-radius': 8,
-            'circle-color': '#007cff',
+            'circle-color': [
+                'step',
+                ['get', 'precision'],
+                '#007cff', // Color base (buena precisión)
+                20,        // Umbral
+                '#9e9e9e'  // Color si supera el umbral
+            ],
+            //'circle-color': '#007cff',
             'circle-stroke-width': 2,
             'circle-stroke-color': '#fff'
         }

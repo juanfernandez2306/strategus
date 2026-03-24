@@ -1,10 +1,12 @@
 import { useRef, useImperativeHandle, forwardRef, type CSSProperties } from 'react';
 import { Box, Typography } from '@mui/material';
+import style from './Compass.module.css';
 
 // Interfaz para que el Padre (o el Hook) controle el componente
 export interface CompassHandle {
   updateAngle: (deg: number) => void;
   updateDistance: (dist: number) => void;
+  setProximityMode: (active: boolean) => void;
 }
 
 interface CompassProps {
@@ -15,6 +17,8 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
   // Referencias específicas para evitar errores de "overload" en TS
   const needleRef = useRef<SVGGElement | null>(null);
   const distanceRef = useRef<HTMLSpanElement | null>(null);
+  const beaconRef = useRef<SVGCircleElement | null>(null);
+  const beaconRef2 = useRef<SVGCircleElement | null>(null);
 
   // Exponemos las funciones de manipulación directa del DOM
   useImperativeHandle(ref, () => ({
@@ -28,6 +32,17 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
     updateDistance: (dist: number) => {
       if (distanceRef.current) {
         distanceRef.current.textContent = `${dist}`;
+      }
+    },
+    setProximityMode: (active: boolean) => {
+      if (needleRef.current && beaconRef.current && beaconRef2.current) {
+        // Ocultar/Mostrar aguja
+        needleRef.current.style.display = active ? 'none' : 'block';
+        
+        // Ocultar/Mostrar AMBOS círculos
+        const displayValue = active ? 'block' : 'none';
+        beaconRef.current.style.display = displayValue;
+        beaconRef2.current.style.display = displayValue;
       }
     }
   }));
@@ -72,6 +87,26 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
             <path fill="#FFF" stroke="var(--color-negro)" strokeWidth="3" d="M50 165 L42 100 H58 Z" />
             <circle cx="50" cy="100" r="5" fill="var(--color-negro)" />
           </g>
+
+          <circle 
+            ref={beaconRef}
+            cx="50" 
+            cy="100" 
+            r="15" 
+            fill="var(--color-primario)" 
+            className={style.beaconAnimation} // <--- AQUÍ agregas la clase del módulo
+            style={{ display: 'none' }}       // Dejamos el display controlado por JS
+          />
+
+          {/* 4. CÍRCULO 2 (Segunda onda con retraso) */}
+          <circle 
+            ref={beaconRef2}
+            cx="50" cy="100" r="15" 
+            fill="var(--color-primario)" 
+            className={style.beaconAnimation2} // <--- NUEVA CLASE con delay
+            style={{ display: 'none' }} 
+          />
+
         </svg>
       </Box>
 

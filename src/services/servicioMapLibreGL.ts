@@ -7,9 +7,10 @@ import {
     type RespuestaGeoJsonSidebarData 
 } from './servicioTipos';
 import { configurarCapasBase } from './servicioCapasMapa';
-import { iniciarSeguimientoGPS } from './servicioGeolocalizacion';
+import { iniciarSeguimientoGPS, validarPuntoEnArea } from './servicioGeolocalizacion';
 import { navService } from './servicioNavegacionBrujula';
 import { watchOrientacionRaw } from './servicioGeolocalizacion';
+import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from './servicioTipos';
 
 export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebarData> => {
     try {
@@ -48,6 +49,18 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
     }
 };
 
+// --- ESTADO GLOBAL DEL MÓDULO (Fuera de las funciones) ---
+let ultimaPosicionGps: { lng: number, lat: number, precision: number } | null = null;
+
+// <--- Almacenamos el valor bruto del angulo del sensor
+let ultimoHeadingRaw: number = 0;
+
+// Exportación válida en el nivel superior
+export const obtenerUltimaPosicion = () => ultimaPosicionGps;
+
+// <--- Exportamos el bruto de la orientacion del sensor
+export const obtenerUltimoHeadingRaw = () => ultimoHeadingRaw;
+
 export const crearInstanciaMapa = (
     contenedor: HTMLDivElement
 ): MapLibreMap => {
@@ -65,7 +78,7 @@ export const crearInstanciaMapa = (
         features: [{
             type: 'Feature',
             geometry: { type: 'Point', coordinates: [0, 0] },
-            properties: { heading: 0 }
+            properties: { heading: 0, precision: 21 }
         }]
     };
 
@@ -97,13 +110,62 @@ export const crearInstanciaMapa = (
 
     let esPrimerVuelo = true;
 
-    const actualizarFuenteUsuario = (coords?: [number, number]) => {
-        if (!mapaListo) return;
+    const actualizarFuenteUsuario = (pos?: { 
+        longitud: number, 
+        latitud: number, 
+        precision: number }) => {
+
+        if (!pos) return
+
+        // 1. Si hay nueva posición GPS, validamos el área
+        const estaDentro = validarPuntoEnArea(
+            pos.longitud, 
+            pos.latitud, 
+            CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO
+        );
+
+        // Si está fuera, abortamos: no actualizamos posición ni centramos
+        if (!estaDentro) {
+            console.warn("Usuario fuera del área permitida. Actualización bloqueada.");
+        }
+
+        ultimaPosicionGps = { 
+            lng: pos.longitud, 
+            lat: pos.latitud, 
+            precision: pos.precision 
+        };
+
+        
+        if (!mapaListo || !ultimaPosicionGps) return;
+
+        const estaDentroAhora = validarPuntoEnArea(
+            ultimaPosicionGps.lng,
+            ultimaPosicionGps.lat,
+            CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO
+        );
+
+        // Si está fuera, no actualizamos la fuente (icono) ni hacemos flyTo
+        if (!estaDentroAhora) return;
+
+
         const source = map.getSource('user-pos-source') as any;
         if (!source) return;
 
-        if (coords) userLocationGeoJSON.features[0].geometry.coordinates = coords;
+        // 2. Si viene una posición nueva, actualizamos la global. 
+        // Si no viene (caso de la orientación), usamos la que ya teníamos.
+        
+
+        // Si no tenemos ninguna posición aún, no podemos dibujar nada
+        if (!ultimaPosicionGps) return;
+
+        const coords: [number, number] = [ultimaPosicionGps.lng, ultimaPosicionGps.lat];
+
+        const precisionActual = ultimaPosicionGps.precision;
+
+        // Actualizamos el GeoJSON para el mapa
+        userLocationGeoJSON.features[0].geometry.coordinates = coords;
         userLocationGeoJSON.features[0].properties.heading = alphaHeading;
+        userLocationGeoJSON.features[0].properties.precision = precisionActual;
 
         source.setData(userLocationGeoJSON);
 
@@ -124,9 +186,6 @@ export const crearInstanciaMapa = (
 
     };
 
-    
-
-
     map.on('load', () => {
 
         mapaListo = true;
@@ -135,12 +194,16 @@ export const crearInstanciaMapa = (
         configurarCapasBase(map, userLocationGeoJSON);
 
         watchGpsId = iniciarSeguimientoGPS(
-            (pos) => actualizarFuenteUsuario([pos.longitud, pos.latitud]),
+            (pos) => actualizarFuenteUsuario(pos),
             (err) => console.error(err)
         );
 
         desactivaOrientacion = watchOrientacionRaw((raw) => {
+            // 1. Guardamos el valor bruto para la brújula del Sidebar
+            ultimoHeadingRaw = raw;
+
             alphaHeading = navService.procesarHeading(raw);
+            
             actualizarFuenteUsuario();
         });
 

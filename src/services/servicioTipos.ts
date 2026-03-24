@@ -63,5 +63,13 @@ export const CONFIG_MAPA = {
     BOUNDS: [-72.706, 9.851, -72.697, 9.874] as [number, number, number, number]
 };
 
+export const CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO = [
+    [-72.70646, 9.87379],
+    [-72.69629, 9.87372],
+    [-72.69645, 9.85043],
+    [-72.70662, 9.8505],
+    [-72.70646, 9.87379]
+]
+
 
 
