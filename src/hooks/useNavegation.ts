@@ -30,7 +30,7 @@ export const useNavigation = (
 
       const { lng, lat } = datosGps;
 
-      //console.log(lat, lng, headingRaw);
+      console.log(lat, lng, headingRaw);
 
 
       if (lat !== null && lng !== null && destLat !== null && destLon !== null) {
