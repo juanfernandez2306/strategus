@@ -5,7 +5,7 @@ import bearing from '@turf/bearing';
 
 class NavigationService {
   // Solo filtramos el ruido físico del GPS (saltos menores a 5m)
-  private readonly GPS_NOISE_THRESHOLD = 5; 
+  private readonly GPS_NOISE_THRESHOLD = 3; 
   
   private currentLerpAngle: number = 0;
   private alphaAngle: number = 0.15; //0.15
@@ -18,7 +18,10 @@ class NavigationService {
   private readonly suavizadoOrientacion = 0.2;
 
   procesarHeading(directo: number): number {
-    let diff = directo - this.currentHeading;
+
+    const directoCorregido = (360 - directo) % 360;
+
+    let diff = directoCorregido - this.currentHeading;
     if (diff > 180) diff -= 360;
     if (diff < -180) diff += 360;
     
@@ -50,8 +53,10 @@ class NavigationService {
     let rumboDestino = bearing(from, to);
     rumboDestino = (rumboDestino + 360) % 360;
 
+    const telefonoHeadingCorregido = (360 - telefonoHeading) % 360;
+
     // 4. Aguja (Camino más corto)
-    const targetAngle = (rumboDestino - telefonoHeading + 360) % 360;
+    const targetAngle = (rumboDestino - telefonoHeadingCorregido + 360) % 360;
     let delta = targetAngle - (this.currentLerpAngle % 360);
 
     if (delta > 180) delta -= 360;

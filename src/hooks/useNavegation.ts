@@ -30,9 +30,6 @@ export const useNavigation = (
 
       const { lng, lat } = datosGps;
 
-      console.log(lat, lng, headingRaw);
-
-
       if (lat !== null && lng !== null && destLat !== null && destLon !== null) {
         const result = navService.calcularNav(
           lat, //latitud proveniente del mapa
@@ -41,8 +38,6 @@ export const useNavigation = (
           destLon,
           headingRaw
         );
-
-        //console.log(`🎯 Ángulo Aguja: ${result.anguloAguja.toFixed(1)}° | Distancia: ${result.distancia.toFixed(1)}m`);
 
         // Actualizamos la distancia visualmente (vía Ref para evitar re-render)
         compassRef.current?.updateDistance(result.distancia);
