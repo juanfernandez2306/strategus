@@ -19,20 +19,13 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
     const ultimoMensajeRef = useRef<string | null>(null);
 
     const [mensajeError, setMensajeError] = useState<string | null>(null);
-
-    const [debugAlfa, setDebugAlfa] = useState<number | null>(null);
    
     useEffect(() => {
         const monitorearGps = (e: any) => {
             // CONSUMO DIRECTO DEL ORQUESTADOR
-            const {datosGps, ultimoHeadingRaw} = e.detail;
+            const {datosGps} = e.detail;
 
-            if (typeof ultimoHeadingRaw === 'number') {
-                setDebugAlfa(ultimoHeadingRaw);
-            } else {
-                // Si llega aquí, es que el sensor no está enviando números
-                console.warn("Sensor Alfa no detectado o no es un número");
-            }
+            
 
             if (!datosGps) {
                 console.log("⏳ Esperando primera posición del GPS...");
@@ -68,6 +61,8 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
                 ultimoMensajeRef.current = mensajeActual;
                 setMensajeError(mensajeActual); // Actualiza la UI de MapLibreGL.tsx
 
+                console.log(mensajeError);
+                
                 if (mensajeActual) {
                         console.warn(`ESTADO CRÍTICO: ${mensajeActual}`);
                     } else {
@@ -125,7 +120,6 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
         inicializarMapa,
         refrescarPunto,
         mapaInstancia: mapRef.current,
-        mensajeError,
-        debugAlfa
+        mensajeError
     };
 };

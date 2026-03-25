@@ -98,33 +98,20 @@ export const iniciarSeguimientoGPS = (
 
 export const watchOrientacionRaw = (onHeadingUpdate: (heading: number) => void) => {
     
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-        // 1. Intentamos obtener el rumbo desde varias fuentes según el navegador
-        // Prioridad: 1. webkitCompassHeading (Chrome/Safari), 2. alpha (Estándar)
-        const rawHeading = (e as any).webkitCompassHeading ?? e.alpha;
+    const handleOrientation = (e: any) => {
+        const directo = e.webkitCompassHeading || e.alpha;
 
-        console.log(e);
-
-        if (rawHeading !== null && rawHeading !== undefined) {
-            // Si el valor llega, lo enviamos al callback
-            onHeadingUpdate(rawHeading);
-        } else {
-            // Esto te confirmará en consola si el navegador sigue mandando cajas vacías
-            console.warn("⚠️ Evento recibido pero alpha/compass es NULL. Revisa permisos de sensores en Chrome.");
+        if (directo !== undefined && directo !== null) {
+            onHeadingUpdate(directo);
         }
     };
 
-    // En Android 14, 'deviceorientationabsolute' es MUCHO más fiable para brújulas
-    const eventName = 'ondeviceorientationabsolute' in window 
-        ? 'deviceorientationabsolute' 
-        : 'deviceorientation';
-
-    console.log(`📡 Registrando sensor: ${eventName}`);
-
-    window.addEventListener(eventName, handleOrientation, true);
+    window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+    window.addEventListener('deviceorientation', handleOrientation, true);
     
     return () => {
-        window.removeEventListener(eventName, handleOrientation, true);
+        window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+        window.removeEventListener('deviceorientation', handleOrientation, true);
     };
 };
 

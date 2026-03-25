@@ -59,21 +59,14 @@ let ultimoHeadingRaw: number = 0;
 const notificarSincronizacion = () => {
     // Si no hay posición, no mandamos nada (evita errores en el sidebar)
     if (!ultimaPosicionGps) return;
-
-    // Capturamos el momento exacto del envío
-    const ahora = new Date();
-    const tsEnvio = ahora.getTime(); 
-    const horaLegible = ahora.toLocaleTimeString('en-GB', { hour12: false }) + ':' + ahora.getMilliseconds();
-
+    
     window.dispatchEvent(new CustomEvent('heading-update', {
         detail: {
             headingRaw: ultimoHeadingRaw,
             datosGps: { 
                 lat: ultimaPosicionGps.lat, 
                 lng: ultimaPosicionGps.lng 
-            },
-            tsEnvio: tsEnvio,
-            horaLegibleEnvio: horaLegible
+            }
         }
     }));
 };
@@ -235,11 +228,8 @@ export const crearInstanciaMapa = (
 
         desactivaOrientacion = watchOrientacionRaw((raw) => {
             // 1. Guardamos el valor bruto para la brújula del Sidebar
-            // 1. Guardamos giro
-            console.log("✅ Evento recibido:", raw);
+            
             ultimoHeadingRaw = raw;
-
-            console.log(ultimoHeadingRaw)
 
             alphaHeading = navService.procesarHeading(raw);
 
