@@ -14,7 +14,7 @@ export const abrirDB = (): Promise<IDBDatabase> => {
       const db = (event.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         const store = db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
-        store.createIndex("fecha_idx", "fecha", { unique: false });
+        store.createIndex("fecha_registro_idx", "fecha_registro", { unique: false });
         store.createIndex("sincronizacion_idx", "sincronizacion", { unique: false });
         store.createIndex("uuid_idx", "uuid", { unique: true });
         store.createIndex("revision_planta_idx", "revision_planta", { unique: false });
@@ -132,7 +132,7 @@ export const obtenerConteoRegistrosDelDia = async (): Promise<number> => {
 
   try {
     const registros = await obtenerRegistroFiltro(
-      "fecha_idx", 
+      "fecha_registro_idx", 
       fechaHoy);
     
     return registros.length;

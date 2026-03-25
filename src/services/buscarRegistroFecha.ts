@@ -8,7 +8,7 @@ const obtenerRegistrosPosicionPorFecha = async (fecha: string): Promise<Registro
     try {
       const transaction = db.transaction(STORE_NAME, "readonly");
       const store = transaction.objectStore(STORE_NAME);
-      const index = store.index("fecha_idx");
+      const index = store.index("fecha_registro_idx");
 
       const range = IDBKeyRange.only(fecha);
       const resultados: RegistroPosicion[] = [];

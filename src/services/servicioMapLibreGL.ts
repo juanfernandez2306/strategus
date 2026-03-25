@@ -55,6 +55,29 @@ let ultimaPosicionGps: { lng: number, lat: number, precision: number } | null = 
 // <--- Almacenamos el valor bruto del angulo del sensor
 let ultimoHeadingRaw: number = 0;
 
+// Esta función es el "Mensajero"
+const notificarSincronizacion = () => {
+    // Si no hay posición, no mandamos nada (evita errores en el sidebar)
+    if (!ultimaPosicionGps) return;
+
+    // Capturamos el momento exacto del envío
+    const ahora = new Date();
+    const tsEnvio = ahora.getTime(); 
+    const horaLegible = ahora.toLocaleTimeString('en-GB', { hour12: false }) + ':' + ahora.getMilliseconds();
+
+    window.dispatchEvent(new CustomEvent('heading-update', {
+        detail: {
+            headingRaw: ultimoHeadingRaw,
+            datosGps: { 
+                lat: ultimaPosicionGps.lat, 
+                lng: ultimaPosicionGps.lng 
+            },
+            tsEnvio: tsEnvio,
+            horaLegibleEnvio: horaLegible
+        }
+    }));
+};
+
 // Exportación válida en el nivel superior
 export const obtenerUltimaPosicion = () => ultimaPosicionGps;
 
@@ -127,6 +150,7 @@ export const crearInstanciaMapa = (
         // Si está fuera, abortamos: no actualizamos posición ni centramos
         if (!estaDentro) {
             console.warn("Usuario fuera del área permitida. Actualización bloqueada.");
+            return
         }
 
         ultimaPosicionGps = { 
@@ -138,6 +162,7 @@ export const crearInstanciaMapa = (
         
         if (!mapaListo || !ultimaPosicionGps) return;
 
+        /*
         const estaDentroAhora = validarPuntoEnArea(
             ultimaPosicionGps.lng,
             ultimaPosicionGps.lat,
@@ -146,7 +171,7 @@ export const crearInstanciaMapa = (
 
         // Si está fuera, no actualizamos la fuente (icono) ni hacemos flyTo
         if (!estaDentroAhora) return;
-
+        */
 
         const source = map.getSource('user-pos-source') as any;
         if (!source) return;
@@ -194,17 +219,34 @@ export const crearInstanciaMapa = (
         configurarCapasBase(map, userLocationGeoJSON);
 
         watchGpsId = iniciarSeguimientoGPS(
-            (pos) => actualizarFuenteUsuario(pos),
+            (pos) => {
+                // 1. Guardamos posición
+                ultimaPosicionGps = { lng: pos.longitud, lat: pos.latitud, precision: pos.precision };
+                // 2. Movemos punto azul
+                actualizarFuenteUsuario(pos);
+                // 3. Avisamos al sidebar (si está escuchando)
+                notificarSincronizacion();
+
+            },
             (err) => console.error(err)
         );
 
+        console.log("Cargando sensores...");
+
         desactivaOrientacion = watchOrientacionRaw((raw) => {
             // 1. Guardamos el valor bruto para la brújula del Sidebar
+            // 1. Guardamos giro
+            console.log("✅ Evento recibido:", raw);
             ultimoHeadingRaw = raw;
 
+            console.log(ultimoHeadingRaw)
+
             alphaHeading = navService.procesarHeading(raw);
-            
+
+            notificarSincronizacion();
+            // 3. Movemos triángulo azul
             actualizarFuenteUsuario();
+            
         });
 
     })

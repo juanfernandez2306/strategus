@@ -8,7 +8,7 @@ class NavigationService {
   private readonly GPS_NOISE_THRESHOLD = 5; 
   
   private currentLerpAngle: number = 0;
-  private alphaAngle: number = 0.15;
+  private alphaAngle: number = 0.15; //0.15
   
   private lastStoredDistance: number = 0;
   private alphaDistance: number = 0.25;

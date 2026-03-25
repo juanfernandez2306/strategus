@@ -46,7 +46,7 @@ export const MapaLibreGL: React.FC = () => {
     setIsSidebarOpen(true);
   };
 
-  const { inicializarMapa, refrescarPunto, mensajeError } = useMapaLibreGLService(manejarClickMarker);
+  const { inicializarMapa, refrescarPunto, mensajeError, debugAlfa } = useMapaLibreGLService(manejarClickMarker);
 
   // 2. Efecto separado solo para sincronizar la referencia
   useEffect(() => {
@@ -183,7 +183,10 @@ export const MapaLibreGL: React.FC = () => {
                   fontSize: '1.5rem'
               }
                 }}>
-                {mensajeError}
+                  {mensajeError}
+                <div>
+                    🧭 Alfa: {debugAlfa?.toFixed(1)}° | Corr: {((debugAlfa || 0) + 180) % 360}°
+                </div>
             </Alert>
         </Snackbar>
 

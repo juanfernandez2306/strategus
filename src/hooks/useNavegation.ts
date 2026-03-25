@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { navService } from '../services/servicioNavegacionBrujula'; 
 import type { CompassHandle } from '../components/Compass';
-import { obtenerUltimaPosicion, obtenerUltimoHeadingRaw } from '../services/servicioMapLibreGL';
 
 export const useNavigation = (
   destLat: number | null,
@@ -23,15 +22,16 @@ export const useNavigation = (
     
 
     // 2. Función lógica de actualización
-    const updateCompass = () => {
+    const updateCompass = (e: any) => {
 
-      const datosGps = obtenerUltimaPosicion()
+      const { headingRaw, datosGps } = e.detail;
 
       if (!datosGps) return
 
-      const { lat, lng } = datosGps;
+      const { lng, lat } = datosGps;
 
-      const headingRaw = obtenerUltimoHeadingRaw();
+      //console.log(lat, lng, headingRaw);
+
 
       if (lat !== null && lng !== null && destLat !== null && destLon !== null) {
         const result = navService.calcularNav(
@@ -41,6 +41,8 @@ export const useNavigation = (
           destLon,
           headingRaw
         );
+
+        //console.log(`🎯 Ángulo Aguja: ${result.anguloAguja.toFixed(1)}° | Distancia: ${result.distancia.toFixed(1)}m`);
 
         // Actualizamos la distancia visualmente (vía Ref para evitar re-render)
         compassRef.current?.updateDistance(result.distancia);
@@ -91,11 +93,11 @@ export const useNavigation = (
     };
 
 
-    const intervalId = setInterval(updateCompass, 50)
+    window.addEventListener('heading-update', updateCompass);
 
     // Limpieza al desmontar o cambiar de destino
     return () => {
-      clearInterval(intervalId);
+      window.removeEventListener('heading-update', updateCompass);
     };
   }, [destLat, destLon, compassRef]); // Se dispara cuando cambian las coordenadas o la ref
 };

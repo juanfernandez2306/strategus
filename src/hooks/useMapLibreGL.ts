@@ -6,7 +6,6 @@ import {
 } from '../services/servicioMapLibreGL';
 import { configurarClusteresEnMapa } from '../services/servicioCapasMapa';
 import { type SidebarData, CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../services/servicioTipos';
-import { obtenerUltimaPosicion } from '../services/servicioMapLibreGL';
 import { validarPuntoEnArea } from '../services/servicioGeolocalizacion';
 
 /**
@@ -21,13 +20,21 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
 
     const [mensajeError, setMensajeError] = useState<string | null>(null);
 
+    const [debugAlfa, setDebugAlfa] = useState<number | null>(null);
    
     useEffect(() => {
-        const monitorearGps = () => {
+        const monitorearGps = (e: any) => {
             // CONSUMO DIRECTO DEL ORQUESTADOR
-            const datos = obtenerUltimaPosicion();
+            const {datosGps, ultimoHeadingRaw} = e.detail;
 
-            if (!datos) {
+            if (typeof ultimoHeadingRaw === 'number') {
+                setDebugAlfa(ultimoHeadingRaw);
+            } else {
+                // Si llega aquí, es que el sensor no está enviando números
+                console.warn("Sensor Alfa no detectado o no es un número");
+            }
+
+            if (!datosGps) {
                 console.log("⏳ Esperando primera posición del GPS...");
                 return;
             }
@@ -35,14 +42,14 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
             const errores: string[] = [];
 
             // Validación A: Precisión
-            if (datos.precision > 20) {
+            if (datosGps.precision > 20) {
                 errores.push("Señal GPS débil (>20m)");
             }
 
             // Validación B: Área de Trabajo (Usando tu función de islas/dissolve)
             const estaDentro = validarPuntoEnArea(
-                datos.lng, 
-                datos.lat, 
+                datosGps.lng, 
+                datosGps.lat, 
                 CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO
             );
 
@@ -71,14 +78,12 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
 
         };
 
-        monitorearGps();
-
-        const intervalId = setInterval(monitorearGps, 500); //
+        window.addEventListener('heading-update', monitorearGps);
 
         return () => {
-          mapRef.current?.remove();
-          mapRef.current = null;
-          clearInterval(intervalId);
+            window.removeEventListener('heading-update', monitorearGps);
+            mapRef.current?.remove();
+            mapRef.current = null;
         };
       }, []);
 
@@ -120,6 +125,7 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
         inicializarMapa,
         refrescarPunto,
         mapaInstancia: mapRef.current,
-        mensajeError
+        mensajeError,
+        debugAlfa
     };
 };

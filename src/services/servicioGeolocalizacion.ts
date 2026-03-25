@@ -2,6 +2,7 @@ import { type RegistroPosicion } from "./servicioTipos";
 import { CONFIG_GPS } from "./servicioTipos";
 import dayjs from "dayjs";
 import { point, polygon, booleanPointInPolygon } from '@turf/turf';
+import { GEOJSON_LOTE } from "./servicioTipos";
 
 
 export const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Partial<RegistroPosicion>> => {
@@ -14,6 +15,12 @@ export const obtenerRegistroPosicionGeografica = (galeria: number): Promise<Part
 
                 if (accuracy > CONFIG_GPS.TOLERANCIA_METROS) {
                     return reject(new Error(`Señal GPS débil: (${accuracy.toFixed(1)}m). Intente, nuevamente.`));
+                }
+
+                const estaEnArea = validarPuntoEnArea(longitude, latitude, GEOJSON_LOTE);
+
+                if (!estaEnArea) {
+                    return reject(new Error("Ubicación fuera del área de trabajo permitida."));
                 }
                 
                 // Formateamos fecha y hora actual
@@ -86,31 +93,36 @@ export const iniciarSeguimientoGPS = (
     );
 };
 
-/**
- * Configura el sensor de orientación y retorna la función de limpieza.
- * No guarda estado interno, delegando el control al llamador.
- * @param onHeadingUpdate Callback con el valor RAW.
- */
-export const watchOrientacionRaw = (
-    onHeadingUpdate: (heading: number) => void
-): (() => void) => {
+
+// servicioGeolocalizacion.ts
+
+export const watchOrientacionRaw = (onHeadingUpdate: (heading: number) => void) => {
     
     const handleOrientation = (e: DeviceOrientationEvent) => {
-        // Valor raw: webkit para iOS, alpha para Android
+        // 1. Intentamos obtener el rumbo desde varias fuentes según el navegador
+        // Prioridad: 1. webkitCompassHeading (Chrome/Safari), 2. alpha (Estándar)
         const rawHeading = (e as any).webkitCompassHeading ?? e.alpha;
-        
+
+        console.log(e);
+
         if (rawHeading !== null && rawHeading !== undefined) {
+            // Si el valor llega, lo enviamos al callback
             onHeadingUpdate(rawHeading);
+        } else {
+            // Esto te confirmará en consola si el navegador sigue mandando cajas vacías
+            console.warn("⚠️ Evento recibido pero alpha/compass es NULL. Revisa permisos de sensores en Chrome.");
         }
     };
 
+    // En Android 14, 'deviceorientationabsolute' es MUCHO más fiable para brújulas
     const eventName = 'ondeviceorientationabsolute' in window 
         ? 'deviceorientationabsolute' 
         : 'deviceorientation';
 
-    window.addEventListener(eventName, handleOrientation, true);
+    console.log(`📡 Registrando sensor: ${eventName}`);
 
-    // Retornamos directamente la función de desuscripción
+    window.addEventListener(eventName, handleOrientation, true);
+    
     return () => {
         window.removeEventListener(eventName, handleOrientation, true);
     };
