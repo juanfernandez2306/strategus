@@ -1,6 +1,6 @@
 import FormBaseLayout from "../components/FormLayoutBase";
 import IconDeleteDB from "../components_svg/IconDeleteDB";
-import limpiarRegistrosPosiciones from "../services/limpiarBD";
+import { limpiarRegistrosPosiciones } from "../services/indexedbd/palmaActions"; 
 
 
 const DeleteIndexeDBcapture = () => {

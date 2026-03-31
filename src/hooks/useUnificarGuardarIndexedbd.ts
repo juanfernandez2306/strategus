@@ -1,5 +1,5 @@
-import { upsertRegistroLuegoDeUnificar } from "../services/servicioAlmacenamientoDB";
-import { type RegistroPosicion } from "../services/servicioTipos";
+import { upsertRegistroLuegoDeUnificar } from "../services/indexedbd/palmaActions"; 
+import { type RegistroPosicion } from "../types";
 
 export const useImportarGeoJSON = () => {
     

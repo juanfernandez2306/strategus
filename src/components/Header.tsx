@@ -24,6 +24,16 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onSelect }) => {
   const [open, setOpen] = useState(false);
 
+  const menuItems = [
+    { text: "Inicio", view: "Inicio" },
+    { text: "Mapa", view: "Mapa" },
+    { text: "Exportar GeoJSON", view: "DescargarDatos" },
+    { text: "Unificar Archivos", view: "UnificarYguardarArchivos" },
+    { text: "Generar QR Jornada", view: "GenerarQR" }, // Nueva opción
+    { text: "Escanear QR Jornada", view: "EscanearQR" }, // Nueva opción
+    { text: "Eliminar Base de Datos", view: "EliminarBD" },
+  ];
+
   return (
     <>
       <AppBar position="static" color="transparent">
@@ -65,32 +75,14 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
           <List>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("Inicio"); setOpen(false); }}>
-                <ListItemText primary="Inicio" />
+            {menuItems.map((item) => (
+              <ListItem key={item.view} disablePadding>
+                <ListItemButton onClick={() => { onSelect(item.view); setOpen(false); }}>
+                  <ListItemText primary={item.text} />
                 </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("DescargarDatos"); setOpen(false); }}>
-                <ListItemText primary="Descargar Datos" />
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("UnificarYguardarArchivos"); setOpen(false); }}>
-                <ListItemText primary="Guardar archivos en BD" />
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("EliminarBD"); setOpen(false); }}>
-                <ListItemText primary="Limpiar registros de la BD" />
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => { onSelect("Mapa"); setOpen(false); }}>
-                <ListItemText primary="Mapa" />
-                </ListItemButton>
-            </ListItem>
-        </List>
+              </ListItem>
+            ))}
+          </List>
 
         <Divider />
           <Box sx={{ p: 2, backgroundColor: '#f9f9f9' }}>

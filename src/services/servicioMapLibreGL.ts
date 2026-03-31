@@ -1,16 +1,17 @@
 import { Map, NavigationControl } from 'maplibre-gl';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { point, featureCollection } from '@turf/turf';
-import { obtenerRegistroSidebarData } from './servicioAlmacenamientoDB';
+import { obtenerRegistroSidebarData } from './indexedbd/palmaQueries'; 
 import { 
     type SidebarData, 
     type RespuestaGeoJsonSidebarData 
-} from './servicioTipos';
-import { configurarCapasBase } from './servicioCapasMapa';
-import { iniciarSeguimientoGPS, validarPuntoEnArea } from './servicioGeolocalizacion';
+} from '../types';
+import { configurarCapasBase } from '../features/mapa/services/capasVectorTilesMapa.ts';
+import { iniciarSeguimiento, detenerSeguimiento } from './sensors/gps/engine';
+import { validarPuntoEnArea } from './sensors/gps/utils';
 import { navService } from './servicioNavegacionBrujula';
-import { watchOrientacionRaw } from './servicioGeolocalizacion';
-import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from './servicioTipos';
+import { watchOrientacionRaw } from './sensors/brujula/engine.ts';
+import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../data/finca/limites';
 
 export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebarData> => {
     try {
@@ -50,7 +51,10 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
 };
 
 // --- ESTADO GLOBAL DEL MÓDULO (Fuera de las funciones) ---
-let ultimaPosicionGps: { lng: number, lat: number, precision: number } | null = null;
+let ultimaPosicionGps: { 
+    latitude: number, 
+    longitude: number, 
+    accuracy: number } | null = null;
 
 // <--- Almacenamos el valor bruto del angulo del sensor
 let ultimoHeadingRaw: number = 0;
@@ -64,8 +68,8 @@ const notificarSincronizacion = () => {
         detail: {
             headingRaw: ultimoHeadingRaw,
             datosGps: { 
-                lat: ultimaPosicionGps.lat, 
-                lng: ultimaPosicionGps.lng 
+                lat: ultimaPosicionGps.latitude, 
+                lng: ultimaPosicionGps.longitude 
             }
         }
     }));
@@ -127,16 +131,17 @@ export const crearInstanciaMapa = (
     let esPrimerVuelo = true;
 
     const actualizarFuenteUsuario = (pos?: { 
-        longitud: number, 
-        latitud: number, 
-        precision: number }) => {
+        latitude: number, 
+        longitude: number, 
+        accuracy: number 
+    }) => {
 
         if (!pos) return
 
         // 1. Si hay nueva posición GPS, validamos el área
         const estaDentro = validarPuntoEnArea(
-            pos.longitud, 
-            pos.latitud, 
+            pos.latitude, 
+            pos.latitude, 
             CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO
         );
 
@@ -147,9 +152,9 @@ export const crearInstanciaMapa = (
         }
 
         ultimaPosicionGps = { 
-            lng: pos.longitud, 
-            lat: pos.latitud, 
-            precision: pos.precision 
+            longitude: pos.longitude, 
+            latitude: pos.latitude, 
+            accuracy: pos.accuracy 
         };
 
         
@@ -176,9 +181,9 @@ export const crearInstanciaMapa = (
         // Si no tenemos ninguna posición aún, no podemos dibujar nada
         if (!ultimaPosicionGps) return;
 
-        const coords: [number, number] = [ultimaPosicionGps.lng, ultimaPosicionGps.lat];
+        const coords: [number, number] = [ultimaPosicionGps.longitude, ultimaPosicionGps.latitude];
 
-        const precisionActual = ultimaPosicionGps.precision;
+        const precisionActual = ultimaPosicionGps.accuracy;
 
         // Actualizamos el GeoJSON para el mapa
         userLocationGeoJSON.features[0].geometry.coordinates = coords;
@@ -209,14 +214,17 @@ export const crearInstanciaMapa = (
         mapaListo = true;
 
         // 2. Ejecutar la carga de capas cuando el estilo base esté listo
-        configurarCapasBase(map, userLocationGeoJSON);
+        configurarCapasBase(map);
 
-        watchGpsId = iniciarSeguimientoGPS(
-            (pos) => {
+        watchGpsId = iniciarSeguimiento(
+            (pos: GeolocationPosition) => {
                 // 1. Guardamos posición
-                ultimaPosicionGps = { lng: pos.longitud, lat: pos.latitud, precision: pos.precision };
+                const { latitude, longitude, accuracy } = pos.coords;
+
+                ultimaPosicionGps = { longitude: longitude, latitude: latitude, accuracy: accuracy };
+                
                 // 2. Movemos punto azul
-                actualizarFuenteUsuario(pos);
+                actualizarFuenteUsuario(ultimaPosicionGps);
                 // 3. Avisamos al sidebar (si está escuchando)
                 notificarSincronizacion();
 
@@ -244,7 +252,7 @@ export const crearInstanciaMapa = (
     map.on('remove', () => {
         // Detener GPS
         if (watchGpsId !== null) {
-            navigator.geolocation.clearWatch(watchGpsId);
+            detenerSeguimiento(watchGpsId);
             console.log("GPS desactivado");
         }
 

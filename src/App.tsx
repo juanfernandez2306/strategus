@@ -5,11 +5,14 @@ import './App.css';
 
 //import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 import DescargarRegistrosPosicionGEOJSON from './layouts/DescargaRegistrosPosicionGEOJSON';
-import { MapaLibreGL } from './layouts/MapLibreGL';
+//import { MapaLibreGL } from './layouts/MapLibreGL';
+import { MapLibre } from './features/mapa/MapLibre.tsx';
 import { useState } from 'react';
-import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
+import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
 import UnirYguardarArchivosGeoJSON  from './layouts/UnificarYguardarArchivosGEOJSON';
 import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
+import GenerarQrJornada from './layouts/GenerarQrJornada';
+import ScannerJornada from './layouts/ScannerJornada';
 
 function App() {
 
@@ -22,11 +25,15 @@ function App() {
       case "DescargarDatos":
         return <DescargarRegistrosPosicionGEOJSON />;
       case "UnificarYguardarArchivos":
-        return <UnirYguardarArchivosGeoJSON />
+        return <UnirYguardarArchivosGeoJSON />;
+      case "GenerarQR": // Nueva vista
+        return <GenerarQrJornada />;
+      case "EscanearQR": // Nueva vista
+        return <ScannerJornada />;
       case "EliminarBD":
-        return <DeleteIndexeDBcapture />
+        return <DeleteIndexeDBcapture />;
       case "Mapa":
-        return <MapaLibreGL />
+        return <MapLibre />;
       default:
         return <RegistroPosicionLayout />;
     }

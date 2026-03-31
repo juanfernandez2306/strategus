@@ -1,6 +1,6 @@
 // src/hooks/useDescargarGeoJSON.ts
 import { point, featureCollection } from '@turf/turf'; 
-import obtenerRegistrosPosicionPorFecha from "../services/buscarRegistroFecha";
+import { obtenerRegistrosPosicionPorFecha } from '../services/indexedbd/palmaQueries';
 import { getOrCreateDeviceId, getDeviceModel } from "../services/deviceID";
 
 export const useDescargarGeoJSON = () => {

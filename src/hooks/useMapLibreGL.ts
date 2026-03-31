@@ -4,9 +4,10 @@ import {
     crearInstanciaMapa, 
     datosGeoJsonSidebarData, 
 } from '../services/servicioMapLibreGL';
-import { configurarClusteresEnMapa } from '../services/servicioCapasMapa';
-import { type SidebarData, CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../services/servicioTipos';
-import { validarPuntoEnArea } from '../services/servicioGeolocalizacion';
+import { configurarClusteresEnMapa } from '../features/mapa/services/capaClusteres.ts';
+import { type SidebarData } from '../types';
+import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../data/finca/limites';
+import { validarPuntoEnArea } from '../services/sensors/gps/utils.ts';
 
 /**
  * Hook para gestionar la lógica del mapa MapLibre y su interacción con IndexedDB.
@@ -61,8 +62,6 @@ export const useMapaLibreGLService = (onPointClick: (datos: SidebarData) => void
                 ultimoMensajeRef.current = mensajeActual;
                 setMensajeError(mensajeActual); // Actualiza la UI de MapLibreGL.tsx
 
-                console.log(mensajeError);
-                
                 if (mensajeActual) {
                         console.warn(`ESTADO CRÍTICO: ${mensajeActual}`);
                     } else {

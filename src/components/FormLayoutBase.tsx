@@ -12,6 +12,8 @@ interface FormBaseProps {
   iconoCustom: ReactNode;
   onExecute: () => Promise<string>; 
   onSuccess?: () => void;
+  // PROPIEDAD OPCIONAL (El signo '?' es la clave)
+  disabled?: boolean;
 }
 
 const FormBaseLayout = ({ 
@@ -20,7 +22,8 @@ const FormBaseLayout = ({
     children,
     iconoCustom, 
     onExecute, 
-    onSuccess }: FormBaseProps) => {
+    onSuccess,
+    disabled = false }: FormBaseProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [mensaje, setMensaje] = useState<string>("");
@@ -65,7 +68,10 @@ const FormBaseLayout = ({
           {titulo}
         </Typography>  
         {children}
-        <button className={style.submit} type="submit" disabled={isSubmitting}>
+        <button 
+          className={style.submit} 
+          type="submit" 
+          disabled={isSubmitting || disabled}>
           {isSubmitting ? "Procesando..." : buttonText}
         </button>
       </form>
@@ -81,7 +87,10 @@ const FormBaseLayout = ({
             <>
               {isError ? <ErrorIcon color="error" sx={{ fontSize: 40 }} /> : <CheckCircleIcon color="success" sx={{ fontSize: 40 }} />}
               <Typography sx={{ color: isError ? "red" : "green" }}>{mensaje}</Typography>
-              <Button variant="contained" onClick={() => setMensaje("")} sx={{ mt: 2 }}>Cerrar</Button>
+              <Button 
+                variant="contained" 
+                onClick={() => setMensaje("")} 
+                sx={{ mt: 2 }}>Cerrar</Button>
             </>
           )}
         </DialogContent>

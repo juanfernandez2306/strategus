@@ -1,8 +1,8 @@
 import { useState } from "react";
-import FormBaseLayout from "../components/FormLayoutBase";
-import style from '../components/FormLayoutBase.module.css';
-import IconStrategusAloeus from "../components_svg/IconStrategusAloeus";
-import { useRegistroPosicion } from "../hooks/useRegistroPosicion";
+import FormBaseLayout from "../../components/FormLayoutBase";
+import style from '../../components/FormLayoutBase.module.css';
+import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus";
+import { useRegistroPosicion } from "./useRegistroPosicion";
 import { Typography, Box } from "@mui/material";
 
 const RegistroPosicionLayout = () => {
