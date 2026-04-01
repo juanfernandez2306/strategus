@@ -4,6 +4,7 @@ import { validarPuntoEnArea } from '../../../services/sensors/gps/utils.ts';
 import { navService } from '../../../services/servicioNavegacionBrujula.ts';
 import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../../../data/finca/limites.ts';
 
+
 /**
  * Gestiona la lógica de los sensores y actualiza la capa visual del usuario.
  */
@@ -13,6 +14,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     
     let ultimaPos = { lng: 0, lat: 0, accuracy: 0 };
     let ultimoHeading = 0;
+
+    let haRealizadoPrimerVuelo = false;
 
     
     const actualizarUserLocation = () => {
@@ -66,6 +69,19 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
                 // Si hay errores críticos, podrías decidir no actualizar la posición 
                 // o actualizarla pero manteniendo el mensaje de error.
                 if (!estaDentro) return; 
+            }
+
+            // --- LÓGICA DE PRIMER VUELO ---
+            if (!haRealizadoPrimerVuelo ) { 
+                map.flyTo({
+                    center: [longitude, latitude],
+                    zoom: 18,
+                    speed: 1.2,
+                    essential: true
+                });
+                
+                haRealizadoPrimerVuelo = true;
+                console.log("Primer centrado de cámara completado.");
             }
 
             ultimaPos = { lng: longitude, lat: latitude, accuracy: accuracy };

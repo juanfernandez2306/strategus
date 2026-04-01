@@ -28,11 +28,29 @@ export const setupNavOrchestrator = (
         );
 
         if (!result) return;
+        
+        // Usamos el valor calculado por el navService
+        compassRef.current?.updateDistance(result.distancia);
+
+        // Variable de control local para el evento del botón
+        let lastCanUpdate = false;
+
+        // 1. Definimos el nuevo estado basado en la distancia
+        const currentCanUpdate = result.distancia <= 12;
+
+        if (currentCanUpdate !== lastCanUpdate) {
+            lastCanUpdate = currentCanUpdate; // Actualizamos el centinela
+            
+            window.dispatchEvent(new CustomEvent('proximity-status', { 
+                detail: { canUpdate: currentCanUpdate } 
+            }));
+            
+        }
 
         // 2. Lógica de Interfaz (Modo Proximidad vs Navegación)
-        if (result.distancia <= 12) {
+        if (currentCanUpdate) {
             compassRef.current?.setProximityMode(true);
-            
+
             // Lógica de Vibración (Solo una vez al entrar al rango)
             if (!hasVibratedRef.current && "vibrate" in navigator) {
                 navigator.vibrate([200, 100, 200]);

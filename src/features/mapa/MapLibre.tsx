@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, Drawer, Typography, Button, IconButton, Stack, Divider, Snackbar, Alert } from '@mui/material';
+import { Box, Drawer, Typography, IconButton, Snackbar, Alert } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
@@ -12,6 +12,8 @@ import { type SidebarData } from '../../types';
 import Compass, { type CompassHandle }  from '../../components/Compass';
 
 import "maplibre-gl/dist/maplibre-gl.css";
+
+import { ConfirmButton } from './components/BtnRevision';
 
 export const MapLibre: React.FC = () => {
   const mapDivRef = useRef<HTMLDivElement>(null);
@@ -74,82 +76,68 @@ export const MapLibre: React.FC = () => {
     <Box sx={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       
       {/* CONTENEDOR DEL MAPA (Mantiene la estética original) */}
-      <Box ref={mapDivRef} sx={{ width: '100%', height: '100%', zIndex: 1 }} />
+      <Box ref={mapDivRef} sx={{ width: '100%', height: 'calc(100vh - 100px)', zIndex: 1 }} />
 
       <Drawer
-        anchor="bottom"
-        open={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        variant="temporary" 
-        PaperProps={{
-          sx: { 
-            borderTopLeftRadius: 24, 
-            borderTopRightRadius: 24, 
-            overflow: 'visible', // PERMITE QUE LA BRÚJULA FLOTE FUERA
-            backgroundColor: 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0px -5px 20px rgba(0,0,0,0.15)'
-          }
-        }}
-      >
+  anchor="bottom"
+  open={isSidebarOpen}
+  onClose={() => setIsSidebarOpen(false)}
+  slotProps={{
+    paper: {
+      sx: {
+        width: { xs: '100%', sm: '450px' },
+        margin: '0 auto',
+        // Mantenemos tus bordes estéticos
+        borderRadius: '28px 28px 0 0', 
+        height: 'auto',
+        minHeight: '400px', // Espacio suficiente para el Compass (260px) + Botón
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: 'blur(10px)',
+      }
+    }
+  }}
+>
+  {/* Botón de cerrar independiente para no mover el centro */}
+  <IconButton 
+    onClick={() => setIsSidebarOpen(false)}
+    sx={{ position: 'absolute', right: 15, top: 15, zIndex: 20 }}
+  >
+    <CloseIcon />
+  </IconButton>
 
-        <Box sx={{ p: 3, pt: 5, position: 'relative' }}>
+  {/* CONTENEDOR JERÁRQUICO CENTRAL */}
+  <Box sx={{ 
+    display: 'flex', 
+    flexDirection: 'column',
+    justifyContent: 'center', // Justificado vertical
+    alignItems: 'center',     // Alineado horizontal (centro)
+    p: 4,
+    pt: 6, // Espacio para que respire arriba
+    gap: 4  // Espacio consistente entre Compass y Botón
+  }}>
+    
+    {/* 1. COMPASS (Primero que se ve) */}
+    {detallePunto && (
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Compass ref={compassRef} size={260} />
+      </Box>
+    )}
 
-          {/* CONTENEDOR DE LA BRÚJULA: Posicionado para flotar en el borde */}
-          {detallePunto && (
-            <Box sx={{ 
-              position: 'absolute',
-              top: -45, // La eleva sobre el borde del drawer
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 10,
-              bgcolor: 'white',
-              borderRadius: '50%',
-              p: 0.5,
-              boxShadow: '0px 4px 12px rgba(0,0,0,0.15)'
-            }}>
-              <Compass ref={compassRef} />
-            </Box>
-          )}
+    {/* 2. TEXTO DE INFORMACIÓN (Opcional, entre el compass y el botón) */}
+    {detallePunto && (
+      <Typography variant="h6" fontWeight="800">
+        PALMA: {detallePunto.uuid.substring(0, 8).toUpperCase()}
+      </Typography>
+    )}
 
-          <IconButton 
-            onClick={() => setIsSidebarOpen(false)}
-            sx={{ position: 'absolute', right: 12, top: 12 }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+    {/* 3. BOTÓN DE ACTUALIZAR (Seguidamente) */}
+    <ConfirmButton 
+      onClick={handleConfirmarVisita} 
+      detallePunto={detallePunto} 
+    />
 
-          {detallePunto && (
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <Typography variant="h6" fontWeight="800" textAlign="center">
-                Detalle de Navegación
-              </Typography>
-              
-              <Divider />
-              
-              <Button
-                variant="contained"
-                fullWidth
-                size="large"
-                onClick={handleConfirmarVisita}
-                sx={{ 
-                  py: 1.8, 
-                  borderRadius: 3,
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  backgroundColor: !detallePunto.revision_planta ? '#2e7d32' : '#ed6c02',
-                  '&:hover': { backgroundColor: !detallePunto.revision_planta ? '#1b5e20' : '#e65100' }
-                }}
-              >
-                {!detallePunto.revision_planta ? "Finalizar Visita" : "Marcar como Pendiente"}
-              </Button>
-            </Stack>
-          )}
-
-
-
-        </Box>
-      </Drawer>
+  </Box>
+</Drawer>
 
       {/* SNACKBAR DE ERRORES (Mantiene la lógica de visibilidad de los nuevos servicios) */}
       <Snackbar 

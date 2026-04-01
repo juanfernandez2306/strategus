@@ -82,7 +82,7 @@ export const MapLibre: React.FC = () => {
       >
         <Box sx={{ p: 3, pt: 5, position: 'relative' }}>
           
-          {/* CONTENEDOR DE LA BRÚJULA: Posicionado para flotar en el borde */}
+          
           {detallePunto && (
             <Box sx={{ 
               position: 'absolute',
