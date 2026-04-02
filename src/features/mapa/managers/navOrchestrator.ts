@@ -14,7 +14,17 @@ export const setupNavOrchestrator = (
     // Esta es la función que reacciona al evento que dispara el UserLocationManager
     const handleSensorUpdate = (e: any) => {
         const { headingRaw, datosGps } = e.detail;
-        if (!datosGps) return;
+
+        if (!datosGps || headingRaw === null) {
+
+            console.log("no se recibio ningun dato")
+
+            window.dispatchEvent(new CustomEvent('proximity-status', { 
+                detail: { canUpdate: false } 
+            }));
+
+            return
+        };
 
         const { lng, lat } = datosGps;
 

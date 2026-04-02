@@ -24,14 +24,24 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
             // Si el evento es 'gps-error', viene el string con los errores unidos
             const mensajeActual = e.detail?.mensaje || null;
 
-            if (mensajeActual !== ultimoMensajeRef.current) {
+
+            if (e.type === 'gps-error') {
                 ultimoMensajeRef.current = mensajeActual;
                 setMensajeError(mensajeActual);
+                return;
+            }
 
+            // 2. Si es un 'heading-update', revisamos si trae un error de brújula
+            if (e.type === 'heading-update') {
+                console.log('recibiendo heading en use map')
                 if (mensajeActual) {
-                    console.warn(`ESTADO CRÍTICO: ${mensajeActual}`);
-                } else {
-                    console.log("Sistema operativo: Posición y precisión OK.");
+                    // Caso: Hay GPS pero la Brújula falló (mensajeActual tiene el texto de arriba)
+                    ultimoMensajeRef.current = mensajeActual;
+                    setMensajeError(mensajeActual);
+                } else if (ultimoMensajeRef.current !== null && e.detail?.datosGps && e.detail?.headingRaw !== null) {
+                    // Caso: Todo está OK ahora (GPS y Brújula), limpiamos el Alert
+                    ultimoMensajeRef.current = null;
+                    setMensajeError(null);
                 }
             }
         };

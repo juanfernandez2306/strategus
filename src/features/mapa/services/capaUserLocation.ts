@@ -32,7 +32,11 @@ export const configurarUserLocation = (map: MapLibreMap, initialGeoJSON: any) =>
                 ],
                 'text-halo-color': '#FBF6F6',
                 'text-halo-width': 3,
-                'text-opacity': 1.0,
+                'text-opacity': [
+                        'case',
+                        ['==', ['get', 'heading'], 9999], 0, // Si es 9999, invisible
+                        1.0                                // Si es cualquier otro valor, visible
+                    ],
                 'text-halo-blur': 1.5
             }
         });

@@ -13,7 +13,7 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     let desactivaOrientacion: (() => void) | null = null;
     
     let ultimaPos = { lng: 0, lat: 0, accuracy: 0 };
-    let ultimoHeading = 0;
+    let ultimoHeading: number | null = null;;
 
     let haRealizadoPrimerVuelo = false;
 
@@ -22,9 +22,15 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
         const source = map.getSource('user-pos-source');
         if (!source || (ultimaPos.lng === 0 && ultimaPos.lat === 0)) return;
 
+        // 1. Si el heading es válido, lo filtramos para que la flecha no vibre.
+        // 2. Si es null, enviamos directamente el 9999 para activar la opacidad 0.
+        const headingParaMapa = (ultimoHeading !== null) 
+            ? navService.procesarHeading(ultimoHeading) 
+            : 9999;
+
         // Actualizamos el objeto GeoJSON que gestiona la capa del usuario
         userGeoJSON.features[0].geometry.coordinates = [ultimaPos.lng, ultimaPos.lat];
-        userGeoJSON.features[0].properties.heading = ultimoHeading;
+        userGeoJSON.features[0].properties.heading = headingParaMapa;
         userGeoJSON.features[0].properties.precision = ultimaPos.accuracy;
 
         // Inyectamos los datos actualizados en la fuente del mapa
@@ -32,10 +38,20 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     };
 
     const notificarSincronizacionUI = () => {
+
+        if (ultimaPos.lng === 0) return;
+
+        // Determinamos el mensaje ANTES de disparar el evento
+        const mensajeErrorSensores = ultimoHeading === null 
+            ? "Brújula no detectada. Mueva el equipo." 
+            : null;
+
         window.dispatchEvent(new CustomEvent('heading-update', {
             detail: {
                 headingRaw: ultimoHeading,
-                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng }
+                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng },
+                // IMPORTANTE: Debes enviar esta propiedad
+                mensaje: mensajeErrorSensores 
             }
         }));
     };
@@ -57,6 +73,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
             if (accuracy > 20) {
                 errores.push("Señal GPS débil (>20m)");
             }
+
+            console.log("valor de headerin", ultimoHeading)
 
             if (errores.length > 0) {
                 // Unimos los errores con tu separador anterior "|"
@@ -101,7 +119,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     // 2. Seguimiento de Brújula
     desactivaOrientacion = watchOrientacionRaw((raw) => {
         // Procesar el ángulo para que la flecha sea estable
-        ultimoHeading = navService.procesarHeading(raw);
+        
+        ultimoHeading = raw;
         
         actualizarUserLocation();
         notificarSincronizacionUI();
