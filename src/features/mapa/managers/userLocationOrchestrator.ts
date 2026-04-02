@@ -1,7 +1,7 @@
 import { iniciarSeguimiento, detenerSeguimiento } from '../../../services/sensors/gps/engine.ts';
 import { watchOrientacionRaw } from '../../../services/sensors/brujula/engine.ts';
 import { validarPuntoEnArea } from '../../../services/sensors/gps/utils.ts';
-import { navService } from '../../../services/servicioNavegacionBrujula.ts';
+import { navService } from '../../../services/sensors/brujula/navigation.ts';
 import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../../../data/finca/limites.ts';
 
 

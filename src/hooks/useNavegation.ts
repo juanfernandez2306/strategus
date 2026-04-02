@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { navService } from '../services/servicioNavegacionBrujula'; 
+import { navService } from '../services/sensors/brujula/navigation'; 
 import type { CompassHandle } from '../components/Compass';
 
 export const useNavigation = (

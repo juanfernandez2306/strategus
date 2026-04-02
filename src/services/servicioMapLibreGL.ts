@@ -9,7 +9,7 @@ import {
 import { configurarCapasBase } from '../features/mapa/services/capasVectorTilesMapa.ts';
 import { iniciarSeguimiento, detenerSeguimiento } from './sensors/gps/engine';
 import { validarPuntoEnArea } from './sensors/gps/utils';
-import { navService } from './servicioNavegacionBrujula';
+import { navService } from './sensors/brujula/navigation.ts';
 import { watchOrientacionRaw } from './sensors/brujula/engine.ts';
 import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from '../data/finca/limites';
 
