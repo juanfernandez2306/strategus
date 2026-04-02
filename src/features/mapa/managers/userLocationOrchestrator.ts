@@ -74,8 +74,6 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
                 errores.push("Señal GPS débil (>20m)");
             }
 
-            console.log("valor de headerin", ultimoHeading)
-
             if (errores.length > 0) {
                 // Unimos los errores con tu separador anterior "|"
                 const mensajeFinal = errores.join(" | ");

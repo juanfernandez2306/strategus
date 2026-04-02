@@ -33,7 +33,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
 
             // 2. Si es un 'heading-update', revisamos si trae un error de brújula
             if (e.type === 'heading-update') {
-                console.log('recibiendo heading en use map')
+                
                 if (mensajeActual) {
                     // Caso: Hay GPS pero la Brújula falló (mensajeActual tiene el texto de arriba)
                     ultimoMensajeRef.current = mensajeActual;
