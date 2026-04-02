@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { servicioCompresion } from '../services/servicioCompresionString';
 import { serializarRegistrosParaQR, deserializarQRARegistros } from '../services/servicioQrTransform'; 
-import { upsertRegistroLuegoDeUnificar } from '../services/indexedbd/palmaActions';  
-import { type RegistroPosicion } from '../types'; 
+import { upsertRegistroLuegoDeUnificar } from '../../../services/indexedbd/palmaActions';  
+import { type RegistroPosicion } from '../../../types'; 
 
 export const useQrManager = () => {
   const [isProcessing, setIsProcessing] = useState(false);

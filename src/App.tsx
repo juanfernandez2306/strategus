@@ -12,7 +12,7 @@ import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicio
 import UnirYguardarArchivosGeoJSON  from './layouts/UnificarYguardarArchivosGEOJSON';
 import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
 import GenerarQrJornada from './layouts/GenerarQrJornada';
-import ScannerJornada from './layouts/ScannerJornada';
+import ScannerJornada from './features/qr/ScannerJornada.tsx';
 
 function App() {
 

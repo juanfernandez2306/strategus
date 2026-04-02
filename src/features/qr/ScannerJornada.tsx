@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { useQrScanner } from "../hooks/useQrScanner";
-import { useQrManager } from "../hooks/useQrManager";
+import { useQrScanner } from "./hook/useQrScanner";
+import { useQrManager } from "./hook/useQrManager";
 import styleBase from '../components/FormLayoutBase.module.css';
 // Importamos el CSS del visor táctico que definimos antes
 import styleScanner from './ScannerJornada.module.css'; 
