@@ -26,9 +26,9 @@ export const obtenerRegistroPosicionGeografica = async (galeria: number): Promis
         
         // 5. Retornamos el objeto limpio
         return {
-            latitud: latitude,
-            longitud: longitude,
-            precision: accuracy,
+            latitud: Number(latitude.toFixed(5)),
+            longitud: Number(longitude.toFixed(5)),
+            precision: Number(accuracy.toFixed(1)),
             fecha_registro: ahora.format("YYYY-MM-DD"),
             hora_registro: ahora.format("HH:mm:ss"),
             galeria,

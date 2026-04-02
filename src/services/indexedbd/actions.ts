@@ -18,7 +18,7 @@ export const escribirRegistro = async <T>(
     
     const request = operation === "add" ? store.add(data) : store.put(data);
 
-    request.onsuccess = () => resolve();
+    
     request.onerror = () => {
       db.close();
       reject(request.error);

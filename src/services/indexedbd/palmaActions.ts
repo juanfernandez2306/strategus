@@ -4,34 +4,46 @@ import { type RegistroPosicion } from "../../types/index.ts";
 import dayjs from "dayjs";
 
 /**
- * Lógica de negocio para UNIFICAR registros.
- * Si el UUID ya existe, actualiza; si no, crea uno nuevo.
+ * Lógica de negocio para UNIFICAR registros con control de actualización selectiva.
+ * Solo actualiza los campos de revisión si el registro local aún no ha sido procesado.
  */
 export const upsertRegistroLuegoDeUnificar = async (registro: RegistroPosicion): Promise<void> => {
   try {
-    // 1. Buscamos si el UUID ya existe usando el especialista de lectura
+    // 1. Buscamos el registro existente por UUID
     const resultados = await obtenerRegistroFiltro("uuid_idx", registro.uuid);
-    const registroExistente = resultados[0];
+    const registroLocal = resultados[0];
 
-    if (registroExistente) {
-      // 2. Si existe, actualizamos manteniendo el ID numérico interno de IndexedDB
-      const registroActualizado = { 
-        ...registro, 
-        id: registroExistente.id 
-      };
-      
-      // Usamos el motor genérico con "put" (actualizar)
-      await escribirRegistro("put", registroActualizado);
+    if (registroLocal) {
+      // 2. LÓGICA "UPDATE WHERE": 
+      // Solo procedemos si el registro local existe y NO ha sido revisado aún.
+      if (registroLocal.revision_planta === false) {
+        
+        // Creamos el objeto de actualización manteniendo la estructura pero
+        // inyectando los nuevos datos de revisión del 'registro' entrante.
+        const registroActualizado = { 
+          ...registroLocal, // Conservamos los datos originales (lat, lng, uuid, etc.)
+          revision_planta: registro.revision_planta,
+          fecha_revision: registro.fecha_revision,
+          hora_revision: registro.hora_revision,
+          // El ID debe ser el numérico de IndexedDB para que 'put' reconozca qué fila actualizar
+          id: registroLocal.id 
+        };
+        
+        await escribirRegistro("put", registroActualizado);
+        console.log(`Update exitoso para UUID: ${registro.uuid}`);
+      } else {
+        // Si revision_planta ya es true, ignoramos el cambio para proteger el dato original
+        console.log(`Registro ${registro.uuid} ya está revisado. Se ignora la actualización.`);
+      }
+
     } else {
-      // 3. Si no existe, lo agregamos como nuevo
-      // Eliminamos el ID para que IndexedDB genere uno nuevo autoincremental
+      // 3. Si el registro no existe en absoluto (INSERT)
       const { id, ...nuevoSinId } = registro;
-      
-      // Usamos el motor genérico con "add" (insertar)
       await escribirRegistro("add", nuevoSinId);
+      console.log(`Nuevo registro insertado para UUID: ${registro.uuid}`);
     }
   } catch (error) {
-    console.error("Error al unificar el registro:", error);
+    console.error("Error en la actualización selectiva:", error);
     throw new Error("No se pudo procesar la unificación del registro.");
   }
 };

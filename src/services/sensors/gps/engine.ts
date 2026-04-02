@@ -7,6 +7,9 @@ export const gpsOptions: PositionOptions = {
 };
 
 export const handleGpsError = (error: GeolocationPositionError): string => {
+
+    console.error(`[GPS ENGINE] Error Código ${error.code}: ${error.message}`);
+    
     switch (error.code) {
         case error.PERMISSION_DENIED:
             return "El usuario no dio permiso de geolocalización. Actívalo en ajustes.";
