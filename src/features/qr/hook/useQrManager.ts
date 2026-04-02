@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { servicioCompresion } from '../services/servicioCompresionString';
-import { serializarRegistrosParaQR, deserializarQRARegistros } from '../services/servicioQrTransform'; 
+import { servicioCompresion } from '../services/compresionString.ts';
+import { serializarRegistrosParaQR, deserializarQRARegistros } from '../services/qrTransform.ts'; 
 import { upsertRegistroLuegoDeUnificar } from '../../../services/indexedbd/palmaActions';  
 import { type RegistroPosicion } from '../../../types'; 
 

@@ -1,4 +1,4 @@
-import { type RegistroPosicion } from "../types";
+import { type RegistroPosicion } from "../../../types";
 
 const LAT_BASE = "9";
 const LNG_BASE = "-72";

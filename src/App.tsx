@@ -11,8 +11,8 @@ import { useState } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
 import UnirYguardarArchivosGeoJSON  from './layouts/UnificarYguardarArchivosGEOJSON';
 import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
-import GenerarQrJornada from './layouts/GenerarQrJornada';
-import ScannerJornada from './features/qr/ScannerJornada.tsx';
+import GenerarQrJornada from './features/qr/GenerarQrJornada.tsx';
+import ScannerJornada from './features/qr/ScannerJornada';
 
 function App() {
 

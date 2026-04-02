@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useQrScanner } from "./hook/useQrScanner";
 import { useQrManager } from "./hook/useQrManager";
-import styleBase from '../components/FormLayoutBase.module.css';
+import styleBase from '../../components/FormLayoutBase.module.css';
 // Importamos el CSS del visor táctico que definimos antes
 import styleScanner from './ScannerJornada.module.css'; 
 
@@ -87,23 +87,29 @@ const ScannerJornada = () => {
 };
 
     return (
-        <div className={styleBase.formContainer} style={{ backgroundColor: '#000', minHeight: '100vh' }}>
+        <div className={styleBase.formContainer} style={{ 
+            backgroundColor: '#000', 
+            minHeight: 'calc(100vh - 120px)',
+            borderRadius: '5px' 
+            }}>
             <div className={styleBase.form} style={{ 
                 backgroundColor: '#1a1a1a', 
                 border: '1px solid #333',
+                borderRadius: '5px',
                 maxWidth: '500px' 
             }}>
                 
                 <header style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    <h3 style={{ color: 'var(--color-primario)', margin: 0 }}>Escáner de Recepción</h3>
-                    <p style={{ color: '#aaa', fontSize: '0.9rem' }}>Sector: El Danubio</p>
+                    <h3 style={{ 
+                        color: '#FFF799', margin: 0 
+                        }}>Escáner de Recepción</h3>
                     <div style={{ 
                         display: 'inline-block', 
                         backgroundColor: '#333', 
                         color: 'var(--color-fondo)', 
                         padding: '2px 12px', 
                         borderRadius: '20px', 
-                        fontSize: '0.8rem',
+                        fontSize: '0.9rem',
                         marginTop: '5px',
                         border: '1px solid var(--color-primario)'
                     }}>
@@ -170,7 +176,7 @@ const ScannerJornada = () => {
                     )}
                 </div>
 
-                <footer style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#555' }}>
+                <footer style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#FFF799' }}>
                     Asegúrese de que el QR esté dentro del marco amarillo.
                 </footer>
             </div>
