@@ -15,7 +15,8 @@ export const inicializarMapa = (contenedor: HTMLDivElement) => {
         center: configMap.centroInicial,
         zoom: configMap.zoomInicial,
         minZoom: configMap.minZoom,
-        maxZoom: configMap.maxZoom
+        maxZoom: configMap.maxZoom,
+        maxBounds: configMap.maxBounds
     });
 
     map.addControl(new NavigationControl({ showCompass: true, showZoom: true }), 'top-left');

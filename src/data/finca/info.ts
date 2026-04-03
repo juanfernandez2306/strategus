@@ -18,18 +18,20 @@ export const INFO_FINCA = {
         // Nombres de las capas generadas en QGIS para este cliente
         capas: {
             lotes: 'plg_lotes_danubio_feb_2026_web_mercator',
-            palmas: 'pts_palmas_danubio_feb_2026_web_mercator'
+            palmas: 'pts_features_plantacion_palmas_danubio_20260403',
+            lineas: 'ln_features_recorte_densificadas_limites_danubio_20260403_web_mercator'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
-        limitesPantalla:  [-72.706, 9.851, -72.697, 9.874] as [number, number, number, number]
+        limitesPantalla:  [-72.706288183, 9.850626825, -72.696354309, 9.877790092] as [number, number, number, number]
     },
 
     // --- PARÁMETROS TÉCNICOS DEL VECTOR TILES MAP ---
     configMap : {
         centroInicial: [-72.70189, 9.86245] as [number, number],
         zoomInicial: 14,
-        minZoom: 12,
-        maxZoom: 20
+        minZoom: 14,
+        maxZoom: 20,
+        maxBounds: [-72.71755, 9.84545, -72.68346, 9.88455] as [number, number, number, number]
     }
 
 }
