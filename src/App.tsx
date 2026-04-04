@@ -8,7 +8,7 @@ import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
 import { MapLibre } from './features/mapa/MapLibre.tsx';
 import { useState } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
-import UnirYguardarArchivosGeoJSON  from './layouts/UnificarYguardarArchivosGEOJSON';
+import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson.tsx';
 import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
 import GenerarQrJornada from './features/qr/GenerarQrJornada.tsx';
 import ScannerJornada from './features/qr/ScannerJornada';
@@ -24,7 +24,7 @@ function App() {
       case "DescargarDatos":
         return <ExportarGeoJSON />;
       case "UnificarYguardarArchivos":
-        return <UnirYguardarArchivosGeoJSON />;
+        return <ImportarGeojson />;
       case "GenerarQR": // Nueva vista
         return <GenerarQrJornada />;
       case "EscanearQR": // Nueva vista
