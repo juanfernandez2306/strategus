@@ -17,8 +17,6 @@ export const setupNavOrchestrator = (
 
         if (!datosGps || headingRaw === null) {
 
-            console.log("no se recibio ningun dato")
-
             window.dispatchEvent(new CustomEvent('proximity-status', { 
                 detail: { canUpdate: false } 
             }));

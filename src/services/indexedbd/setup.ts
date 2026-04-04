@@ -11,12 +11,16 @@ import {
   } from './config.ts';
 
 
+let dbInstance: IDBDatabase | null = null;
+
 /**
  * Inicializa y abre la base de datos local.
  * Configura los índices necesarios para el filtrado por fecha, UUID y estado de revisión.
  */
 
 export const abrirDB = (): Promise<IDBDatabase> => {
+
+  if (dbInstance) return Promise.resolve(dbInstance);
 
   return new Promise((resolve, reject) => {
 
@@ -36,7 +40,11 @@ export const abrirDB = (): Promise<IDBDatabase> => {
       }
     };
 
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = (event) => {
+      dbInstance = (event.target as IDBOpenDBRequest).result;
+      resolve(dbInstance);
+    };
+    
     request.onerror = () => reject(request.error);
   });
 };

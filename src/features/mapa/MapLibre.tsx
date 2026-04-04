@@ -79,23 +79,23 @@ export const MapLibre: React.FC = () => {
       <Box ref={mapDivRef} sx={{ width: '100%', height: 'calc(100vh - 100px)', zIndex: 1 }} />
 
       <Drawer
-  anchor="bottom"
-  open={isSidebarOpen}
-  onClose={() => setIsSidebarOpen(false)}
-  slotProps={{
-    paper: {
-      sx: {
-        width: { xs: '100%', sm: '450px' },
-        margin: '0 auto',
-        // Mantenemos tus bordes estéticos
-        borderRadius: '28px 28px 0 0', 
-        height: 'auto',
-        minHeight: '400px', // Espacio suficiente para el Compass (260px) + Botón
-        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: 'blur(10px)',
-      }
-    }
-  }}
+        anchor="bottom"
+        open={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              width: { xs: '100%', sm: '450px' },
+              margin: '0 auto',
+              // Mantenemos tus bordes estéticos
+              borderRadius: '28px 28px 0 0', 
+              height: 'auto',
+              minHeight: '400px', // Espacio suficiente para el Compass (260px) + Botón
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              backdropFilter: 'blur(10px)',
+            }
+          }
+        }}
 >
   {/* Botón de cerrar independiente para no mover el centro */}
   <IconButton 

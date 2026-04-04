@@ -37,11 +37,7 @@ export const obtenerRegistroFiltro = async (
     
 
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => {
-      db.close();
-      reject(request.error);
-    }
-    transaction.oncomplete = () => db.close();
+    request.onerror = () => reject(request.error);
   });
 
 }

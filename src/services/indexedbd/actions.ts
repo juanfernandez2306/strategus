@@ -20,12 +20,10 @@ export const escribirRegistro = async <T>(
 
     
     request.onerror = () => {
-      db.close();
       reject(request.error);
     };
     
     transaction.oncomplete = () => {
-      db.close();
       resolve();
     };
   });
@@ -49,11 +47,9 @@ export const borrarRegistroPorUUID = async (uuid: string): Promise<void> => {
     };
 
     transaction.oncomplete = () => {
-      db.close();
       resolve();
     };
     transaction.onerror = () => {
-      db.close();
       reject(transaction.error);
     };
   });
@@ -73,18 +69,18 @@ export const limpiarAlmacenDatos = async (): Promise<void> => {
     
     // Agregamos el uso de reject para limpiar el error de TS
     request.onerror = () => {
-      db.close();
-      reject(request.error); //
+      reject(request.error);
     };
 
     transaction.oncomplete = () => {
-      db.close();
+      //se elemino el cierre de la bd por el uso de la 
+      // variable let dbInstance: IDBDatabase | null = null;
       resolve();
     };
 
     // También es buena práctica manejar el error a nivel de transacción
     transaction.onerror = () => {
-      db.close();
+      //se elemino el cierre de la bd por el uso de la 
       reject(transaction.error); //
     };
   });
