@@ -4,8 +4,7 @@ import './App.css';
 
 
 //import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
-import DescargarRegistrosPosicionGEOJSON from './layouts/DescargaRegistrosPosicionGEOJSON';
-//import { MapaLibreGL } from './layouts/MapLibreGL';
+import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
 import { MapLibre } from './features/mapa/MapLibre.tsx';
 import { useState } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
@@ -23,7 +22,7 @@ function App() {
       case "Inicio":
         return <RegistroPosicionLayout />;
       case "DescargarDatos":
-        return <DescargarRegistrosPosicionGEOJSON />;
+        return <ExportarGeoJSON />;
       case "UnificarYguardarArchivos":
         return <UnirYguardarArchivosGeoJSON />;
       case "GenerarQR": // Nueva vista

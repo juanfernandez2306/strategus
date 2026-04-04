@@ -2,7 +2,7 @@ import FormBaseLayout from "../../components/FormLayoutBase";
 import IconFileGEOJSON from "../../components_svg/IconFileGEOJSON";
 import { useExportarTodo } from "./useExportar";
 
-const ExportarTodoGeoJSON = () => {
+const ExportarGeoJSON = () => {
     const { ejecutarExportacionTotal } = useExportarTodo();
 
     return (
@@ -24,4 +24,4 @@ const ExportarTodoGeoJSON = () => {
     );
 };
 
-export default ExportarTodoGeoJSON;
+export default ExportarGeoJSON;

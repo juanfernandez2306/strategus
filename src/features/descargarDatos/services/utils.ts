@@ -63,6 +63,7 @@ export const compartirArchivoBlob = async (
       }
       // Otros errores de sistema
       throw new Error(`Error al intentar compartir: ${error.message}`);
+      console.log(error);
     }
   } else {
     /* FALLBACK: Si el navegador no soporta compartir archivos (ej. Chrome en PC),
