@@ -31,49 +31,36 @@ export const descargarArchivoBlob = (
 };
 
 
-/**
- * Intenta compartir un archivo usando Web Share API.
- * Si no es compatible, recurre a la descarga automática.
- * * @returns Promise<string> Mensaje de éxito para el modal de FormBaseLayout
- */
 export const compartirArchivoBlob = async (
     contenido: string, 
     nombreArchivo: string, 
     tipo: string
 ): Promise<string> => {
   
-  // 1. Creamos el objeto File (requerido por navigator.share para archivos)
   const file = new File([contenido], nombreArchivo, { type: tipo });
-
-  // 2. Verificamos si el navegador puede compartir este archivo específico
   const canShare = navigator.canShare && navigator.canShare({ files: [file] });
 
+  // Si el navegador dice que "podría" compartir...
   if (canShare) {
     try {
       await navigator.share({
         files: [file],
         title: nombreArchivo,
-        text: `Exportación de datos: ${nombreArchivo}`,
+        text: `Exportación: ${nombreArchivo}`,
       });
       return "Archivo compartido correctamente";
     } catch (error: any) {
-      // Si el usuario cancela (AbortError), no lo tratamos como un error crítico de lógica
-      if (error.name === 'AbortError') {
-        return "Compartir cancelado por el usuario";
+      // Si el error es por falta de permisos (como en tu caso) o cancelación
+      if (error.name === 'NotAllowedError' || error.name === 'AbortError') {
+        console.warn("Permiso denegado o cancelado. Aplicando descarga de respaldo...");
+        descargarArchivoBlob(file, nombreArchivo);
+        return "El sistema bloqueó el compartir. El archivo se descargó automáticamente.";
       }
-      // Otros errores de sistema
-      throw new Error(`Error al intentar compartir: ${error.message}`);
-      console.log(error);
+      throw new Error(`Error al compartir: ${error.message}`);
     }
   } else {
-    /* FALLBACK: Si el navegador no soporta compartir archivos (ej. Chrome en PC),
-       procedemos a la descarga tradicional para no dejar al usuario sin sus datos.
-    */
-    try {
-        descargarArchivoBlob(file, nombreArchivo);
-        return "Tu navegador no soporta compartir. El archivo se ha descargado automáticamente.";
-    } catch (err) {
-        throw new Error("No se pudo compartir ni descargar el archivo.");
-    }
+    // Si de entrada el navegador no soporta la API (PC o navegadores viejos)
+    descargarArchivoBlob(file, nombreArchivo);
+    return "Navegador no compatible. El archivo se descargó automáticamente.";
   }
 };
