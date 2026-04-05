@@ -1,6 +1,9 @@
 import { navService } from '../../../services/sensors/brujula/navigation';
 import { type CompassHandle } from '../../../components/Compass';
 
+
+let lastCanUpdate = false;
+
 /**
  * Orquesta la actualización de la brújula visual y la lógica de proximidad.
  */
@@ -41,7 +44,7 @@ export const setupNavOrchestrator = (
         compassRef.current?.updateDistance(result.distancia);
 
         // Variable de control local para el evento del botón
-        let lastCanUpdate = false;
+        
 
         // 1. Definimos el nuevo estado basado en la distancia
         const currentCanUpdate = result.distancia <= 12;

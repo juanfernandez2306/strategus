@@ -63,6 +63,9 @@ export const iniciarServicioMapa = async (
     // 1. Instancia base
     const map = inicializarMapa(contenedor);
 
+    // VARIABLE PARA LIMPIEZA ACCESIBLE DESDE EL INICIO
+    let limpiarSensores: (() => void) | null = null;
+
     // 2. Referencia única para el GeoJSON del usuario
     // Se pasa por referencia a los servicios para que todos hablen del mismo objeto
     const userGeoJSON = {
@@ -83,18 +86,25 @@ export const iniciarServicioMapa = async (
 
         // C. Encender Sensores (GPS + Brújula)
         // Guardamos el "detonador" de apagado
-        const stopTracking = setupUserTracking(map, userGeoJSON);
+        limpiarSensores = setupUserTracking(map, userGeoJSON);
 
         // D. Cargar Capas Dinámicas (Datos de IndexedDB)
         const dbData = await datosGeoJsonSidebarData();
         // Aquí llamarías a tu función de clústeres si la tienes separada
         configurarClusteresEnMapa(map, dbData, onPointClick);
 
+        
+        
+    });
+
+    
+    
+    map.on('remove', () => {
         // E. Limpieza Automática
-        map.on('remove', () => {
-            stopTracking(); // Apaga sensores
-            console.log("Orquestador: Mapa desmontado y sensores apagados.");
-        });
+        if (limpiarSensores) {
+            limpiarSensores();
+            console.log("Orquestador: Sensores apagados por remoción de mapa.");
+        }
     });
 
     return map;

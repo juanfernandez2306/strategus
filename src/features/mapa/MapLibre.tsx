@@ -53,19 +53,23 @@ export const MapLibre: React.FC = () => {
 
   // 4. Montaje del mapa al inicio
   useEffect(() => {
-    let objetoMapa: any = null;
 
-    if (mapDivRef.current) {
-      // Capturamos la instancia del mapa que devuelve la función
-      inicializarMapa(mapDivRef.current).then(map => {
-        objetoMapa = map;
-      });
-    }
+    let mapInstance: any = null;
+
+    const setup = async () => {
+      if (mapDivRef.current) {
+        // Esperamos a que la función nos entregue la instancia
+        const map = await inicializarMapa(mapDivRef.current);
+        mapInstance = map;
+      }
+    };
+
+    setup();
 
     return () => {
-    if (objetoMapa) {
-        console.log("Destruyendo instancia de mapa para liberar WebGL");
-        objetoMapa.remove(); 
+      if (mapInstance) {
+        console.log("EJECUTANDO CLEANUP: Destruyendo WebGL y Sensores");
+        mapInstance.remove(); 
       }
     };
 
