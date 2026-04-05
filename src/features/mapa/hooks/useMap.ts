@@ -59,7 +59,6 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
      * Llama al Orquestador para levantar todo el sistema de mapas.
      */
     const inicializarMapa = useCallback(async (contenedor: HTMLDivElement) => {
-        const mapRef = useRef<MapLibreMap | null>(null);
 
         if (mapRef.current) return;
 
