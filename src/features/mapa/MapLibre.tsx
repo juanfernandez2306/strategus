@@ -12,6 +12,7 @@ import { type SidebarData } from '../../types';
 import Compass, { type CompassHandle }  from '../../components/Compass';
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import { type Map as MapLibreMap } from 'maplibre-gl';
 
 import { ConfirmButton } from './components/BtnRevision';
 
@@ -52,28 +53,36 @@ export const MapLibre: React.FC = () => {
   );
 
   // 4. Montaje del mapa al inicio
-  useEffect(() => {
+// MapLibre.tsx
+useEffect(() => {
+  let instanciaMapaLocal: MapLibreMap | null = null;
+  let componenteDesmontado = false;
 
-    let mapInstance: any = null;
+  const montarSistema = async () => {
+    if (!mapDivRef.current) return;
 
-    const setup = async () => {
-      if (mapDivRef.current) {
-        // Esperamos a que la función nos entregue la instancia
-        const map = await inicializarMapa(mapDivRef.current);
-        mapInstance = map;
+    // Ahora solo pasamos el contenedor, el callback ya va por el hook
+    const mapa = await inicializarMapa(mapDivRef.current);
+
+    if (mapa) {
+      if (componenteDesmontado) {
+        mapa.remove();
+      } else {
+        instanciaMapaLocal = mapa;
       }
-    };
+    }
+  };
 
-    setup();
+  montarSistema();
 
-    return () => {
-      if (mapInstance) {
-        console.log("EJECUTANDO CLEANUP: Destruyendo WebGL y Sensores");
-        mapInstance.remove(); 
-      }
-    };
-
-  }, [inicializarMapa]);
+  return () => {
+    componenteDesmontado = true;
+    if (instanciaMapaLocal) {
+      console.log("React Cleanup: Solicitando destrucción de mapa y sensores");
+      instanciaMapaLocal.remove(); 
+    }
+  };
+}, [inicializarMapa]); // Solo dependemos de la función del hook
 
   // 5. Lógica de negocio (Actualización de DB y Refresco de Capas)
   const handleConfirmarVisita = async () => {

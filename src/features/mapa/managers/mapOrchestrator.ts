@@ -66,6 +66,8 @@ export const iniciarServicioMapa = async (
     // VARIABLE PARA LIMPIEZA ACCESIBLE DESDE EL INICIO
     let limpiarSensores: (() => void) | null = null;
 
+    let mapaRemovido = false; // Bandera de seguridad
+
     // 2. Referencia única para el GeoJSON del usuario
     // Se pasa por referencia a los servicios para que todos hablen del mismo objeto
     const userGeoJSON = {
@@ -78,6 +80,9 @@ export const iniciarServicioMapa = async (
     };
 
     map.on('load', async () => {
+        
+        // Si el usuario ya cerró el mapa, no hagas nada más
+        if (mapaRemovido) return;
         // A. Configurar Infraestructura (Tiles, Lotes, Palmas base)
         configurarInfraestructura(map);
 
@@ -97,9 +102,10 @@ export const iniciarServicioMapa = async (
         
     });
 
-    
-    
     map.on('remove', () => {
+
+        mapaRemovido = true; // Marcamos que el mapa ya no existe
+
         // E. Limpieza Automática
         if (limpiarSensores) {
             limpiarSensores();

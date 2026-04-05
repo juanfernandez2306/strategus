@@ -59,6 +59,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
      * Llama al Orquestador para levantar todo el sistema de mapas.
      */
     const inicializarMapa = useCallback(async (contenedor: HTMLDivElement) => {
+        const mapRef = useRef<MapLibreMap | null>(null);
 
         if (mapRef.current) return;
 
@@ -67,6 +68,8 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
             // El orquestador se encarga de: Instancia, Capas QGIS, Usuario, Sensores y Clústeres.
             const mapa = await iniciarServicioMapa(contenedor, onPointClick);
             mapRef.current = mapa;
+
+            return mapa;
 
         } catch (error) {
 
