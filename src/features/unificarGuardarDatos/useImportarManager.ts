@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { transformarGeoJSONaRegistros } from "./geojsonTransform.ts";
+import { transformarGeoJSONaRegistros } from "./geojsonTransform";
 import { upsertRegistroLuegoDeUnificar } from "../../services/indexedbd/palmaActions";
 
 export const useImportarManager = () => {

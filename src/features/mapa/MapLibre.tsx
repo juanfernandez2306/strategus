@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, Drawer, Typography, IconButton, Snackbar, Alert } from '@mui/material';
+import { Box, Drawer, IconButton, Snackbar, Alert } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
@@ -53,9 +53,22 @@ export const MapLibre: React.FC = () => {
 
   // 4. Montaje del mapa al inicio
   useEffect(() => {
+    let objetoMapa: any = null;
+
     if (mapDivRef.current) {
-      inicializarMapa(mapDivRef.current);
+      // Capturamos la instancia del mapa que devuelve la función
+      inicializarMapa(mapDivRef.current).then(map => {
+        objetoMapa = map;
+      });
     }
+
+    return () => {
+    if (objetoMapa) {
+        console.log("Destruyendo instancia de mapa para liberar WebGL");
+        objetoMapa.remove(); 
+      }
+    };
+
   }, [inicializarMapa]);
 
   // 5. Lógica de negocio (Actualización de DB y Refresco de Capas)
@@ -121,13 +134,6 @@ export const MapLibre: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Compass ref={compassRef} size={260} />
       </Box>
-    )}
-
-    {/* 2. TEXTO DE INFORMACIÓN (Opcional, entre el compass y el botón) */}
-    {detallePunto && (
-      <Typography variant="h6" fontWeight="800">
-        PALMA: {detallePunto.uuid.substring(0, 8).toUpperCase()}
-      </Typography>
     )}
 
     {/* 3. BOTÓN DE ACTUALIZAR (Seguidamente) */}

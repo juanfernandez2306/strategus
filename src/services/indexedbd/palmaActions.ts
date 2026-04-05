@@ -30,17 +30,14 @@ export const upsertRegistroLuegoDeUnificar = async (registro: RegistroPosicion):
         };
         
         await escribirRegistro("put", registroActualizado);
-        console.log(`Update exitoso para UUID: ${registro.uuid}`);
-      } else {
-        // Si revision_planta ya es true, ignoramos el cambio para proteger el dato original
-        console.log(`Registro ${registro.uuid} ya está revisado. Se ignora la actualización.`);
-      }
+        
+      } 
 
     } else {
       // 3. Si el registro no existe en absoluto (INSERT)
       const { id, ...nuevoSinId } = registro;
       await escribirRegistro("add", nuevoSinId);
-      console.log(`Nuevo registro insertado para UUID: ${registro.uuid}`);
+
     }
   } catch (error) {
     console.error("Error en la actualización selectiva:", error);

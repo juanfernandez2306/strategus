@@ -20,6 +20,11 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     
     const actualizarUserLocation = () => {
         const source = map.getSource('user-pos-source');
+
+        if (!map || typeof map.getStyle !== 'function' || !map.getStyle()) {
+            return; 
+        }
+
         if (!source || (ultimaPos.lng === 0 && ultimaPos.lat === 0)) return;
 
         // 1. Si el heading es válido, lo filtramos para que la flecha no vibre.

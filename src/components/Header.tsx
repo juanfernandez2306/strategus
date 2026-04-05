@@ -16,6 +16,8 @@ import { useState } from "react";
 // importa tu logo PNG
 import logo from "../assets/logo_header.png";
 
+import { INFO_FINCA } from "../data/finca/info";
+
 interface HeaderProps {
   onSelect: (view: string) => void;
 }
@@ -25,10 +27,11 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
   const [open, setOpen] = useState(false);
 
   const menuItems = [
-    { text: "Inicio", view: "Inicio" },
+    { text: "Registro de datos", view: "Registro" },
     { text: "Mapa", view: "Mapa" },
+    { text: "Resumen Jornada", view: "Resumen" },
     { text: "Exportar GeoJSON", view: "DescargarDatos" },
-    { text: "Unificar Archivos", view: "UnificarYguardarArchivos" },
+    { text: "Importar GeoJSON", view: "ImportarGeojson" },
     { text: "Generar QR Jornada", view: "GenerarQR" }, // Nueva opción
     { text: "Escanear QR Jornada", view: "EscanearQR" }, // Nueva opción
     { text: "Eliminar Base de Datos", view: "EliminarBD" },
@@ -73,6 +76,30 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
 
       {/* Drawer lateral */}
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+        <Box sx={{ 
+            p: 1, 
+            background: 'linear-gradient(180deg, rgba(253, 251, 0, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
+            borderBottom: '1px solid #eee'
+          }}>
+            <Typography variant="overline" sx={{ color: 'var(--color-primario)', fontWeight: 'bold', lineHeight: 1 }}>
+              Proyecto
+            </Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'black', textTransform: 'uppercase', mt: 0.5 }}>
+              {INFO_FINCA.nombre}
+            </Typography>
+            
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="caption" display="block" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                {INFO_FINCA.razonSocial}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', opacity: 0.8 }}>
+                RIF: {INFO_FINCA.rif}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Divider />
+          
         <Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
           <List>
             {menuItems.map((item) => (

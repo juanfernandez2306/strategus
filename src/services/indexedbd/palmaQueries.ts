@@ -60,3 +60,33 @@ export const obtenerRegistroSidebarData = async (): Promise<SidebarData[]> => {
     return [];
   }
 };
+
+/**
+ * Retorna la suma aritmética de los valores del campo 'galeria' 
+ * de todos los registros capturados el día de hoy.
+ * * @returns {Promise<number>} La suma total (ej. si hay dos registros de Galería 5, retorna 10)
+ */
+export const obtenerSumaTotalGaleriasHoy = async (): Promise<number> => {
+  const fechaHoy = dayjs().format("YYYY-MM-DD");
+
+  try {
+    // Reutilizamos tu lógica de filtrado por índice de fecha
+    const registros = await obtenerRegistroFiltro(
+      "fecha_registro_idx", 
+      fechaHoy
+    );
+
+    // Sumamos aritméticamente el valor del campo 'galeria'
+    const suma = registros.reduce((acumulador, reg) => {
+      // Aseguramos la conversión a número por seguridad
+      const valor = Number(reg.galeria) || 0;
+      return acumulador + valor;
+    }, 0);
+
+    return suma;
+
+  } catch (error) {
+    console.error("Error al sumar galerías:", error);
+    throw new Error("No se pudo calcular la suma de galerías de hoy.");
+  }
+};

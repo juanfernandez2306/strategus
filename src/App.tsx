@@ -2,16 +2,16 @@ import Header from './components/Header';
 import './App.css';
 
 
-
 //import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
 import { MapLibre } from './features/mapa/MapLibre.tsx';
 import { useState } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
 import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson.tsx';
-import DeleteIndexeDBcapture from './layouts/DeleteIndexedDBcapture';
+import EliminarRegistros from './features/eliminarBD/EliminarRegistro.tsx';
 import GenerarQrJornada from './features/qr/GenerarQrJornada.tsx';
 import ScannerJornada from './features/qr/ScannerJornada';
+import ResumenJornadaLayout from './features/resumen/ResumenJornada.tsx';
 
 function App() {
 
@@ -19,20 +19,22 @@ function App() {
 
   const renderContent = () => {
     switch (selectedView) {
-      case "Inicio":
+      case "Registro":
         return <RegistroPosicionLayout />;
       case "DescargarDatos":
         return <ExportarGeoJSON />;
-      case "UnificarYguardarArchivos":
+      case "ImportarGeojson":
         return <ImportarGeojson />;
       case "GenerarQR": // Nueva vista
         return <GenerarQrJornada />;
       case "EscanearQR": // Nueva vista
         return <ScannerJornada />;
       case "EliminarBD":
-        return <DeleteIndexeDBcapture />;
+        return <EliminarRegistros />;
       case "Mapa":
         return <MapLibre />;
+      case "Resumen":
+        return <ResumenJornadaLayout />
       default:
         return <RegistroPosicionLayout />;
     }
@@ -41,12 +43,12 @@ function App() {
 
 
   return (
-    <>
+     <>
       <Header onSelect={setSelectedView} />
       <main style={selectedView === "Mapa" ? { padding: 0, margin: 0, maxWidth: '100%', width: '100%' } : {}}>
         {renderContent()}
       </main>
-    </>
+    </> 
   )
 }
 
