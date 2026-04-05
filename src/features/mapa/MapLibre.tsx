@@ -80,6 +80,11 @@ useEffect(() => {
     if (instanciaMapaLocal) {
       console.log("React Cleanup: Solicitando destrucción de mapa y sensores");
       instanciaMapaLocal.remove(); 
+
+      instanciaMapaLocal = null; // 2. Limpia la variable local
+      
+      console.log("Referencia de mapa anulada.");
+
     }
   };
 }, [inicializarMapa]); // Solo dependemos de la función del hook
