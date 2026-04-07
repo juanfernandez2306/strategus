@@ -2,7 +2,7 @@ import { navService } from '../../../services/sensors/brujula/navigation';
 import { type CompassHandle } from '../../../components/Compass';
 
 
-let lastCanUpdate = false;
+let lastCanUpdate: boolean | null = null;
 
 /**
  * Orquesta la actualización de la brújula visual y la lógica de proximidad.
@@ -13,6 +13,8 @@ export const setupNavOrchestrator = (
     compassRef: React.RefObject<CompassHandle | null>,
     hasVibratedRef: { current: boolean }
 ) => {
+
+    lastCanUpdate = null;
     
     // Esta es la función que reacciona al evento que dispara el UserLocationManager
     const handleSensorUpdate = (e: any) => {
