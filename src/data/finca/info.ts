@@ -1,15 +1,16 @@
+let coordenada_centro = [-72.31968, 8.29176];
 
 export const INFO_FINCA = {
-    nombre: "FINCA DANUBIO",
-    razonSocial: "AGROPECUARIA GUAIKINIMA, C.A.",
-    rif: "J-29556953-0",
-    estado: "ZULIA",
-    municipio: "MACHIQUES DE PERIJA",
-    parroquia: "LIBERTAD",
+    nombre: "HACIENDA PALMERA DON BOSCO",
+    razonSocial: "AGRÍCOLA EL DIAMANTE LA FRÍA C.A.,",
+    rif: "J-00214035-6",
+    estado: "TÁCHIRA",
+    municipio: "GARCÍA DE HEVÍA",
+    parroquia: "JOSÉ ANTONIO PÁEZ",
 
     // --- PARÁMETROS TÉCNICOS DEL VECTOR TILES MAP ---
     configVector: {
-        centroInicial: [-72.701892, 9.862457] as [number, number],
+        centroInicial: coordenada_centro as [number, number],
         zoomInicial: 14,
         minZoom: 0,
         maxZoom: 14,
@@ -17,21 +18,21 @@ export const INFO_FINCA = {
         tilesURL: `${window.location.origin}/geoapp/tiles/{z}/{x}/{y}.pbf`,
         // Nombres de las capas generadas en QGIS para este cliente
         capas: {
-            lotes: 'plg_lotes_danubio_feb_2026_web_mercator',
-            palmas: 'pts_features_plantacion_palmas_danubio_20260403',
-            lineas: 'ln_features_recorte_densificadas_limites_danubio_20260403_web_mercator'
+            lotes: 'plg_finca_don_bosco_corrales_casa',
+            palmas: 'pts_finca_don_bosco',
+            lineas: 'ln_infraestructuras_don_bosco'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
-        limitesPantalla:  [-72.706288183, 9.850626825, -72.696354309, 9.877790092] as [number, number, number, number]
+        limitesPantalla:  [-72.3327, 8.2845, -72.3080, 8.3021] as [number, number, number, number]
     },
 
     // --- PARÁMETROS TÉCNICOS DEL VECTOR TILES MAP ---
     configMap : {
-        centroInicial: [-72.70189, 9.86245] as [number, number],
+        centroInicial: coordenada_centro as [number, number],
         zoomInicial: 14,
-        minZoom: 14,
+        minZoom: 13,
         maxZoom: 20,
-        maxBounds: [-72.71755, 9.84545, -72.68346, 9.88455] as [number, number, number, number]
+        maxBounds: [-72.3392, 8.2729, -72.3035, 8.3075] as [number, number, number, number]
     }
 
 }

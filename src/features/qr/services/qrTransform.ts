@@ -1,6 +1,6 @@
 import { type RegistroPosicion } from "../../../types";
 
-const LAT_BASE = "9";
+const LAT_BASE = "8";
 const LNG_BASE = "-72";
 
 /**

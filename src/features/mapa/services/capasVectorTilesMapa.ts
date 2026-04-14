@@ -45,7 +45,8 @@ export const configurarCapasBase = (map: MapLibreMap) => {
                 ['get', 'desc'],
                 'lindero', '#000000', // Negro continuo
                 'tendido', '#FF4400', // Naranja continuo
-                'cerca', '#424242',    // Gris oscuro para la cerca
+                'cerca', '#424242',
+                'hidrografia', '#03AED2',    // Gris oscuro para la cerca
                 '#000000'             // Valor por defecto
             ],
             'line-width': [
@@ -220,7 +221,8 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         'source': 'finca-danubio-source',
         'source-layer': configVector.capas.lotes,
         // Filtro: Solo elementos con FID >= 12
-        'filter': ['>=', ['to-number', ['get', 'fid']], 12],
+        //'filter': ['>=', ['to-number', ['get', 'fid']], 12],
+        'filter': ['!=', ['get', 'desc'], ''],
         'minzoom': 16, // Aparecen cuando el usuario se acerca
         'maxzoom': 19, // Se mantienen visibles en zooms profundos
         'layout': {
@@ -228,7 +230,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
             'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
             'text-size': [
                 'interpolate', ['linear'], ['zoom'],
-                16, 10,
+                13, 10,
                 20, 14
             ],
             'text-justify': 'center',
