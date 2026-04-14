@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: '/geoapp/',
+  base: '/pwa/',
   assetsInclude: ['**/*.pbf'],
   plugins: [
     react(),
@@ -17,10 +17,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,pbf,png,svg}']
       },
       manifest: {
-        name: 'GeoApp',
+        name: 'pwa',
         short_name: 'GeoApp',
-        start_url: '/geoapp/', // Ajustado para GitHub Pages
-        scope: '/geoapp/',      // Ajustado para GitHub Pages
+        start_url: '/pwa/', // Ajustado para GitHub Pages
+        scope: '/pwa/',      // Ajustado para GitHub Pages
         display: 'standalone',
         background_color: '#FFFCFB',
         theme_color: '#386641',

@@ -15,7 +15,7 @@ export const INFO_FINCA = {
         minZoom: 0,
         maxZoom: 14,
         // Configuración de tiles basada en XYZ_TEMPLATE
-        tilesURL: `${window.location.origin}/geoapp/tiles/{z}/{x}/{y}.pbf`,
+        tilesURL: `${window.location.origin}/pwa/tiles/{z}/{x}/{y}.pbf`,
         // Nombres de las capas generadas en QGIS para este cliente
         capas: {
             lotes: 'plg_finca_don_bosco_corrales_casa',
