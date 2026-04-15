@@ -9,7 +9,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography"
+import Typography from "@mui/material/Typography";
 
 import { useState } from "react";
 

@@ -1,5 +1,5 @@
 import { type Map as MapLibreMap } from 'maplibre-gl';
-import { featureCollection, point } from '@turf/turf';
+import { featureCollection, point } from '@turf/helpers';
 
 // Importaciones de Negocio / Tipos
 import { obtenerRegistroSidebarData } from '../../../services/indexedbd/palmaQueries';

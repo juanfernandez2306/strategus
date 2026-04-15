@@ -2,16 +2,17 @@ import Header from './components/Header';
 import './App.css';
 
 
-//import RegistroPosicionLayout from './layouts/RegistroPosicionLayout';
 import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
-import { MapLibre } from './features/mapa/MapLibre.tsx';
-import { useState } from 'react';
-import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout.tsx';
-import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson.tsx';
-import EliminarRegistros from './features/eliminarBD/EliminarRegistro.tsx';
-import GenerarQrJornada from './features/qr/GenerarQrJornada.tsx';
-import ScannerJornada from './features/qr/ScannerJornada';
-import ResumenJornadaLayout from './features/resumen/ResumenJornada.tsx';
+import { MapLibre } from './features/mapa/MapLibre';
+import { useState, lazy, Suspense } from 'react';
+import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout';
+import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson';
+import EliminarRegistros from './features/eliminarBD/EliminarRegistro';
+import GenerarQrJornada from './features/qr/GenerarQrJornada';
+
+import ResumenJornadaLayout from './features/resumen/ResumenJornada';
+
+const ScannerJornada = lazy(() => import('./features/qr/ScannerJornada'));
 
 function App() {
 
@@ -28,7 +29,15 @@ function App() {
       case "GenerarQR": // Nueva vista
         return <GenerarQrJornada />;
       case "EscanearQR": // Nueva vista
-        return <ScannerJornada />;
+          return (
+            <Suspense fallback={
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>
+                Cargando motor de escaneo...
+              </div>
+            }>
+              <ScannerJornada />
+            </Suspense>
+          );
       case "EliminarBD":
         return <EliminarRegistros />;
       case "Mapa":

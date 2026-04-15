@@ -1,5 +1,6 @@
 import { useRef, useImperativeHandle, forwardRef, type CSSProperties } from 'react';
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import style from './Compass.module.css';
 
 // Interfaz para que el Padre (o el Hook) controle el componente

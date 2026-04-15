@@ -1,6 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   base: '/pwa/',
@@ -37,6 +38,28 @@ export default defineConfig({
           }
         ]
       }
-    })
-  ]
+    }),
+    visualizer({ open: true })
+  ],
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Separamos el motor pesado del escáner en su propio archivo
+          if (id.includes('html5-qrcode')) {
+            return 'vendor-scanner';
+          }
+          // Separamos MapLibre y Turf que también son grandes
+          if (id.includes('maplibre-gl') || id.includes('@turf')) {
+            return 'vendor-maps';
+          }
+          // Separamos Material UI para que el index.js sea mínimo
+          if (id.includes('@mui')) {
+            return 'vendor-ui';
+          }
+        }
+      }
+    }
+  }
 })

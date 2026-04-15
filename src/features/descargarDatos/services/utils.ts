@@ -1,5 +1,5 @@
 
-import { point, featureCollection } from '@turf/turf';
+import { point, featureCollection } from '@turf/helpers';
 import { type RegistroPosicion } from '../../../types';
 
 export const transformarRegistrosAGeoJSON = (registros: RegistroPosicion[]) => {

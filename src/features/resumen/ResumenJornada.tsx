@@ -1,7 +1,9 @@
 // src/layouts/ResumenJornadaLayout.tsx
 import FormBaseLayout from "../../components/FormLayoutBase";
 import { useResumenJornada } from "./useResumenJornada";
-import { Box, Typography, Divider } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import style from "../../components/FormLayoutBase.module.css";
 // Importa un icono adecuado de tu carpeta de SVGs
 import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus"; 

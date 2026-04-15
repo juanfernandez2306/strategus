@@ -1,4 +1,5 @@
-import { point, polygon, booleanPointInPolygon } from '@turf/turf';
+import { point, polygon } from '@turf/helpers';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 
 export const validarPuntoEnArea = (
     lng: number, 

@@ -1,6 +1,6 @@
 import { Map, NavigationControl } from 'maplibre-gl';
 import { type Map as MapLibreMap } from 'maplibre-gl';
-import { point, featureCollection } from '@turf/turf';
+import { point, featureCollection } from '@turf/helpers';
 import { obtenerRegistroSidebarData } from './indexedbd/palmaQueries'; 
 import { 
     type SidebarData, 

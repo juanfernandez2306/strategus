@@ -1,6 +1,11 @@
 import { useState } from "react";
 import type { ReactNode, FormEvent } from "react";
-import { Dialog, DialogContent, Typography, Button, CircularProgress } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import style from '../components/FormLayoutBase.module.css';

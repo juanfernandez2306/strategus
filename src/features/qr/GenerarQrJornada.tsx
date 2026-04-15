@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import FormBaseLayout from "../../components/FormLayoutBase.tsx";
+import FormBaseLayout from "../../components/FormLayoutBase";
 import styleBase from '../../components/FormLayoutBase.module.css';
-import { obtenerRegistrosPosicionPorFecha } from "../../services/indexedbd/palmaQueries.ts";  
-import { useQrManager } from "./hook/useQrManager.ts";
+import { obtenerRegistrosPosicionPorFecha } from "../../services/indexedbd/palmaQueries";  
+import { useQrManager } from "./hook/useQrManager";
 
 const GenerarQrJornada = () => {
     const [fecha, setFecha] = useState<string>("");

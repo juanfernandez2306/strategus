@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, Drawer, IconButton, Snackbar, Alert } from '@mui/material';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
