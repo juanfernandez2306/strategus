@@ -49,9 +49,8 @@ export const MapLibre: React.FC = () => {
 
     mensajeErrorRef.current = mensajeError;
 
-    if (mensajeError) {
-      setDisplayError(mensajeError);
-    }
+    if (mensajeError) setDisplayError(mensajeError);
+    
 
   }, [mensajeError]);
   
@@ -63,43 +62,28 @@ export const MapLibre: React.FC = () => {
     compassRef
   );
 
-  // 4. Montaje del mapa al inicio
-// MapLibre.tsx
 useEffect(() => {
-  let instanciaMapaLocal: MapLibreMap | null = null;
-  let componenteDesmontado = false;
 
-  const montarSistema = async () => {
-    if (!mapDivRef.current) return;
+    let instanciaMapaLocal: MapLibreMap | null = null;
 
-    // Ahora solo pasamos el contenedor, el callback ya va por el hook
-    const mapa = await inicializarMapa(mapDivRef.current);
+    const montarSistema = async () => {
 
-    if (mapa) {
-      if (componenteDesmontado) {
-        mapa.remove();
-      } else {
-        instanciaMapaLocal = mapa;
-      }
-    }
-  };
+      if (!mapDivRef.current) return;
 
-  montarSistema();
+      const mapa = await inicializarMapa(mapDivRef.current);
 
-  return () => {
-    componenteDesmontado = true;
-    if (instanciaMapaLocal) {
-      console.log("React Cleanup: Solicitando destrucción de mapa y sensores");
-      instanciaMapaLocal.remove(); 
+      if (mapa) instanciaMapaLocal = mapa;
 
-      instanciaMapaLocal = null; // 2. Limpia la variable local
-      
-      console.log("Referencia de mapa anulada.");
+    };
 
-    }
-  };
-}, [inicializarMapa]); // Solo dependemos de la función del hook
+    montarSistema();
 
+    return () => {
+      if (instanciaMapaLocal) instanciaMapaLocal.remove();
+    };
+    
+  }, [inicializarMapa]);
+  
   // 5. Lógica de negocio (Actualización de DB y Refresco de Capas)
   const handleConfirmarVisita = async () => {
     if (!detallePunto) return;
