@@ -3,7 +3,6 @@ import './App.css';
 
 
 import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
-import { MapLibre } from './features/mapa/MapLibre';
 import { useState, lazy, Suspense } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout';
 import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson';
@@ -12,9 +11,16 @@ import GenerarQrJornada from './features/qr/GenerarQrJornada';
 
 import ResumenJornadaLayout from './features/resumen/ResumenJornada';
 
+import { NOMBRE_APP } from './data/finca/appConfig';
+
 const ScannerJornada = lazy(() => import('./features/qr/ScannerJornada'));
+const MapLibre = lazy(() => 
+    import('./features/mapa/MapLibre').then(module => ({ default: module.MapLibre }))
+  );
 
 function App() {
+
+  document.title = NOMBRE_APP;
 
   const [selectedView, setSelectedView] = useState("Inicio");
 
@@ -41,7 +47,15 @@ function App() {
       case "EliminarBD":
         return <EliminarRegistros />;
       case "Mapa":
-        return <MapLibre />;
+        return (
+          <Suspense fallback={
+            <div style={{ padding: '2rem', color: 'white', textAlign: 'center' }}>
+              Inicializando motor de mapas...
+            </div>
+          }>
+            <MapLibre />
+          </Suspense>
+        );
       case "Resumen":
         return <ResumenJornadaLayout />
       default:
