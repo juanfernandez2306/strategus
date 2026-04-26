@@ -1,0 +1,111 @@
+/* MapLibre.module.css */
+.screenContainer {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 100px);
+  overflow: hidden;
+}
+
+.mapCanvas {
+  width: 100%;
+  height: calc(100vh - 100px);
+  z-index: 1;
+}
+
+/* --- Estilos del Drawer (Panel Inferior) --- */
+.drawerOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  /* --- CAMBIO AQUÍ --- */
+  opacity: 0;
+  visibility: hidden;
+  /* El transition-delay en visibility es el truco para que no desaparezca de golpe */
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+
+.overlayActive {
+  opacity: 1;
+  visibility: visible;
+  /* Al activarse, quitamos el delay para que aparezca al instante */
+  transition: opacity 0.4s ease, visibility 0s linear 0s;
+}
+
+.drawerPaper {
+  width: 100%;
+  max-width: 450px;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-radius: 28px 28px 0 0;
+  min-height: 400px;
+  padding: 32px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+
+  /* Estado inicial: abajo */
+  transform: translateY(105%); 
+  /* Curva de salida más natural (acelerada al final) */
+  transition: transform 0.4s ease-in;
+}
+
+.drawerOpen {
+  transform: translateY(0);
+  transition: transform 0.5s ease-out;
+}
+
+/* ------------------------------------- */
+
+.btnClose {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}
+
+/* --- Snackbar de Error --- */
+.snackbar {
+  width: 90%;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px); /* Empieza abajo, fuera de vista */
+  background-color: #d32f2f;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  
+  /* Transición suave */
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.3s ease, 
+              visibility 0.4s;
+}
+
+/* Clase activa para mostrar el error */
+.snackbarActive {
+  transform: translateX(-50%) translateY(0); /* Sube a su posición original */
+  opacity: 1;
+  visibility: visible;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.3s ease, 
+              visibility 0s; /* Aparece al instante */
+}
