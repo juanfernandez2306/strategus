@@ -1,6 +1,4 @@
 import { useRef, useImperativeHandle, forwardRef, type CSSProperties } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import style from './Compass.module.css';
 
 // Interfaz para que el Padre (o el Hook) controle el componente
@@ -55,80 +53,58 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+    <div className={style.mainContainer}>
       
       {/* Contenedor de la Brújula */}
-      <Box sx={{ 
-        position: 'relative', 
-        width: size, 
-        height: size,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--color-fondo)', // Variables de App.css
-        borderRadius: '50%',
-        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
-        border: '2px solid var(--color-terciario)',
-      }}>
+      <div 
+        className={style.compassWrapper} 
+        style={{ width: size, height: size }} // El tamaño sigue siendo dinámico por prop
+      >
         <svg
           viewBox="0 0 100 200"
           style={{ width: '85%', height: '85%', overflow: 'visible' }}
         >
-          {/* Marcador Norte fijo (Objetivo) */}
+          {/* Marcador Norte fijo */}
           <path d="M50 5 L50 25" stroke="var(--color-error)" strokeWidth="6" strokeLinecap="round" />
           
-          {/* Círculo de escala con strokeDasharray */}
           <circle cx="50" cy="100" r="65" fill="none" stroke="var(--color-terciario)" strokeWidth="1.5" strokeDasharray="3 3" />
 
           {/* Aguja móvil */}
           <g ref={needleRef} style={needleStyle}>
-            {/* Punta Norte (Color Error/Rojo) */}
             <path fill="var(--color-error)" stroke="var(--color-negro)" strokeWidth="3" d="M50 35 L42 100 H58 Z" />
-            {/* Punta Sur (Blanco) */}
             <path fill="#FFF" stroke="var(--color-negro)" strokeWidth="3" d="M50 165 L42 100 H58 Z" />
             <circle cx="50" cy="100" r="5" fill="var(--color-negro)" />
           </g>
 
           <circle 
             ref={beaconRef}
-            cx="50" 
-            cy="100" 
-            r="15" 
+            cx="50" cy="100" r="15" 
             fill="var(--color-primario)" 
-            className={style.beaconAnimation} // <--- AQUÍ agregas la clase del módulo
-            style={{ display: 'none' }}       // Dejamos el display controlado por JS
+            className={style.beaconAnimation}
+            style={{ display: 'none' }}
           />
 
-          {/* 4. CÍRCULO 2 (Segunda onda con retraso) */}
           <circle 
             ref={beaconRef2}
             cx="50" cy="100" r="15" 
             fill="var(--color-primario)" 
-            className={style.beaconAnimation2} // <--- NUEVA CLASE con delay
+            className={style.beaconAnimation2}
             style={{ display: 'none' }} 
           />
-
         </svg>
-      </Box>
+      </div>
 
       {/* Bloque de Texto Independiente */}
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography 
-          variant="h2" 
-          sx={{ fontWeight: "bold", color: "var(--color-primario)", mb: 0, lineHeight: 1 }}
-        >
-          {/* El span permite la actualización directa sin romper tipos de MUI */}
+      <div className={style.textContainer}>
+        <h2 className={style.distanceText}>
           <span ref={distanceRef}>--</span>m
-        </Typography>
-        <Typography 
-          variant="overline" 
-          sx={{ display: 'block', mt: 0, color: "var(--color-negro)", opacity: 0.7 }}
-        >
+        </h2>
+        <span className={style.labelSubtitle}>
           Distancia al objetivo
-        </Typography>
-      </Box>
+        </span>
+      </div>
 
-    </Box>
+    </div>
   );
 });
 
