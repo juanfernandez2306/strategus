@@ -1,0 +1,42 @@
+
+.btnBase {
+  width: 100%;
+  max-width: 350px;
+  padding: 16px 0;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-transform: none;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.4s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.btnActive {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Colores dinámicos */
+.colorConfirmar { background-color: var(--color-primario); }
+.colorConfirmar:hover { 
+    background-color: var(--color-terciario); 
+    color: var(--color-negro);
+}
+
+.colorPendiente { background-color: var(--color-error); }
+.colorPendiente:hover { 
+    background-color: var(--color-secundario);
+    color: var(--color-negro); 
+}
+
+/* Estado Bloqueado / Disabled */
+.btnLocked {
+  background-color: #b0bec5 !important;
+  color: #eceff1;
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
