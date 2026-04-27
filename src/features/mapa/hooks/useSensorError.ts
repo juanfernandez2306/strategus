@@ -15,15 +15,13 @@ export const useSensorError = () => {
             // 1. Actualización de banderas (Banderas de hardware)
             gpsOkRef.current = !!(datosGps && datosGps.lat !== 0);
             brujulaOkRef.current = typeof headingRaw === 'number';
-
-            console.log('valor brujula', headingRaw, '-->', 'valor ref brujula', brujulaOkRef.current)
-
+            
             const sistemaOperativoActual = gpsOkRef.current && brujulaOkRef.current;
 
             // 2. Lógica de Cambio de Estado (Evita re-renders innecesarios)
             if (sistemaOperativoActual !== sistemaListoRef.current) {
                 if (sistemaOperativoActual) {
-                    setMensajeError(null); // Todo OK: Limpia el alert
+                    setMensajeError(null); 
                 } else {
                     console.log('fallando');
 
@@ -33,6 +31,7 @@ export const useSensorError = () => {
                     if (!brujulaOkRef.current) fallos.push("Brújula");
                     setMensajeError(`Esperando respuesta de: ${fallos.join(' y ')}`);
                 }
+                
                 sistemaListoRef.current = sistemaOperativoActual;
             }
         };
