@@ -119,7 +119,6 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     desactivaOrientacion = watchOrientacionRaw((raw) => {
          
         ultimoHeading = raw;
-        console.log(raw)
 
         actualizarUserLocation();
         
