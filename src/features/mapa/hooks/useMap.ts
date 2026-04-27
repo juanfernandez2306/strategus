@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { type SidebarData } from '../../../types/index.ts';
 
@@ -11,49 +11,8 @@ import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
  */
 export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
     const mapRef = useRef<MapLibreMap | null>(null);
-    const [mensajeError, setMensajeError] = useState<string | null>(null);
+    
 
-    // Tu "filtro de ruido" persistente
-    const ultimoMensajeRef = useRef<string | null>(null);
-
-
-    // 1. Escuchar eventos globales de error (emitidos por el UserLocationManager)
-    useEffect(() => {
-        const manejarGpsUpdate = (e: any) => {
-            // Si el evento es 'heading-update', el mensaje es null (Todo OK)
-            // Si el evento es 'gps-error', viene el string con los errores unidos
-            const mensajeActual = e.detail?.mensaje || null;
-
-
-            if (e.type === 'gps-error') {
-                ultimoMensajeRef.current = mensajeActual;
-                setMensajeError(mensajeActual);
-                return;
-            }
-
-            // 2. Si es un 'heading-update', revisamos si trae un error de brújula
-            if (e.type === 'heading-update') {
-                
-                if (mensajeActual) {
-                    // Caso: Hay GPS pero la Brújula falló (mensajeActual tiene el texto de arriba)
-                    ultimoMensajeRef.current = mensajeActual;
-                    setMensajeError(mensajeActual);
-                } else if (ultimoMensajeRef.current !== null && e.detail?.datosGps && e.detail?.headingRaw !== null) {
-                    // Caso: Todo está OK ahora (GPS y Brújula), limpiamos el Alert
-                    ultimoMensajeRef.current = null;
-                    setMensajeError(null);
-                }
-            }
-        };
-
-        window.addEventListener('gps-error', manejarGpsUpdate);
-        window.addEventListener('heading-update', manejarGpsUpdate);
-
-        return () => {
-            window.removeEventListener('gps-error', manejarGpsUpdate);
-            window.removeEventListener('heading-update', manejarGpsUpdate);
-        };
-    }, []);
 
     /**
      * Llama al Orquestador para levantar todo el sistema de mapas.
@@ -72,7 +31,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
 
         } catch (error) {
 
-            setMensajeError("Error crítico al iniciar el mapa.");
+            
             console.error(error);
 
         }
@@ -92,7 +51,6 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
     return { 
         inicializarMapa,
         refrescarPunto,  
-        mapaInstancia: mapRef.current,
-        mensajeError
+        mapaInstancia: mapRef.current
     };
 };

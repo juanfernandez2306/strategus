@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './MapLibre.module.css';
 
+
 // --- NUEVOS HOOKS REFACTORIZADOS ---
 import { useMapa } from './hooks/useMap'; 
 import { useNavigation } from './hooks/useNavegation';
+import { useSensorError } from './hooks/useSensorError';
+
 
 // --- SERVICIOS Y TIPOS ---
 import { actualizarEstadoRevisionDB } from '../../services/indexedbd/palmaActions'; 
@@ -15,10 +18,13 @@ import { type Map as MapLibreMap } from 'maplibre-gl';
 
 import { ConfirmButton } from './components/BtnRevision';
 
+
 export const MapLibre: React.FC = () => {
   const mapDivRef = useRef<HTMLDivElement>(null);
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const { mensajeError, sistemaListo } = useSensorError();
 
   // Referencia para la brújula (actualizada por el navOrchestrator a 60fps)
   const compassRef = useRef<CompassHandle>(null);
@@ -27,14 +33,18 @@ export const MapLibre: React.FC = () => {
 
   const mensajeErrorRef = useRef<string | null>(null);
 
+  const sistemaListoRefGlobal = useRef(false);
+  useEffect(() => {
+      sistemaListoRefGlobal.current = sistemaListo;
+  }, [sistemaListo]);
+  
+
   // 1. Callback de click en punto (se pasa al orquestador a través del hook)
   const handlePointClick = useCallback((datos: SidebarData) => {
-    // Si hay un error crítico de GPS (fuera de área), bloqueamos la interacción
     
-
-    if (mensajeErrorRef.current) {
-      console.warn("Acción bloqueada: Hay un error activo en los sensores.");
-      return; 
+    if (!sistemaListoRefGlobal.current) {
+        console.warn("Bloqueado: Sensores no listos");
+        return; 
     }
     
     setDetallePunto(datos);
@@ -42,7 +52,7 @@ export const MapLibre: React.FC = () => {
   }, []);
 
   // 2. Inicialización del nuevo Hook de Mapa
-  const { inicializarMapa, refrescarPunto, mensajeError } = useMapa(handlePointClick);
+  const { inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
 
   // Sincronizamos el ref de mensaje para el callback de click
   useEffect(() => {

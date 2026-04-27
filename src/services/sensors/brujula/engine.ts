@@ -1,11 +1,10 @@
-export const watchOrientacionRaw = (onHeadingUpdate: (heading: number) => void) => {
+export const watchOrientacionRaw = (onHeadingUpdate: (heading: number | null) => void) => {
     
+
     const handleOrientation = (e: any) => {
         const directo = e.webkitCompassHeading || e.alpha;
+        onHeadingUpdate(directo); 
 
-        if (directo !== undefined && directo !== null) {
-            onHeadingUpdate(directo);
-        }
     };
 
     window.addEventListener('deviceorientationabsolute', handleOrientation, true);

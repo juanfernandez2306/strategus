@@ -42,21 +42,16 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
         source.setData(userGeoJSON);
     };
 
+    
+
     const notificarSincronizacionUI = () => {
 
         if (ultimaPos.lng === 0) return;
 
-        // Determinamos el mensaje ANTES de disparar el evento
-        const mensajeErrorSensores = ultimoHeading === null 
-            ? "Brújula no detectada. Mueva el equipo." 
-            : null;
-
         window.dispatchEvent(new CustomEvent('heading-update', {
             detail: {
                 headingRaw: ultimoHeading,
-                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng },
-                // IMPORTANTE: Debes enviar esta propiedad
-                mensaje: mensajeErrorSensores 
+                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng } 
             }
         }));
     };
@@ -83,12 +78,11 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
                 // Unimos los errores con tu separador anterior "|"
                 const mensajeFinal = errores.join(" | ");
                 
-                window.dispatchEvent(new CustomEvent('gps-error', { 
+                window.dispatchEvent(new CustomEvent('sensors-error', { 
                     detail: { mensaje: mensajeFinal } 
                 }));
                 
-                // Si hay errores críticos, podrías decidir no actualizar la posición 
-                // o actualizarla pero manteniendo el mensaje de error.
+                
                 if (!estaDentro) return; 
             }
 
@@ -112,21 +106,25 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
         (err) => {
             console.error("Error en sensor GPS:", err)
 
-            window.dispatchEvent(new CustomEvent('gps-error', { 
+            window.dispatchEvent(new CustomEvent('sensors-error', { 
                 detail: { mensaje: "Error de sensor: GPS no disponible" } 
             }));
     
         }
     );
 
+    
+
     // 2. Seguimiento de Brújula
     desactivaOrientacion = watchOrientacionRaw((raw) => {
-        // Procesar el ángulo para que la flecha sea estable
-        
+         
         ultimoHeading = raw;
-        
+        console.log(raw)
+
         actualizarUserLocation();
+        
         notificarSincronizacionUI();
+
     });
 
     // Función de limpieza para map.on('remove')
