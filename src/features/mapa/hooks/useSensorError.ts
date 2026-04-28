@@ -1,48 +1,59 @@
 import { useEffect, useState, useRef } from 'react';
 
 export const useSensorError = () => {
-    // Iniciamos con el mensaje de espera que sugeriste
-    const [mensajeError, setMensajeError] = useState<string | null>("Iniciando sensores y buscando señal GPS...");
+
+    const MENSAJE_INICIAL = "Iniciando sensores y buscando señal GPS...";
+    
+    const [mensajeError, setMensajeError] = useState<string | null>(MENSAJE_INICIAL);
+    const ultimoMensajeRef = useRef<string | null>(MENSAJE_INICIAL);
     
     const gpsOkRef = useRef(false);
     const brujulaOkRef = useRef(false);
-    const sistemaListoRef = useRef(false);
+    
 
     useEffect(() => {
-        const validacionErresSensores = (e: any) => {
+        const validacionErroresSensores = (e: any) => {
+
             const { headingRaw, datosGps } = e.detail;
 
-            // 1. Actualización de banderas (Banderas de hardware)
+            /**controles referencias para GPS y brujula */
             gpsOkRef.current = !!(datosGps && datosGps.lat !== 0);
             brujulaOkRef.current = typeof headingRaw === 'number';
-            
+
             const sistemaOperativoActual = gpsOkRef.current && brujulaOkRef.current;
 
-            // 2. Lógica de Cambio de Estado (Evita re-renders innecesarios)
-            if (sistemaOperativoActual !== sistemaListoRef.current) {
-                if (sistemaOperativoActual) {
-                    setMensajeError(null); 
-                } else {
-                    console.log('fallando');
+            /** si sistemaOperativoActual esta ok con los sensores
+            se reincia los valores del estado del mensaje 
+            y la referencia del ultimo mensaje
+             */
+            if (sistemaOperativoActual) {
+                
+                setMensajeError(null);
+                ultimoMensajeRef.current = null;
+                
+            } else {
+                let mensajeObjetivo: string | null = null;
 
-                    // Construcción del mensaje según el fallo
-                    let fallos = [];
-                    if (!gpsOkRef.current) fallos.push("GPS");
-                    if (!brujulaOkRef.current) fallos.push("Brújula");
-                    setMensajeError(`Esperando respuesta de: ${fallos.join(' y ')}`);
+                const fallos = [];
+                if (!gpsOkRef.current) fallos.push("GPS");
+                if (!brujulaOkRef.current) fallos.push("Brújula");
+                mensajeObjetivo = `Esperando respuesta de: ${fallos.join(' y ')}`;
+
+                if (ultimoMensajeRef.current !== mensajeObjetivo) {
+                    ultimoMensajeRef.current = mensajeObjetivo;
+                    setMensajeError(mensajeObjetivo);
                 }
                 
-                sistemaListoRef.current = sistemaOperativoActual;
+                
             }
         };
 
-        window.addEventListener('heading-update', validacionErresSensores);
-        return () => window.removeEventListener('heading-update', validacionErresSensores);
+        window.addEventListener('heading-update', validacionErroresSensores);
+        return () => window.removeEventListener('heading-update', validacionErroresSensores);
     }, []);
 
     return { 
-        mensajeError, 
-        sistemaListo: sistemaListoRef.current,
+        mensajeError,
         gpsOkRef,
         brujulaOkRef 
     };
