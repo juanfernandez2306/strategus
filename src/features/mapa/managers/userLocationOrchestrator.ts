@@ -13,7 +13,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
     let desactivaOrientacion: (() => void) | null = null;
     
     let ultimaPos = { lng: 0, lat: 0, accuracy: 0 };
-    let ultimoHeading: number | null = null;;
+    let ultimoHeading: number | null = null;
+    let errorGps: string | null = null;
 
     let haRealizadoPrimerVuelo = false;
 
@@ -51,7 +52,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
         window.dispatchEvent(new CustomEvent('heading-update', {
             detail: {
                 headingRaw: ultimoHeading,
-                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng } 
+                datosGps: { lat: ultimaPos.lat, lng: ultimaPos.lng },
+                errorGps: errorGps || null 
             }
         }));
     };
@@ -77,11 +79,8 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
             if (errores.length > 0) {
                 // Unimos los errores con tu separador anterior "|"
                 const mensajeFinal = errores.join(" | ");
-                
-                window.dispatchEvent(new CustomEvent('sensors-error', { 
-                    detail: { mensaje: mensajeFinal } 
-                }));
-                
+
+                errorGps = mensajeFinal;
                 
                 if (!estaDentro) return; 
             }
@@ -106,9 +105,7 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
         (err) => {
             console.error("Error en sensor GPS:", err)
 
-            window.dispatchEvent(new CustomEvent('sensors-error', { 
-                detail: { mensaje: "Error de sensor: GPS no disponible" } 
-            }));
+            errorGps = "Error de sensor: GPS no disponible";
     
         }
     );

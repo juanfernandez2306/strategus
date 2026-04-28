@@ -14,7 +14,7 @@ export const useSensorError = () => {
     useEffect(() => {
         const validacionErroresSensores = (e: any) => {
 
-            const { headingRaw, datosGps } = e.detail;
+            const { headingRaw, datosGps, errorGps } = e.detail;
 
             /**controles referencias para GPS y brujula */
             gpsOkRef.current = !!(datosGps && datosGps.lat !== 0);
@@ -26,17 +26,26 @@ export const useSensorError = () => {
             se reincia los valores del estado del mensaje 
             y la referencia del ultimo mensaje
              */
+
+            console.log(sistemaOperativoActual, 'hola');
+
             if (sistemaOperativoActual) {
                 
                 setMensajeError(null);
                 ultimoMensajeRef.current = null;
                 
             } else {
+
+                console.log("hola");
+
                 let mensajeObjetivo: string | null = null;
 
                 const fallos = [];
-                if (!gpsOkRef.current) fallos.push("GPS");
+
+                if (!gpsOkRef.current) fallos.push(errorGps);
+
                 if (!brujulaOkRef.current) fallos.push("Brújula");
+
                 mensajeObjetivo = `Esperando respuesta de: ${fallos.join(' y ')}`;
 
                 if (ultimoMensajeRef.current !== mensajeObjetivo) {
