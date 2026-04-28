@@ -47,8 +47,6 @@ export const setupUserTracking = (map: any, userGeoJSON: any) => {
 
     const notificarSincronizacionUI = () => {
 
-        if (ultimaPos.lng === 0) return;
-
         window.dispatchEvent(new CustomEvent('heading-update', {
             detail: {
                 headingRaw: ultimoHeading,

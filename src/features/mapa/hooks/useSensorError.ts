@@ -6,6 +6,7 @@ export const useSensorError = () => {
     
     const [mensajeError, setMensajeError] = useState<string | null>(MENSAJE_INICIAL);
     const ultimoMensajeRef = useRef<string | null>(MENSAJE_INICIAL);
+    const [sistemaListo, setSistemaListo] = useState<boolean>(false);
     
     const gpsOkRef = useRef(false);
     const brujulaOkRef = useRef(false);
@@ -22,21 +23,19 @@ export const useSensorError = () => {
 
             const sistemaOperativoActual = gpsOkRef.current && brujulaOkRef.current;
 
-            /** si sistemaOperativoActual esta ok con los sensores
-            se reincia los valores del estado del mensaje 
-            y la referencia del ultimo mensaje
-             */
-
-            console.log(sistemaOperativoActual, 'hola');
+            /** 
+                si sistemaOperativoActual esta ok con los sensores
+                se reincia los valores del estado del mensaje 
+                y la referencia del ultimo mensaje
+            */
 
             if (sistemaOperativoActual) {
                 
                 setMensajeError(null);
+                setSistemaListo(sistemaOperativoActual);
                 ultimoMensajeRef.current = null;
                 
             } else {
-
-                console.log("hola");
 
                 let mensajeObjetivo: string | null = null;
 
@@ -44,13 +43,14 @@ export const useSensorError = () => {
 
                 if (!gpsOkRef.current) fallos.push(errorGps);
 
-                if (!brujulaOkRef.current) fallos.push("Brújula");
+                if (!brujulaOkRef.current) fallos.push("Esperando respuesta de la brújula");
 
-                mensajeObjetivo = `Esperando respuesta de: ${fallos.join(' y ')}`;
+                mensajeObjetivo = `${fallos.join(' y ')}`;
 
                 if (ultimoMensajeRef.current !== mensajeObjetivo) {
                     ultimoMensajeRef.current = mensajeObjetivo;
                     setMensajeError(mensajeObjetivo);
+                    setSistemaListo(sistemaOperativoActual);
                 }
                 
                 
@@ -63,6 +63,7 @@ export const useSensorError = () => {
 
     return { 
         mensajeError,
+        sistemaListo,
         gpsOkRef,
         brujulaOkRef 
     };
