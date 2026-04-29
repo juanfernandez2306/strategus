@@ -33,7 +33,8 @@ export const MapLibre: React.FC = () => {
 
   const mensajeErrorRef = useRef<string | null>(null);
 
-  const sistemaListoRefGlobal = useRef(false);
+  const sistemaListoRefGlobal = useRef<boolean>(false);
+
   useEffect(() => {
       sistemaListoRefGlobal.current = sistemaListo;
   }, [sistemaListo]);

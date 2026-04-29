@@ -19,16 +19,12 @@ export const useNavigation = (
 
     // ENCENDER EL ORQUESTADOR
     // Él se encarga de escuchar los sensores, calcular distancias y mover la aguja
-    const stopNav = setupNavOrchestrator(
+    setupNavOrchestrator(
         destLat, 
         destLon, 
         compassRef, 
         hasVibratedRef
     );
-
-    // LIMPIEZA: Apagar el orquestador cuando el componente se desmonte 
-    // o el destino cambie
-    return () => stopNav();
 
   }, [destLat, destLon, compassRef]);
 };

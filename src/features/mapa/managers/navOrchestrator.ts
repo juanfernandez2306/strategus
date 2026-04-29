@@ -1,8 +1,6 @@
 import { navService } from '../../../services/sensors/brujula/navigation';
 import { type CompassHandle } from '../../../components/Compass';
-
-
-let lastCanUpdate: boolean | null = null;
+import { useSensorStore } from '../hooks/useSensorStore';
 
 /**
  * Orquesta la actualización de la brújula visual y la lógica de proximidad.
@@ -14,77 +12,33 @@ export const setupNavOrchestrator = (
     hasVibratedRef: { current: boolean }
 ) => {
 
-    lastCanUpdate = null;
+    const { lat, lng, headingRaw, setCanUpdate } = useSensorStore.getState();
+
+    if (lat === 0 || headingRaw === null) {
+        setCanUpdate(false);
+        return;
+    }
+
+    const result = navService.calcularNav(lat, lng, destLat, destLon, headingRaw);
     
-    // Esta es la función que reacciona al evento que dispara el UserLocationManager
-    const handleSensorUpdate = (e: any) => {
-        const { headingRaw, datosGps } = e.detail;
+    if (!result) return;
 
-        if (!datosGps || headingRaw === null) {
+    compassRef.current?.updateDistance(result.distancia);
 
-            window.dispatchEvent(new CustomEvent('proximity-status', { 
-                detail: { canUpdate: false } 
-            }));
+    const isNear = result.distancia <= 12;
 
-            return
-        };
-
-        const { lng, lat } = datosGps;
-
-        // 1. Cálculo de navegación (Distancia y Ángulo)
-        const result = navService.calcularNav(
-            lat, 
-            lng, 
-            destLat, 
-            destLon, 
-            headingRaw
-        );
-
-        if (!result) return;
-        
-        // Usamos el valor calculado por el navService
-        compassRef.current?.updateDistance(result.distancia);
-
-        // Variable de control local para el evento del botón
-        
-
-        // 1. Definimos el nuevo estado basado en la distancia
-        const currentCanUpdate = result.distancia <= 12;
-
-        if (currentCanUpdate !== lastCanUpdate) {
-            lastCanUpdate = currentCanUpdate; // Actualizamos el centinela
-            
-            window.dispatchEvent(new CustomEvent('proximity-status', { 
-                detail: { canUpdate: currentCanUpdate } 
-            }));
-            
+    if (isNear) {
+        compassRef.current?.setProximityMode(true);
+        if (!hasVibratedRef.current && "vibrate" in navigator) {
+            navigator.vibrate([200, 100, 200]);
+            hasVibratedRef.current = true;
         }
+    } else {
+        compassRef.current?.setProximityMode(false);
+        compassRef.current?.updateAngle(result.anguloAguja);
+        if (result.distancia > 20) hasVibratedRef.current = false;
+    }
 
-        // 2. Lógica de Interfaz (Modo Proximidad vs Navegación)
-        if (currentCanUpdate) {
-            compassRef.current?.setProximityMode(true);
-
-            // Lógica de Vibración (Solo una vez al entrar al rango)
-            if (!hasVibratedRef.current && "vibrate" in navigator) {
-                navigator.vibrate([200, 100, 200]);
-                hasVibratedRef.current = true;
-            }
-        } else {
-            compassRef.current?.setProximityMode(false);
-            compassRef.current?.updateAngle(result.anguloAguja);
-            
-            // Si se aleja, permitimos que vuelva a vibrar al entrar
-            if (result.distancia > 20) {
-                hasVibratedRef.current = false;
-            }
-        }
-    };
-
-    // Escuchar el evento global que emite el UserLocationManager
-    window.addEventListener('heading-update', handleSensorUpdate);
-
-    // Retornar limpieza
-    return () => {
-        window.removeEventListener('heading-update', handleSensorUpdate);
-    };
+    setCanUpdate(isNear);
+    
 };

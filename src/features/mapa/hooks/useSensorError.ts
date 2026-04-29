@@ -1,70 +1,30 @@
-import { useEffect, useState, useRef } from 'react';
+import { useSensorStore } from './useSensorStore';
 
 export const useSensorError = () => {
 
     const MENSAJE_INICIAL = "Iniciando sensores y buscando señal GPS...";
     
-    const [mensajeError, setMensajeError] = useState<string | null>(MENSAJE_INICIAL);
-    const ultimoMensajeRef = useRef<string | null>(MENSAJE_INICIAL);
-    const [sistemaListo, setSistemaListo] = useState<boolean>(false);
-    
-    const gpsOkRef = useRef(false);
-    const brujulaOkRef = useRef(false);
-    
+    const tieneGps = useSensorStore((state) => state.lat !== 0);
+    const tieneHeading = useSensorStore((state) => typeof state.headingRaw === 'number');
+    const errorGps = useSensorStore((state) => state.errorGps);
 
-    useEffect(() => {
-        const validacionErroresSensores = (e: any) => {
+    const sistemaListo: boolean = tieneGps && tieneHeading;
 
-            const { headingRaw, datosGps, errorGps } = e.detail;
+    const obtenerMensaje = () => {
+        
+        if (sistemaListo) return null;
 
-            /**controles referencias para GPS y brujula */
-            gpsOkRef.current = !!(datosGps && datosGps.lat !== 0);
-            brujulaOkRef.current = typeof headingRaw === 'number';
+        const fallos = [];
 
-            const sistemaOperativoActual = gpsOkRef.current && brujulaOkRef.current;
+        if (!tieneGps) fallos.push(errorGps);
 
-            /** 
-                si sistemaOperativoActual esta ok con los sensores
-                se reincia los valores del estado del mensaje 
-                y la referencia del ultimo mensaje
-            */
+        if (!tieneHeading) fallos.push("Esperando respuesta de la brújula");
 
-            if (sistemaOperativoActual) {
-                
-                setMensajeError(null);
-                setSistemaListo(sistemaOperativoActual);
-                ultimoMensajeRef.current = null;
-                
-            } else {
-
-                let mensajeObjetivo: string | null = null;
-
-                const fallos = [];
-
-                if (!gpsOkRef.current) fallos.push(errorGps);
-
-                if (!brujulaOkRef.current) fallos.push("Esperando respuesta de la brújula");
-
-                mensajeObjetivo = `${fallos.join(' y ')}`;
-
-                if (ultimoMensajeRef.current !== mensajeObjetivo) {
-                    ultimoMensajeRef.current = mensajeObjetivo;
-                    setMensajeError(mensajeObjetivo);
-                    setSistemaListo(sistemaOperativoActual);
-                }
-                
-                
-            }
-        };
-
-        window.addEventListener('heading-update', validacionErroresSensores);
-        return () => window.removeEventListener('heading-update', validacionErroresSensores);
-    }, []);
+        return fallos.length > 0 ? fallos.join(' y ') : MENSAJE_INICIAL;;
+    }
 
     return { 
-        mensajeError,
-        sistemaListo,
-        gpsOkRef,
-        brujulaOkRef 
+        mensajeError: obtenerMensaje(),
+        sistemaListo 
     };
 };
