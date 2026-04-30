@@ -3,9 +3,11 @@ import styles from './MapLibre.module.css';
 
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
-import { useMapa } from './hooks/useMap'; 
-import { useNavigation } from './hooks/useNavegation';
+import { useMapa } from './hooks/useMap';
+import { useSensorManager } from './hooks/useSensorManager'; 
 import { useSensorError } from './hooks/useSensorError';
+import { useNavigation } from './hooks/useNavegation';
+import { useMapUserUpdate } from './hooks/useMapUserUpdate';
 
 
 // --- SERVICIOS Y TIPOS ---
@@ -20,50 +22,40 @@ import { ConfirmButton } from './components/BtnRevision';
 
 
 export const MapLibre: React.FC = () => {
+
+  //activando sensores gps y brujula
+  useSensorManager();
+
+  const { mensajeError, sistemaListo } = useSensorError();
+
   const mapDivRef = useRef<HTMLDivElement>(null);
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const { mensajeError, sistemaListo } = useSensorError();
+  
 
-  // Referencia para la brújula (actualizada por el navOrchestrator a 60fps)
   const compassRef = useRef<CompassHandle>(null);
-  
-  const [displayError, setDisplayError] = useState<string | null>(null);
-
-  const mensajeErrorRef = useRef<string | null>(null);
-
-  const sistemaListoRefGlobal = useRef<boolean>(false);
-
-  useEffect(() => {
-      sistemaListoRefGlobal.current = sistemaListo;
-  }, [sistemaListo]);
-  
 
   // 1. Callback de click en punto (se pasa al orquestador a través del hook)
   const handlePointClick = useCallback((datos: SidebarData) => {
     
-    if (!sistemaListoRefGlobal.current) {
-        console.warn("Bloqueado: Sensores no listos");
-        return; 
+    if (!sistemaListo) {
+      console.warn("Interacción bloqueada: Sensores no listos");
+      return; 
     }
     
     setDetallePunto(datos);
     setIsSidebarOpen(true);
-  }, []);
+
+  }, [sistemaListo]);
 
   // 2. Inicialización del nuevo Hook de Mapa
-  const { inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
+  const { map: mapInstance, inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
+
+  useMapUserUpdate(mapInstance, sistemaListo);
 
   // Sincronizamos el ref de mensaje para el callback de click
-  useEffect(() => {
-
-    mensajeErrorRef.current = mensajeError;
-
-    if (mensajeError) setDisplayError(mensajeError);
-    
-
-  }, [mensajeError]);
+  
   
   // 3. Activación del Hook de Navegación
   // Se encarga de encender/apagar el navOrchestrator automáticamente
@@ -142,9 +134,9 @@ useEffect(() => {
       </div>
     </div>
 
-    <div className={`${styles.snackbar} ${mensajeError ? styles.snackbarActive : ''}`}>
+    <div className={`${styles.snackbar} ${mensajeError ? styles.show : ''}`}>
       {/* Mostramos el mensaje actual o el último conocido para que no desaparezca el texto antes que el cuadro */}
-      {mensajeError || displayError}
+      {mensajeError}
     </div>
 
   </div>

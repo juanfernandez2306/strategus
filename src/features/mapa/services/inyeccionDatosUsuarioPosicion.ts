@@ -46,16 +46,7 @@ export const startLocationSource = (
                 errores.push("Señal GPS débil (>20m)");
             }
 
-            if (errores.length > 0) {
-                // Unimos los errores con tu separador anterior "|"
-                const mensajeFinal = errores.join(" | ");
-
-                errorGps = mensajeFinal;
-                
-                if (!estaDentro) return; 
-            }
-
-            
+            errorGps = errores.length > 0 ? errores.join(" | ") : null;
 
             ultimaPos = { lng: longitude, lat: latitude, accuracy: accuracy };
 

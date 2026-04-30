@@ -9,7 +9,8 @@ import { type SidebarData, type RespuestaGeoJsonSidebarData } from '../../../typ
 import { inicializarMapa } from '../services/instanciarMapa';
 import { configurarCapasBase as configurarInfraestructura } from '../services/capasVectorTilesMapa';
 import { configurarUserLocation } from '../services/capaUserLocation';
-import { setupUserTracking } from './userLocationOrchestrator.ts';
+
+import { userGeoJSON } from '../services/instaciarSimbologiaUsuario.ts';
 import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
 
 /**
@@ -62,22 +63,9 @@ export const iniciarServicioMapa = async (
 
     // 1. Instancia base
     const map = inicializarMapa(contenedor);
+    
+    let mapaRemovido = false;
 
-    // VARIABLE PARA LIMPIEZA ACCESIBLE DESDE EL INICIO
-    let limpiarSensores: (() => void) | null = null;
-
-    let mapaRemovido = false; // Bandera de seguridad
-
-    // 2. Referencia única para el GeoJSON del usuario
-    // Se pasa por referencia a los servicios para que todos hablen del mismo objeto
-    const userGeoJSON = {
-        type: 'FeatureCollection',
-        features: [{
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [0, 0] },
-            properties: { heading: 0, precision: 1 }
-        }]
-    };
 
     map.on('load', async () => {
 
@@ -91,9 +79,6 @@ export const iniciarServicioMapa = async (
         // B. Configurar Capa Visual del Usuario (Punto, Flecha, Halo)
         configurarUserLocation(map, userGeoJSON);
 
-        // C. Encender Sensores (GPS + Brújula)
-        // Guardamos el "detonador" de apagado
-        limpiarSensores = setupUserTracking(map, userGeoJSON);
 
         // D. Cargar Capas Dinámicas (Datos de IndexedDB)
         const dbData = await datosGeoJsonSidebarData();
@@ -106,13 +91,11 @@ export const iniciarServicioMapa = async (
 
     map.on('remove', () => {
 
-        mapaRemovido = true; // Marcamos que el mapa ya no existe
+        mapaRemovido = true;
 
-        // E. Limpieza Automática
-        if (limpiarSensores) {
-            limpiarSensores();
-            console.log("Orquestador: Sensores apagados por remoción de mapa.");
-        }
+        console.log("Se desmonto el mapa");
+
+        
     });
 
     return map;

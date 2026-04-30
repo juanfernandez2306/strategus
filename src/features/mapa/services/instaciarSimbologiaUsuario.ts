@@ -3,7 +3,7 @@ import { navService } from '../../../services/sensors/brujula/navigation.ts';
 
 let haRealizadoPrimerVuelo = false;
 
-const userGeoJSON = {
+export const userGeoJSON = {
     type: 'FeatureCollection' as const,
     features: [{
         type: 'Feature' as const,
