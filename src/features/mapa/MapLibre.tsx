@@ -134,8 +134,7 @@ useEffect(() => {
       </div>
     </div>
 
-    <div className={`${styles.snackbar} ${mensajeError ? styles.show : ''}`}>
-      {/* Mostramos el mensaje actual o el último conocido para que no desaparezca el texto antes que el cuadro */}
+    <div className={`${styles.snackbarError} ${mensajeError ? styles.visible : styles.hidden}`}>
       {mensajeError}
     </div>
 

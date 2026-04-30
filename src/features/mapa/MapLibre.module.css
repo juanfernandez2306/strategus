@@ -78,34 +78,39 @@
 }
 
 /* --- Snackbar de Error --- */
-.snackbar {
-  width: 90%;
-  position: fixed;
-  bottom: 20px;
+.snackbarError {
+  position: absolute;
+  bottom: 30px; /* Separación del borde inferior */
   left: 50%;
-  transform: translateX(-50%) translateY(100px); /* Empieza abajo, fuera de vista */
-  background-color: #d32f2f;
+  transform: translate(-50%, 100px); /* Empieza fuera de la pantalla (abajo) */
+  width: 90%;
+  max-width: 500px;
+  background-color: rgba(220, 53, 69, 0.95); /* Rojo semi-transparente */
   color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: bold;
-  z-index: 200;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
   
   /* Transición suave */
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.4s ease;
   opacity: 0;
-  visibility: hidden;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              opacity 0.3s ease, 
-              visibility 0.4s;
+  z-index: 2000; /* Por encima del mapa (z-index 1) y del drawer (z-index 100) */
+  pointer-events: none;
 }
 
-/* Clase activa para mostrar el error */
-.snackbarActive {
-  transform: translateX(-50%) translateY(0); /* Sube a su posición original */
+.visible {
   opacity: 1;
-  visibility: visible;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              opacity 0.3s ease, 
-              visibility 0s; /* Aparece al instante */
+  transform: translate(-50%, 0); /* Sube a su posición */
+  pointer-events: auto;
+}
+
+.hidden {
+  opacity: 0;
+  transform: translate(-50%, 100px); /* Baja y desaparece */
+  pointer-events: none;
 }

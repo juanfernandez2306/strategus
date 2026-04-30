@@ -24,15 +24,26 @@ export const useSensorStore = create<SensorState>((set) => ({
     errorGps: null,
     canUpdate: false,
 
-    updateLocation: (lng, lat, accuracy) => 
-        set({ lng, lat, accuracy }),
-    
-    updateHeading: (headingRaw) => 
-        set({ headingRaw }),
-    
-    setGpsError: (errorGps) => 
-        set({ errorGps }),
+    updateLocation: (lng, lat, accuracy) => {
 
-    setCanUpdate: (canUpdate) =>
-        set({canUpdate}),
+        set({ lng, lat, accuracy })
+
+    },
+    
+    updateHeading: (headingRaw) => {
+
+        set({ headingRaw })
+    },
+    
+    setGpsError: (errorGps) => {
+
+        set({ errorGps })
+    },
+
+    setCanUpdate: (canUpdate) => {
+
+        set({canUpdate})
+        
+    },
+
 }));
