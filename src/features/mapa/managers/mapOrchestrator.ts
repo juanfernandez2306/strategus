@@ -69,7 +69,7 @@ export const iniciarServicioMapa = async (
 
     map.on('load', async () => {
 
-        console.log("Orquestador: Mapa cargado, iniciando sensores...");
+        console.log("Orquestador: Mapa cargado");
 
         // Si el usuario ya cerró el mapa, no hagas nada más
         if (mapaRemovido) return;
