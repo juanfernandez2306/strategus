@@ -3,39 +3,48 @@ import { useSensorStore } from './useSensorStore';
 import { updateUserVisuals } from '../services/instaciarSimbologiaUsuario';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 
+// useMapUserUpdate.ts
 export const useMapUserUpdate = (
     mapInstance: MapLibreMap | null, 
-    sistemaListo: boolean
+    sistemaListo: boolean,
+    mensajeError: string | null // <-- Pasamos el mensaje de error aquí
 ) => {
-    
-    const lat = useSensorStore(s => s.lat);
-    const lng = useSensorStore(s => s.lng);
-    const accuracy = useSensorStore(s => s.accuracy);
-    const headingRaw = useSensorStore(s => s.headingRaw);
+    const { lat, lng, accuracy, headingRaw } = useSensorStore();
 
     useEffect(() => {
-
-        if (!mapInstance || !mapInstance.getStyle()) return;
-
-        // Control de visibilidad atómico
-        const visibility = sistemaListo ? 'visible' : 'none';
+        // 1. Validación de seguridad: Si no hay mapa o el estilo está roto, abortar.
+        if (!mapInstance) return;
         
-        // Lista de capas que conforman la simbología del usuario
-        const layers = ['user-pos-layer', 'user-arrow-layer', 'user-halo-layer'];
-        
-        layers.forEach(layerId => {
-
-            if (mapInstance.getLayer(layerId)) {
-                mapInstance.setLayoutProperty(layerId, 'visibility', visibility);
+        try {
+            // Verificación profunda de MapLibre
+            if (!mapInstance.getStyle() || !mapInstance.isStyleLoaded()) {
+                return; 
             }
 
-        });
+            // 2. Condición de visibilidad: 
+            // Mostramos SOLO si el sistema está listo Y no hay mensajes de error críticos
+            const mostrarSimbolo = sistemaListo && !mensajeError && lat !== 0;
+            const visibility = mostrarSimbolo ? 'visible' : 'none';
+            
+            const layers = ['user-heading-arrow', 'user-halo', 'user-dot'];
+            
+            layers.forEach(layerId => {
+                if (mapInstance.getLayer(layerId)) {
+                    mapInstance.setLayoutProperty(layerId, 'visibility', visibility);
+                } else {
+                    console.warn(`[Hook] Capa no encontrada: ${layerId}`);
+                }
+            });
 
-        
-        if (sistemaListo) {
+            // 3. Si todo está ok, actualizamos posición
+            if (mostrarSimbolo) {
+                updateUserVisuals(mapInstance, lng, lat, accuracy, headingRaw);
+            }
 
-            updateUserVisuals(mapInstance, lng, lat, accuracy, headingRaw);
+        } catch (err) {
+            // Captura el error "There is no style added to the map" de tus logs
+            console.log("Esperando estabilidad del mapa...");
         }
 
-    }, [mapInstance, lat, lng, accuracy, headingRaw, sistemaListo]);
+    }, [mapInstance, lat, lng, accuracy, headingRaw, sistemaListo, mensajeError]);
 };

@@ -24,9 +24,11 @@ export const updateUserVisuals = (
 
     const source = map.getSource('user-pos-source') as GeoJSONSource;
 
-    if (!source || !map.getStyle()) return;
+    if (!map || typeof map.getStyle !== 'function' || !map.getStyle()) {
+        return; 
+    }
 
-
+    if (!source || (lng === 0 && lat === 0)) return;
 
     const headingParaMapa = (headingRaw !== null) 
         ? navService.procesarHeading(headingRaw) 
@@ -37,7 +39,7 @@ export const updateUserVisuals = (
     userGeoJSON.features[0].properties.heading = headingParaMapa; 
     source.setData(userGeoJSON);
 
-    if (!haRealizadoPrimerVuelo ) { 
+    if (!haRealizadoPrimerVuelo && lng !== 0 ) { 
         map.flyTo({
             center: [lng, lat],
             zoom: 18,

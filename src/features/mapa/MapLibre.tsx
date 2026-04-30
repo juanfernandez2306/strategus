@@ -7,7 +7,7 @@ import { useMapa } from './hooks/useMap';
 import { useSensorManager } from './hooks/useSensorManager'; 
 import { useSensorError } from './hooks/useSensorError';
 import { useNavigation } from './hooks/useNavegation';
-import { useMapUserUpdate } from './hooks/useMapUserUpdate';
+
 
 
 // --- SERVICIOS Y TIPOS ---
@@ -50,15 +50,8 @@ export const MapLibre: React.FC = () => {
   }, [sistemaListo]);
 
   // 2. Inicialización del nuevo Hook de Mapa
-  const { map: mapInstance, inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
+  const { inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
 
-  useMapUserUpdate(mapInstance, sistemaListo);
-
-  // Sincronizamos el ref de mensaje para el callback de click
-  
-  
-  // 3. Activación del Hook de Navegación
-  // Se encarga de encender/apagar el navOrchestrator automáticamente
   useNavigation(
     detallePunto?.lat ?? null,
     detallePunto?.lng ?? null,

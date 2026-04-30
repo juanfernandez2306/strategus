@@ -13,6 +13,9 @@ import { configurarUserLocation } from '../services/capaUserLocation';
 import { userGeoJSON } from '../services/instaciarSimbologiaUsuario.ts';
 import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
 
+import { useSensorStore } from '../hooks/useSensorStore';
+import { updateUserVisuals } from '../services/instaciarSimbologiaUsuario.ts';
+
 /**
  * Obtiene y transforma los datos de la DB local
  */
@@ -63,6 +66,8 @@ export const iniciarServicioMapa = async (
 
     // 1. Instancia base
     const map = inicializarMapa(contenedor);
+
+    let unsubSensor: (() => void) | null = null;
     
     let mapaRemovido = false;
 
@@ -80,18 +85,39 @@ export const iniciarServicioMapa = async (
         configurarUserLocation(map, userGeoJSON);
 
 
+        unsubSensor = useSensorStore.subscribe((state) => {
+            try {
+                    updateUserVisuals(
+                        map, 
+                        state.lng, 
+                        state.lat, 
+                        state.accuracy, 
+                        state.headingRaw
+                    );
+                } catch (e) {
+                    // Si el mapa se está desmontando, fallará silenciosamente aquí
+                    console.log("fallo actualizacion de punto");
+                }
+        });
+
+
         // D. Cargar Capas Dinámicas (Datos de IndexedDB)
         const dbData = await datosGeoJsonSidebarData();
+
+        if (mapaRemovido || !map.getStyle()) return;
         // Aquí llamarías a tu función de clústeres si la tienes separada
         configurarClusteresEnMapa(map, dbData, onPointClick);
 
-        
-        
     });
 
     map.on('remove', () => {
 
         mapaRemovido = true;
+
+        if (unsubSensor) {
+            unsubSensor(); // <-- ESTO ES VITAL para no saturar la memoria
+            console.log("Suscripción de sensores liberada");
+        }
 
         console.log("Se desmonto el mapa");
 

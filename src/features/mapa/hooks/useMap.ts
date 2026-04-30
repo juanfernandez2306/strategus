@@ -56,7 +56,6 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
     return { 
         inicializarMapa,
         refrescarPunto,  
-        mapaInstancia: mapRef.current,
-        map: mapInstance
+        mapInstance
     };
 };
