@@ -8,12 +8,14 @@ interface SensorState {
     headingRaw: number | null;
     errorGps: string | null;
     canUpdate: boolean;
+    haRealizadoPrimerVuelo: boolean;
 
     // Acciones para actualizar el estado
     updateLocation: (lng: number, lat: number, accuracy: number) => void;
     updateHeading: (heading: number | null) => void;
     setGpsError: (error: string | null) => void;
     setCanUpdate: (canUpdate: boolean) => void;
+    setHaRealizadoPrimerVuelo: (val: boolean) => void;
 }
 
 export const useSensorStore = create<SensorState>((set) => ({
@@ -23,6 +25,7 @@ export const useSensorStore = create<SensorState>((set) => ({
     headingRaw: null,
     errorGps: null,
     canUpdate: false,
+    haRealizadoPrimerVuelo: false,
 
     updateLocation: (lng, lat, accuracy) => {
 
@@ -44,6 +47,10 @@ export const useSensorStore = create<SensorState>((set) => ({
 
         set({canUpdate})
         
+    },
+
+    setHaRealizadoPrimerVuelo: (haRealizadoPrimerVuelo) => {
+        set({haRealizadoPrimerVuelo})
     },
 
 }));

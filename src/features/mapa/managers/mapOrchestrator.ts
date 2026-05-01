@@ -84,15 +84,19 @@ export const iniciarServicioMapa = async (
         // B. Configurar Capa Visual del Usuario (Punto, Flecha, Halo)
         configurarUserLocation(map, userGeoJSON);
 
-
         unsubSensor = useSensorStore.subscribe((state) => {
             try {
+                
+                console.log('console log en map', state.haRealizadoPrimerVuelo);
+
                     updateUserVisuals(
                         map, 
                         state.lng, 
                         state.lat, 
                         state.accuracy, 
-                        state.headingRaw
+                        state.headingRaw,
+                        state.haRealizadoPrimerVuelo,
+                        state.setHaRealizadoPrimerVuelo
                     );
                 } catch (e) {
                     // Si el mapa se está desmontando, fallará silenciosamente aquí
@@ -113,6 +117,8 @@ export const iniciarServicioMapa = async (
     map.on('remove', () => {
 
         mapaRemovido = true;
+
+        useSensorStore.getState().setHaRealizadoPrimerVuelo(false);
 
         if (unsubSensor) {
             unsubSensor(); // <-- ESTO ES VITAL para no saturar la memoria

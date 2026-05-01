@@ -26,7 +26,7 @@ export const MapLibre: React.FC = () => {
   //activando sensores gps y brujula
   useSensorManager();
 
-  const { mensajeError, sistemaListo } = useSensorError();
+  const { mensajeError } = useSensorError();
 
   const mapDivRef = useRef<HTMLDivElement>(null);
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
@@ -36,10 +36,13 @@ export const MapLibre: React.FC = () => {
 
   const compassRef = useRef<CompassHandle>(null);
 
+
   // 1. Callback de click en punto (se pasa al orquestador a través del hook)
   const handlePointClick = useCallback((datos: SidebarData) => {
+
+    console.log(mensajeError);
     
-    if (!sistemaListo) {
+    if (mensajeError) {
       console.warn("Interacción bloqueada: Sensores no listos");
       return; 
     }
@@ -47,7 +50,7 @@ export const MapLibre: React.FC = () => {
     setDetallePunto(datos);
     setIsSidebarOpen(true);
 
-  }, [sistemaListo]);
+  }, []);
 
   // 2. Inicialización del nuevo Hook de Mapa
   const { inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
@@ -62,11 +65,18 @@ useEffect(() => {
 
     let instanciaMapaLocal: MapLibreMap | null = null;
 
+    let cancelado = false;
+
     const montarSistema = async () => {
 
       if (!mapDivRef.current) return;
 
       const mapa = await inicializarMapa(mapDivRef.current);
+
+      if (!mapa || cancelado) {
+                mapa?.remove();
+                return;
+            }
 
       if (mapa) instanciaMapaLocal = mapa;
 
