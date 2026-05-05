@@ -4,8 +4,8 @@ import styles from './MapLibre.module.css';
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
 import { useMapa } from './hooks/useMap';
-import { useSensorManager } from './hooks/useSensorManager'; 
-import { useSensorError } from './hooks/useSensorError';
+// import { useSensorManager } from './hooks/useSensorManager'; 
+// import { useSensorError } from './hooks/useSensorError';
 import { useNavigation } from './hooks/useNavegation';
 
 
@@ -24,9 +24,10 @@ import { ConfirmButton } from './components/BtnRevision';
 export const MapLibre: React.FC = () => {
 
   //activando sensores gps y brujula
-  useSensorManager();
+  // useSensorManager();
 
-  const { mensajeError } = useSensorError();
+  // const { mensajeError } = useSensorError();
+  const mensajeError = "mapa estatico";
 
   const mapDivRef = useRef<HTMLDivElement>(null);
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
@@ -65,7 +66,7 @@ useEffect(() => {
 
     let instanciaMapaLocal: MapLibreMap | null = null;
 
-    let cancelado = false;
+    let componenteMontado = true;
 
     const montarSistema = async () => {
 
@@ -73,10 +74,11 @@ useEffect(() => {
 
       const mapa = await inicializarMapa(mapDivRef.current);
 
-      if (!mapa || cancelado) {
-                mapa?.remove();
-                return;
-            }
+      if (!componenteMontado) {
+        console.log("Abortando: El componente se desmontó antes de que el mapa terminara de cargar");
+        mapa?.remove();
+        return;
+      }
 
       if (mapa) instanciaMapaLocal = mapa;
 
@@ -85,7 +87,11 @@ useEffect(() => {
     montarSistema();
 
     return () => {
-      if (instanciaMapaLocal) instanciaMapaLocal.remove();
+      componenteMontado = false;
+      if (instanciaMapaLocal) {
+        console.log("Limpiando instancia de mapa...");
+        instanciaMapaLocal.remove();
+      };
     };
     
   }, [inicializarMapa]);
