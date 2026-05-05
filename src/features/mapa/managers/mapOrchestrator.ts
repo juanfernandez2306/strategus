@@ -9,14 +9,6 @@ import { type SidebarData, type RespuestaGeoJsonSidebarData } from '../../../typ
 import { inicializarMapa } from '../services/instanciarMapa';
 import { configurarCapasBase as configurarInfraestructura } from '../services/capasVectorTilesMapa';
 
-// import { configurarUserLocation } from '../services/capaUserLocation';
-
-// import { userGeoJSON } from '../services/instaciarSimbologiaUsuario.ts';
-// import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
-
-// import { useSensorStore } from '../hooks/useSensorStore';
-// import { updateUserVisuals } from '../services/instaciarSimbologiaUsuario.ts';
-
 /**
  * Obtiene y transforma los datos de la DB local
  */
@@ -77,41 +69,11 @@ export const iniciarServicioMapa = async (
 
         console.log("Orquestador: Mapa cargado");
 
-        // Si el usuario ya cerró el mapa, no hagas nada más
+        
         if (mapaRemovido) return;
+
         // A. Configurar Infraestructura (Tiles, Lotes, Palmas base)
         configurarInfraestructura(map);
-
-        
-        // configurarUserLocation(map, userGeoJSON);
-
-        // unsubSensor = useSensorStore.subscribe((state) => {
-        //     try {
-                
-        //         console.log('console log en map', state.haRealizadoPrimerVuelo);
-
-        //             updateUserVisuals(
-        //                 map, 
-        //                 state.lng, 
-        //                 state.lat, 
-        //                 state.accuracy, 
-        //                 state.headingRaw,
-        //                 state.haRealizadoPrimerVuelo,
-        //                 state.setHaRealizadoPrimerVuelo
-        //             );
-        //         } catch (e) {
-        //             // Si el mapa se está desmontando, fallará silenciosamente aquí
-        //             console.log("fallo actualizacion de punto");
-        //         }
-        // });
-
-
-        
-        // const dbData = await datosGeoJsonSidebarData();
-
-        // if (mapaRemovido || !map.getStyle()) return;
-        
-        // configurarClusteresEnMapa(map, dbData, onPointClick);
 
     });
 
@@ -119,16 +81,8 @@ export const iniciarServicioMapa = async (
 
         mapaRemovido = true;
 
-        // useSensorStore.getState().setHaRealizadoPrimerVuelo(false);
-
-        // if (unsubSensor) {
-        //     unsubSensor(); // <-- ESTO ES VITAL para no saturar la memoria
-        //     console.log("Suscripción de sensores liberada");
-        // }
-
         console.log("Se desmonto el mapa");
 
-        
     });
 
     return map;
