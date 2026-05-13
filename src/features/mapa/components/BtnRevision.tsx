@@ -1,7 +1,7 @@
 
 import { type SidebarData } from "../../../types";
 import styles from "./BtnRevision.module.css";
-import { useSensorStore } from "../hooks/useSensorStore";
+import { useSensorStore } from "../hooks/useSistemaStore";
 
 export const ConfirmButton = ({ onClick, detallePunto }: { onClick: () => void, detallePunto: SidebarData | null }) => {
   

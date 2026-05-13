@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSensorStore } from './useSensorStore';
+import { useSensorStore } from './useSistemaStore';
 import { updateUserVisuals } from '../services/instaciarSimbologiaUsuario';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 

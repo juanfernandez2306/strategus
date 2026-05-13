@@ -1,4 +1,4 @@
-import { useSensorStore } from './useSensorStore';
+import { useSensorStore } from './useSistemaStore';
 
 export const useSensorError = () => {
     const MENSAJE_INICIAL = "Iniciando sensores y buscando señal GPS...";
