@@ -9,7 +9,7 @@ interface SensorStatusState {
 
 export const useSistemaStore = create<SensorStatusState>((set) => ({
     sistemaListo: false,
-    mensajeError: null,
+    mensajeError: "Iniciando sensores...",
     setSistemaListo: (sistemaListo) => set({ sistemaListo }),
     setMensajeError: (mensajeError) => set({ mensajeError }),
 }));

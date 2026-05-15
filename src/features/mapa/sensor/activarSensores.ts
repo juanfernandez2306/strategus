@@ -10,8 +10,7 @@ export const iniciarSensores = (
         accuracy: number | null, 
         error: string | null }) => void,
     onUpdateHeading: (data: {
-        heading: number | null,
-        accuracy: number | null
+        heading: number | null
     }) => void,
     activarOrientacion: boolean = true
 ) => {
@@ -23,7 +22,7 @@ export const iniciarSensores = (
     watchGpsId = iniciarSeguimiento(
         (pos) => {
             const { latitude, longitude, accuracy } = pos.coords;
-
+            
             onUpdateGPS({
                 lng: longitude,
                 lat: latitude,
@@ -64,11 +63,15 @@ export const iniciarSensores = (
 
     if (activarOrientacion) {
 
-        desactivaOrientacion = watchOrientacionRaw((raw) => {
+        desactivaOrientacion = watchOrientacionRaw((data) => {
+
+            if (!data || data.heading === null) {
+                onUpdateHeading({ heading: null });
+                return;
+            }
 
             onUpdateHeading({
-                heading:raw.heading,
-                accuracy: raw.accuracy
+                heading: data.heading
             });
 
         });

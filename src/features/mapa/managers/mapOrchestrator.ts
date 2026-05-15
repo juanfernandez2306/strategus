@@ -8,6 +8,8 @@ import { type SidebarData, type RespuestaGeoJsonSidebarData } from '../../../typ
 // Importaciones de la Feature Mapa (Las piezas que creamos)
 import { inicializarMapa } from '../services/instanciarMapa';
 import { configurarCapasBase as configurarInfraestructura } from '../services/capasVectorTilesMapa';
+import { configurarUserLocation } from '../services/capaUserLocation';
+import { userGeoJSON } from '../services/instaciarSimbologiaUsuario';
 
 /**
  * Obtiene y transforma los datos de la DB local
@@ -53,8 +55,7 @@ export const datosGeoJsonSidebarData = async (): Promise<RespuestaGeoJsonSidebar
  * Función principal que tu componente llamará en el useEffect
  */
 export const iniciarServicioMapa = async (
-    contenedor: HTMLDivElement,
-    // onPointClick: (datos: SidebarData) => void
+    contenedor: HTMLDivElement
 ): Promise<MapLibreMap> => {
 
     // 1. Instancia base
@@ -74,6 +75,8 @@ export const iniciarServicioMapa = async (
 
         // A. Configurar Infraestructura (Tiles, Lotes, Palmas base)
         configurarInfraestructura(map);
+
+        configurarUserLocation(map, userGeoJSON);
 
     });
 

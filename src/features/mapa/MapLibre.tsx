@@ -4,8 +4,8 @@ import styles from './MapLibre.module.css';
 
 // --- NUEVOS HOOKS REFACTORIZADOS ---
 import { useMapa } from './hooks/useMap';
-// import { useSensorManager } from './hooks/useSensorManager'; 
-// import { useSensorError } from './hooks/useSensorError';
+import { useSensorManager } from './sensor/useSensorManager';
+import { useSistemaStore } from './hooks/useSistemaStore';
 import { useNavigation } from './hooks/useNavegation';
 
 
@@ -20,14 +20,16 @@ import { type Map as MapLibreMap } from 'maplibre-gl';
 
 import { ConfirmButton } from './components/BtnRevision';
 
+import { useMapSensorSync } from './hooks/useMapUserUpdate';
+
 
 export const MapLibre: React.FC = () => {
 
   //activando sensores gps y brujula
-  // useSensorManager();
+  useSensorManager();
 
-  // const { mensajeError } = useSensorError();
-  const mensajeError = "mapa estatico";
+  const sistemaListo = useSistemaStore((s) => s.sistemaListo);
+  const mensajeError = useSistemaStore((s) => s.mensajeError);
 
   const mapDivRef = useRef<HTMLDivElement>(null);
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
@@ -37,13 +39,13 @@ export const MapLibre: React.FC = () => {
 
   const compassRef = useRef<CompassHandle>(null);
 
+  const sistemaListoRef = useRef(sistemaListo);
+  useEffect(() => { sistemaListoRef.current = sistemaListo; }, [sistemaListo]);
 
-  // 1. Callback de click en punto (se pasa al orquestador a través del hook)
+  
   const handlePointClick = useCallback((datos: SidebarData) => {
-
-    console.log(mensajeError);
     
-    if (mensajeError) {
+    if (!sistemaListoRef.current) {
       console.warn("Interacción bloqueada: Sensores no listos");
       return; 
     }
@@ -54,8 +56,10 @@ export const MapLibre: React.FC = () => {
   }, []);
 
   // 2. Inicialización del nuevo Hook de Mapa
-  const { inicializarMapa, refrescarPunto } = useMapa(handlePointClick);
+  const { inicializarMapa, refrescarPunto, mapInstance } = useMapa(handlePointClick);
 
+  useMapSensorSync(mapInstance, sistemaListo);
+  
   useNavigation(
     detallePunto?.lat ?? null,
     detallePunto?.lng ?? null,

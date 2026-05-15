@@ -1,7 +1,7 @@
 import { validarPuntoEnArea } from "../../../services/sensors/gps/utils";
 import { CONFIG_ENVOLVENTE_MIN_AREA_TRABAJO } from "../../../data/finca/limites";
 
-type GpsData = { lng: number, lat: number };
+type GpsData = { lng: number, lat: number, accuracy: number };
 type HeadingData = { heading: number };
 
 // Mapa de eventos para vincular el nombre con su estructura de datos
@@ -81,18 +81,12 @@ export const headingErrorMessage = (headingData: any): string | null => {
 
     }
 
-    if (typeof headingData.accuracy === 'number' && headingData.accuracy > 20){
-
-        return "Realizar calibración de la brujula en forma de 8 en aire";
-
-    }
-
     return null
 }
 
 export const haSuperadoUmbralHeading = (
     oldHeading: number, 
-    newHeading: number) => {
+    newHeading: number): boolean => {
     
         let diferencia = Math.abs(oldHeading - newHeading);
 
@@ -101,8 +95,5 @@ export const haSuperadoUmbralHeading = (
         }
 
         return (diferencia > 3);
-
-        
-
 
 }

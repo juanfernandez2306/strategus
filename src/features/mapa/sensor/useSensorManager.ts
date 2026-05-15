@@ -12,9 +12,10 @@ import {
 
 export const useSensorManager = () => {
 
-    let ultimaPosicionRef = useRef<{ lng: number; lat: number }>({
+    let ultimaPosicionRef = useRef<{ lng: number; lat: number, accuracy: number }>({
         lng: 0, 
-        lat: 0 
+        lat: 0,
+        accuracy: 999
     });
 
     let ultimoMensajeErrorGps = useRef<string | null>(null);
@@ -60,9 +61,11 @@ export const useSensorManager = () => {
                     ultimoMensajeErrorGps.current = mensajeGPSerrorActual
                 }
                 
-                const { lng, lat } = gps;
+                const { lng, lat, accuracy } = gps;
 
-                const gpsSaludable = (mensajeGPSerrorActual === null && lng !== null && lat !== null);
+                console.log(lng, lat, accuracy, "valores de useSensorManager");
+
+                const gpsSaludable = (mensajeGPSerrorActual === null && lng !== null && lat !== null && accuracy !== null);
 
                 if (statusGpsOkRef.current !== gpsSaludable) {
                     statusGpsOkRef.current = gpsSaludable;
@@ -83,9 +86,13 @@ export const useSensorManager = () => {
 
                 if (haSuperadoUmbralValue) {
 
-                    ultimaPosicionRef.current = { lng, lat };
+                    console.log("valor del umbral", haSuperadoUmbralValue);
 
-                    dispatchSensorEvent('sensorUpdateGPS', { lng, lat });
+                    ultimaPosicionRef.current = { lng, lat, accuracy };
+
+                    console.log("se esta disparando el evento", lng, lat, accuracy)
+
+                    dispatchSensorEvent('sensorUpdateGPS', { lng, lat, accuracy });
 
                 }
                 
@@ -105,12 +112,11 @@ export const useSensorManager = () => {
                     ultimoMensajeErrorHeading.current = mensajeHeadingActual
                 }
 
-                const { heading, accuracy } = rawHeadingData;
+                const { heading } = rawHeadingData;
 
                 const headingSaludable = (
                     mensajeHeadingActual === null && 
-                    heading !== null && 
-                    accuracy !== null
+                    heading !== null 
                 );
 
                 if (statusHeadingOkRef.current !== headingSaludable){

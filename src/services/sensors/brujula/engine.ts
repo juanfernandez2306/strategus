@@ -1,9 +1,17 @@
-export const watchOrientacionRaw = (onHeadingUpdate: (heading: number | null) => void) => {
+export const watchOrientacionRaw = (
+    onHeadingUpdate: (
+        data: { 
+            heading: number | null, 
+            }) => void
+) => {
     
 
     const handleOrientation = (e: any) => {
         const directo = e.webkitCompassHeading || e.alpha;
-        onHeadingUpdate(directo); 
+        
+        onHeadingUpdate({
+            heading: directo,
+        });
 
     };
 

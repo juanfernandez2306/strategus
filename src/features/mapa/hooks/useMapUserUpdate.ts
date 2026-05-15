@@ -1,50 +1,55 @@
 import { useEffect } from 'react';
-import { useSensorStore } from './useSistemaStore';
-import { updateUserVisuals } from '../services/instaciarSimbologiaUsuario';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 
-// useMapUserUpdate.ts
-export const useMapUserUpdate = (
-    mapInstance: MapLibreMap | null, 
-    sistemaListo: boolean,
-    mensajeError: string | null // <-- Pasamos el mensaje de error aquí
+/**
+ * Hook que sincroniza los eventos de hardware con la visualización del mapa
+ * sin provocar re-renders en el componente principal.
+ */
+export const useMapSensorSync = (
+    mapInstance: MapLibreMap | null,
+    sistemaListo: boolean
 ) => {
-    const { lat, lng, accuracy, headingRaw } = useSensorStore();
-
     useEffect(() => {
-        // 1. Validación de seguridad: Si no hay mapa o el estilo está roto, abortar.
-        if (!mapInstance) return;
+
         
-        try {
-            // Verificación profunda de MapLibre
-            if (!mapInstance.getStyle() || !mapInstance.isStyleLoaded()) {
-                return; 
-            }
 
-            // 2. Condición de visibilidad: 
-            // Mostramos SOLO si el sistema está listo Y no hay mensajes de error críticos
-            const mostrarSimbolo = sistemaListo && !mensajeError && lat !== 0;
-            const visibility = mostrarSimbolo ? 'visible' : 'none';
+        if (!mapInstance || !sistemaListo) return;
+
+        console.log("map instance listo y sistema listo");
+
+        // Referencias locales para mantener el último estado conocido
+        let lastLat = 0;
+        let lastLng = 0;
+        let lastAccuracy = 999;
+        let lastHeading = 0;
+
+        const handleGpsUpdate = (e: any) => {
+            const { lat, lng, accuracy } = e.detail;
+            lastLat = lat;
+            lastLng = lng;
+            lastAccuracy = accuracy;
+
+            console.log("enviando datos", lastLat, lastLng, lastAccuracy)
             
-            const layers = ['user-heading-arrow', 'user-halo', 'user-dot'];
+           
+        };
+
+        const handleHeadingUpdate = (e: any) => {
+            const { heading } = e.detail;
+            lastHeading = heading;
             
-            layers.forEach(layerId => {
-                if (mapInstance.getLayer(layerId)) {
-                    mapInstance.setLayoutProperty(layerId, 'visibility', visibility);
-                } else {
-                    console.warn(`[Hook] Capa no encontrada: ${layerId}`);
-                }
-            });
+            // Si ya tenemos una posición, actualizamos el rumbo
+            
+        };
 
-            // 3. Si todo está ok, actualizamos posición
-            if (mostrarSimbolo) {
-                updateUserVisuals(mapInstance, lng, lat, accuracy, headingRaw);
-            }
+        
+        window.addEventListener('sensorUpdateGPS' as any, handleGpsUpdate);
+        window.addEventListener('sensorUpdateHeading' as any, handleHeadingUpdate);
 
-        } catch (err) {
-            // Captura el error "There is no style added to the map" de tus logs
-            console.log("Esperando estabilidad del mapa...");
-        }
+        return () => {
+            window.removeEventListener('sensorUpdateGPS' as any, handleGpsUpdate);
+            window.removeEventListener('sensorUpdateHeading' as any, handleHeadingUpdate);
+        };
 
-    }, [mapInstance, lat, lng, accuracy, headingRaw, sistemaListo, mensajeError]);
+    }, [mapInstance, sistemaListo]);
 };

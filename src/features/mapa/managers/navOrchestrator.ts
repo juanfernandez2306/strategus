@@ -1,6 +1,6 @@
 import { navService } from '../../../services/sensors/brujula/navigation';
 import { type CompassHandle } from '../../../components/Compass';
-import { useSensorStore } from '../hooks/useSistemaStore';
+
 
 /**
  * Orquesta la actualización de la brújula visual y la lógica de proximidad.
@@ -12,7 +12,15 @@ export const setupNavOrchestrator = (
     hasVibratedRef: { current: boolean }
 ) => {
 
-    const { lat, lng, headingRaw, setCanUpdate } = [0, 0, null, false];
+    const { lat, lng, headingRaw, setCanUpdate } = { 
+    lat: 0, 
+    lng: 0, 
+    headingRaw: null as number | null, // Especificamos el tipo para evitar 'never'
+    setCanUpdate: (value: boolean): void => {
+        // Aquí es donde realizarías la acción, por ejemplo, actualizar una Ref o un Estado
+        console.log("Actualización permitida:", value);
+    } 
+};
 
     if (lat === 0 || headingRaw === null) {
         setCanUpdate(false);

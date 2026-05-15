@@ -1,14 +1,6 @@
 import { useState } from "react";
 import type { ReactNode, FormEvent } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
-import style from '../components/FormLayoutBase.module.css';
+import style from './FormLayoutBase.module.css';
 
 interface FormBaseProps {
   titulo: string;
@@ -17,7 +9,6 @@ interface FormBaseProps {
   iconoCustom: ReactNode;
   onExecute: () => Promise<string>; 
   onSuccess?: () => void;
-  // PROPIEDAD OPCIONAL (El signo '?' es la clave)
   disabled?: boolean;
 }
 
@@ -52,7 +43,7 @@ const FormBaseLayout = ({
     }
   };
 
-  const showModal = isSubmitting || !!mensaje;
+  const closeModal = () => setMensaje("");
 
   return (
     <div className={style.formContainer}>
@@ -60,19 +51,13 @@ const FormBaseLayout = ({
         <figure className={style.ContainerSvg}>
           {iconoCustom}
         </figure>
-        <Typography 
-          variant="h3" 
-          align="center"
-          sx={{ 
-            fontSize: "1.3rem", 
-            margin: 0,
-            fontWeight: 'bold',
-            color: "var(--color-primario)"
-          }}
-        >
+        
+        <h3 className={style.titulo} style={{ color: "var(--color-primario)", fontWeight: 'bold' }}>
           {titulo}
-        </Typography>  
+        </h3>
+        
         {children}
+        
         <button 
           className={style.submit} 
           type="submit" 
@@ -81,25 +66,36 @@ const FormBaseLayout = ({
         </button>
       </form>
 
-      <Dialog open={showModal} onClose={() => setMensaje("")}>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-          {isSubmitting ? (
-            <>
-              <CircularProgress />
-              <Typography>Procesando información...</Typography>
-            </>
-          ) : (
-            <>
-              {isError ? <ErrorIcon color="error" sx={{ fontSize: 40 }} /> : <CheckCircleIcon color="success" sx={{ fontSize: 40 }} />}
-              <Typography sx={{ color: isError ? "red" : "green" }}>{mensaje}</Typography>
-              <Button 
-                variant="contained" 
-                onClick={() => setMensaje("")} 
-                sx={{ mt: 2 }}>Cerrar</Button>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Modal de Feedback (Sustituye a Dialog) */}
+      {(isSubmitting || !!mensaje) && (
+        <div className={style.modalOverlay}>
+          <div className={style.modalContent}>
+            {isSubmitting ? (
+              <>
+                <div className={style.spinner} />
+                <p>Procesando información...</p>
+              </>
+            ) : (
+              <>
+                {/* Iconos manuales para evitar dependencias */}
+                {isError ? (
+                  <span style={{ fontSize: '40px' }}>⚠️</span>
+                ) : (
+                  <span style={{ fontSize: '40px' }}>✅</span>
+                )}
+                
+                <p className={isError ? style.errorText : style.successText}>
+                  {mensaje}
+                </p>
+                
+                <button className={style.closeButton} onClick={closeModal}>
+                  Cerrar
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

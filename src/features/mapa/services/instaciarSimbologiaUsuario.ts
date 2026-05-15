@@ -1,5 +1,6 @@
 import { type Map as MapLibreMap, type GeoJSONSource } from 'maplibre-gl';
 import { navService } from '../../../services/sensors/brujula/navigation.ts';
+import { useRef } from 'react';
 
 export const userGeoJSON = {
     type: 'FeatureCollection' as const,
@@ -16,11 +17,10 @@ export const updateUserVisuals = (
     lng: number, 
     lat: number, 
     accuracy: number, 
-    headingRaw: number | null,
-    haRealizadoPrimerVuelo: boolean, // <-- Recibido del store
-    setHaRealizadoPrimerVuelo: (val: boolean) => void
+    headingRaw: number | null
 ) => {
 
+    const haRealizadoPrimerVuelo = useRef(false);
 
     const source = map.getSource('user-pos-source') as GeoJSONSource;
 
@@ -39,7 +39,7 @@ export const updateUserVisuals = (
     userGeoJSON.features[0].properties.heading = headingParaMapa; 
     source.setData(userGeoJSON);
 
-    if (!haRealizadoPrimerVuelo && lng !== 0 ) { 
+    if (!haRealizadoPrimerVuelo.current && lng !== 0 ) { 
         map.flyTo({
             center: [lng, lat],
             zoom: 18,
@@ -47,7 +47,8 @@ export const updateUserVisuals = (
             essential: true
         });
         
-        setHaRealizadoPrimerVuelo(true);
+        haRealizadoPrimerVuelo.current =  true;
+
         console.log("Primer centrado de cámara completado.");
     }
 

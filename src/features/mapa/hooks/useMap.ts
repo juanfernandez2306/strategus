@@ -6,6 +6,8 @@ import { type SidebarData } from '../../../types/index.ts';
 import { iniciarServicioMapa, datosGeoJsonSidebarData as obtenerDatosLocalesGeoJson } from '../managers/mapOrchestrator';
 import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
 
+
+
 /**
  * Hook refinado: Actúa como puente entre la UI de React y el Orquestador del Mapa.
  */
@@ -26,7 +28,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
         try {
 
             // El orquestador se encarga de: Instancia, Capas QGIS, Usuario, Sensores y Clústeres.
-            const mapa = await iniciarServicioMapa(contenedor, onPointClick);
+            const mapa = await iniciarServicioMapa(contenedor);
 
             mapRef.current = mapa;
 
@@ -51,6 +53,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
 
         const respuesta = await obtenerDatosLocalesGeoJson();
         configurarClusteresEnMapa(mapRef.current, respuesta, onPointClick);
+
     }, [onPointClick]);
 
     return { 
@@ -58,4 +61,5 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
         refrescarPunto,  
         mapInstance
     };
+    
 };
