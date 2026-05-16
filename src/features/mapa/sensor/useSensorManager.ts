@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { iniciarSensores } from './activarSensores';
 import { useSincronizadorSistema } from './useSincronizadorSistema';
 
@@ -44,7 +44,7 @@ export const useSensorManager = () => {
         errorHeadingRef: ultimoMensajeErrorHeading
     });
 
-    useEffect(() => {
+    const encenderSensores = useCallback(() => {
     
         console.log("Iniciando sensores...");
     
@@ -158,6 +158,10 @@ export const useSensorManager = () => {
 
         };
 
-  }, []);
+  }, [sincronizar]);
+
+  return {
+    encenderSensores
+  }
 
 }

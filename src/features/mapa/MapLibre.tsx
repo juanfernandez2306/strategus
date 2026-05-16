@@ -32,6 +32,7 @@ export const MapLibre: React.FC = () => {
   const mensajeError = useSistemaStore((s) => s.mensajeError);
 
   const mapDivRef = useRef<HTMLDivElement>(null);
+
   const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 

@@ -13,9 +13,11 @@ import ResumenJornadaLayout from './features/resumen/ResumenJornada';
 
 import { NOMBRE_APP } from './data/finca/appConfig';
 
+
 const ScannerJornada = lazy(() => import('./features/qr/ScannerJornada'));
-const MapLibre = lazy(() => 
-    import('./features/mapa/MapLibre').then(module => ({ default: module.MapLibre }))
+
+const MapLibreGL = lazy(() => 
+    import('./features/mapa/MapLibreGL').then(module => ({ default: module.MapLibreGL }))
   );
 
 function App() {
@@ -53,7 +55,7 @@ function App() {
               Inicializando motor de mapas...
             </div>
           }>
-            <MapLibre />
+            <MapLibreGL />
           </Suspense>
         );
       case "Resumen":

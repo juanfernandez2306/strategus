@@ -1,0 +1,109 @@
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { useSistemaStore } from '../hooks/useSistemaStore';
+
+import "maplibre-gl/dist/maplibre-gl.css";
+import { type Map as MapLibreMap } from 'maplibre-gl';
+
+import { type SidebarData } from '../../../types';
+import { useMapa } from '../hooks/useMap';
+
+import { useSensorManager } from '../sensor/useSensorManager';
+
+export const useMapLibreGLmanager = () => {
+    const mapDivRef = useRef<HTMLDivElement>(null);
+    const mensajeError = useSistemaStore((s) => s.mensajeError);
+    const sistemaListo = useSistemaStore((s) => s.sistemaListo);
+
+    /** */
+    const sistemaListoRef = useRef(sistemaListo);
+    useEffect(() => { sistemaListoRef.current = sistemaListo; }, [sistemaListo]);
+
+    const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    
+
+
+    const handlePointClick = useCallback((datos: SidebarData) => {
+        
+        if (!sistemaListoRef.current) {
+          console.warn("Interacción bloqueada: Sensores no listos");
+          return; 
+        }
+        
+        setDetallePunto(datos);
+        setIsSidebarOpen(true);
+    
+      }, []);
+
+    /** */
+    const { inicializarMapa,  } = useMapa(handlePointClick);
+
+    const { encenderSensores } = useSensorManager();
+    
+
+    /** */
+
+    
+
+    /** */
+
+    const instanciaMapaLocalRef = useRef<MapLibreMap | null>(null);
+
+    // Almacenamos la función de apagado de sensores en un Ref para el cleanup asíncrono
+    const apagarSensoresRef = useRef<(() => void) | null>(null);
+
+    useEffect(() => {
+
+        
+        let componenteMontado = true;
+
+        /**inicia funcion de montaje sistema */
+        const montarSistema = async () => {
+
+            if (!mapDivRef.current) return;
+
+            const mapa = await inicializarMapa(mapDivRef.current);
+
+            if (!componenteMontado) {
+                console.log("Abortando: El componente se desmontó antes de que el mapa terminara de cargar");
+                mapa?.remove();
+                return;
+            }
+
+            if (mapa) {
+                instanciaMapaLocalRef.current = mapa;
+                console.log("Componente verificado vivo. Encendiendo sensores...");
+                apagarSensoresRef.current = encenderSensores();
+            }
+
+        };
+
+        /**fin funcion de montaje sistema */
+
+        montarSistema();
+
+        return () => {
+            componenteMontado = false;
+
+            if (apagarSensoresRef.current) {
+                apagarSensoresRef.current();
+                apagarSensoresRef.current = null;
+            }
+
+            if (instanciaMapaLocalRef.current) {
+                console.log("Limpiando instancia de mapa...");
+                instanciaMapaLocalRef.current.remove();
+                instanciaMapaLocalRef.current = null;
+            };
+
+        };
+    
+  }, [inicializarMapa, encenderSensores]);
+
+    return {
+        mapDivRef,
+        mensajeError,
+        detallePunto,
+        isSidebarOpen
+    }
+}
