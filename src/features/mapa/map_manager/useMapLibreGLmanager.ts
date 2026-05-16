@@ -71,9 +71,10 @@ export const useMapLibreGLmanager = () => {
             }
 
             if (mapa) {
+
                 instanciaMapaLocalRef.current = mapa;
-                console.log("Componente verificado vivo. Encendiendo sensores...");
                 apagarSensoresRef.current = encenderSensores();
+
             }
 
         };
@@ -98,7 +99,7 @@ export const useMapLibreGLmanager = () => {
 
         };
     
-  }, [inicializarMapa, encenderSensores]);
+  }, [inicializarMapa]);
 
     return {
         mapDivRef,
@@ -106,4 +107,5 @@ export const useMapLibreGLmanager = () => {
         detallePunto,
         isSidebarOpen
     }
+    
 }
