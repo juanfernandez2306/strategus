@@ -9,14 +9,14 @@ interface TelemetriaState {
     // Estados de control para la localizacion
     posicionGPS: CoordenadasGeograficas;
     esPrecisoGPS: boolean;
-    headingAlfa: number;
+    headingAlfa: number | null;
     
     // Actions (Setters)
     setSistemaListo: (val: boolean) => void;
     setMensajeError: (error: string | null) => void;
     setPosicionGPS: (posicionGPS: CoordenadasGeograficas) => void,
     setEsPrecisoGPS: (esPrecisoGPS: boolean) => void,
-    setHeadingAlfa: (headingAlfa: number) => void,
+    setHeadingAlfa: (headingAlfa: number | null) => void,
 }
 
 export const useSistemaStore = create<TelemetriaState>((set) => ({
@@ -24,7 +24,7 @@ export const useSistemaStore = create<TelemetriaState>((set) => ({
     mensajeError: "Iniciando sensores...",
     posicionGPS: {lng: 0, lat: 0},
     esPrecisoGPS: false,
-    headingAlfa: 0,
+    headingAlfa: null,
 
 
     setSistemaListo: (sistemaListo) => set({ sistemaListo }),

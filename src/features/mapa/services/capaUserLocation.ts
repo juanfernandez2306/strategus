@@ -12,30 +12,30 @@ export const configurarUserLocation = (map: MapLibreMap, initialGeoJSON: any) =>
             type: 'symbol',
             source: 'user-pos-source',
             layout: {
-                'text-field': '▼', // Usamos el triángulo hacia abajo para invertir la posición
+                'text-field': '▲',
                 'text-size': 15,
                 // Sumamos 180 para invertir la dirección si fuera necesario
-                'text-rotate': ['+', ['get', 'heading'], 180], 
+                'text-rotate': ['coalesce', ['get', 'heading'], 0], 
                 'text-rotation-alignment': 'map',
                 'text-allow-overlap': true,
                 'text-ignore-placement': true,
-                'text-offset': [0, 1] // Lo alejamos un poco del centro para que parezca un faro
+                'text-offset': [0, -1] // Lo alejamos un poco del centro para que parezca un faro
             },
             paint: {
                 //'text-color': '#007cff',
                 'text-color': [
-                    'step',
-                    ['get', 'precision'],
+                    'case',
+                    ['get', 'esPreciso'],
                     '#007cff', // Azul si la precisión es buena (< 20m)
-                    20,        // Umbral de precisión
                     '#9e9e9e'  // Gris si la precisión es mala (> 20m)
                 ],
                 'text-halo-color': '#FBF6F6',
                 'text-halo-width': 3,
                 'text-opacity': [
                         'case',
-                        ['==', ['get', 'heading'], 9999], 0, // Si es 9999, invisible
-                        1.0                                // Si es cualquier otro valor, visible
+                        ['==', ['typeof', ['get', 'heading']], 'number'], 
+                        1.0,
+                        0.0  
                     ],
                 'text-halo-blur': 1.5
             }
@@ -48,10 +48,9 @@ export const configurarUserLocation = (map: MapLibreMap, initialGeoJSON: any) =>
             paint: {
                 'circle-radius': 24,
                 'circle-color': [
-                    'step',
-                    ['get', 'precision'],
+                    'case',
+                    ['get', 'esPreciso'],
                     '#007cff', // Color base (buena precisión)
-                    20,        // Umbral
                     '#9e9e9e'  // Color si supera el umbral
                 ],
                 'circle-opacity': 0.3,
@@ -66,13 +65,11 @@ export const configurarUserLocation = (map: MapLibreMap, initialGeoJSON: any) =>
             paint: {
                 'circle-radius': 8,
                 'circle-color': [
-                    'step',
-                    ['get', 'precision'],
+                    'case',
+                    ['get', 'esPreciso'],
                     '#007cff', // Color base (buena precisión)
-                    20,        // Umbral
                     '#9e9e9e'  // Color si supera el umbral
                 ],
-                //'circle-color': '#007cff',
                 'circle-stroke-width': 2,
                 'circle-stroke-color': '#fff'
             }

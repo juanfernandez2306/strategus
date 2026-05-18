@@ -98,7 +98,11 @@ export const useUpdateLocation = ({
 
         const headingRaw = dataHeading.heading;
 
-        if (typeof headingRaw !== 'number') return;
+        if (typeof headingRaw !== 'number'){
+            ultimoHeadingSuavizadoRef.current = null;
+            setHeadingAlfa(null);
+            return
+        };
 
 
         if (ultimoHeadingSuavizadoRef.current === null){

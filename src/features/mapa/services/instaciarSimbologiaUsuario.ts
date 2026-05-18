@@ -7,7 +7,7 @@ export const userGeoJSON = {
     features: [{
         type: 'Feature' as const,
         geometry: { type: 'Point' as const, coordinates: [0, 0] },
-        properties: { heading: 0, precision: 1 }
+        properties: { heading: 0, esPreciso: false }
     }]
 };
 
@@ -16,7 +16,7 @@ export const updateUserVisuals = (
     map: MapLibreMap, 
     lng: number, 
     lat: number, 
-    accuracy: number, 
+    esPrecisoGPS: boolean, 
     headingRaw: number | null
 ) => {
 
@@ -35,7 +35,7 @@ export const updateUserVisuals = (
         : 9999;
 
     userGeoJSON.features[0].geometry.coordinates = [lng, lat];
-    userGeoJSON.features[0].properties.precision = accuracy;
+    userGeoJSON.features[0].properties.esPreciso = esPrecisoGPS;
     userGeoJSON.features[0].properties.heading = headingParaMapa; 
     source.setData(userGeoJSON);
 
