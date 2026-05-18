@@ -29,10 +29,7 @@ export const useUpdateLocation = ({
 
     const esPrimeraPosicionValidaRef = useRef<boolean>(false);
 
-    const posicionPrimerZoomRef = useRef<CoordenadasGeograficas>({
-        lng: 0,
-        lat: 0
-    });
+    
 
     const ultimaPosicionRef = useRef<CoordenadasGeograficas>({
        lng: 0,
@@ -45,8 +42,7 @@ export const useUpdateLocation = ({
 
     const ultimoHeadingSuavizadoRef = useRef<number | null>(null);
 
-    const { 
-        setPosicionInicialZoom,
+    const {
         setPosicionGPS,
         setEsPrecisoGPS,
         setHeadingAlfa
@@ -67,17 +63,11 @@ export const useUpdateLocation = ({
 
             esPrimeraPosicionValidaRef.current = true;
 
-            posicionPrimerZoomRef.current = {
-                lng: lng,
-                lat: lat
-            }
-
             ultimaPosicionRef.current = {
                 lng: lng,
                 lat: lat
             }
-
-            setPosicionInicialZoom(posicionPrimerZoomRef.current);
+            
             setPosicionGPS(ultimaPosicionRef.current);
 
         }
@@ -100,7 +90,7 @@ export const useUpdateLocation = ({
             setEsPrecisoGPS(esPrecisoGpsRef.current)
         }
 
-    }, [setPosicionInicialZoom, setPosicionGPS, setEsPrecisoGPS]);
+    }, [setPosicionGPS, setEsPrecisoGPS]);
 
     const procesarHeading = useCallback((dataHeading: HeadingSensorData) => {
 

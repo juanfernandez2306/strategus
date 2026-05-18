@@ -56,6 +56,7 @@ export const useMapLibreGLmanager = () => {
 
         
         let componenteMontado = true;
+        
 
         /**inicia funcion de montaje sistema */
         const montarSistema = async () => {
@@ -73,6 +74,7 @@ export const useMapLibreGLmanager = () => {
             if (mapa) {
 
                 instanciaMapaLocalRef.current = mapa;
+
                 apagarSensoresRef.current = encenderSensores();
 
             }
@@ -84,6 +86,7 @@ export const useMapLibreGLmanager = () => {
         montarSistema();
 
         return () => {
+            
             componenteMontado = false;
 
             if (apagarSensoresRef.current) {
