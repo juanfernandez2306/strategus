@@ -1,19 +1,17 @@
 import { iniciarSeguimiento, detenerSeguimiento, handleGpsError } from '../../../services/sensors/gps/engine.ts';
 import { watchOrientacionRaw } from '../../../services/sensors/brujula/engine.ts';
 
-
+import type { 
+    OnUpdateGpsCallback, 
+    OnUpdateHeadingCallback, 
+    DetenerSensoresFn 
+} from './sensorTypes.ts';
 
 export const iniciarSensores = (
-    onUpdateGPS: (pos: { 
-        lng: number | null, 
-        lat: number | null, 
-        accuracy: number | null, 
-        error: string | null }) => void,
-    onUpdateHeading: (data: {
-        heading: number | null
-    }) => void,
+    onUpdateGPS: OnUpdateGpsCallback,
+    onUpdateHeading: OnUpdateHeadingCallback,
     activarOrientacion: boolean = true
-) => {
+): DetenerSensoresFn => {
 
     let watchGpsId: number | null = null;
     let desactivaOrientacion: (() => void) | null = null;
