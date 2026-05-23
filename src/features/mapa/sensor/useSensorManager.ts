@@ -53,7 +53,7 @@ export const useSensorManager = () => {
 
         };
 
-  }, [procesarMensajeErrorGPS, procesarMensajeErrorHeading]);
+  }, [procesarPosicionGPS, procesarMensajeErrorGPS, procesarHeading, procesarMensajeErrorHeading]);
 
   return {
     encenderSensores

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useSistemaStore } from "../../hooks/useSistemaStore";
 
 interface SincronizadorSistemaListo {
@@ -21,7 +21,7 @@ export const useUpdateSistemaListo = ({
     const ultimoEstadoListoEnviado = useRef<boolean>(false);
     const ultimoMensajeEnviado = useRef<string | null>(null);
 
-    const sincronizarSistemaListo = () => {
+    const sincronizarSistemaListo = useCallback(() => {
         
         const sistemaListoActual = statusGpsOkRef.current && statusHeadingOkRef.current;
 
@@ -49,7 +49,7 @@ export const useUpdateSistemaListo = ({
             setMensajeError(mensajeCombinado);
 
         }
-    };
+    }, [setSistemaListo, setMensajeError]);
 
     return { sincronizarSistemaListo };
 };

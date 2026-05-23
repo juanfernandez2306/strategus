@@ -27,9 +27,7 @@ export const useUpdateLocation = ({
     // 3 metros / 111111.11 metros
     const UMBRAL_TOLERANCIA = 0.000027;
 
-    const esPrimeraPosicionValidaRef = useRef<boolean>(false);
-
-    
+    const primerVueloCompletado = useRef<boolean>(false);
 
     const ultimaPosicionRef = useRef<CoordenadasGeograficas>({
        lng: 0,
@@ -45,12 +43,23 @@ export const useUpdateLocation = ({
     const {
         setPosicionGPS,
         setEsPrecisoGPS,
-        setHeadingAlfa
+        setHeadingAlfa,
+        setPrimerVueloCompletado,
      } = useSistemaStore();
 
     const procesarPosicionGPS = useCallback((dataGPS: GpsSensorData) => {
 
-        if (!statusGpsOkRef.current) return;
+        if (!statusGpsOkRef.current){
+            
+            if (primerVueloCompletado.current) {
+
+                primerVueloCompletado.current = false;
+                setPrimerVueloCompletado(false);
+
+            }
+            
+            return;
+        };
 
         let { lng, lat, accuracy } = dataGPS;
 
@@ -59,9 +68,9 @@ export const useUpdateLocation = ({
         lng = +lng.toFixed(5);
         lat = +lat.toFixed(5);
 
-        if (!esPrimeraPosicionValidaRef.current){
+        if (!primerVueloCompletado.current){
 
-            esPrimeraPosicionValidaRef.current = true;
+            primerVueloCompletado.current = true;
 
             ultimaPosicionRef.current = {
                 lng: lng,
@@ -69,6 +78,7 @@ export const useUpdateLocation = ({
             }
             
             setPosicionGPS(ultimaPosicionRef.current);
+            setPrimerVueloCompletado(primerVueloCompletado.current);
 
         }
 
@@ -90,19 +100,23 @@ export const useUpdateLocation = ({
             setEsPrecisoGPS(esPrecisoGpsRef.current)
         }
 
-    }, [setPosicionGPS, setEsPrecisoGPS]);
+    }, [setPosicionGPS, setEsPrecisoGPS, setPrimerVueloCompletado]);
 
     const procesarHeading = useCallback((dataHeading: HeadingSensorData) => {
-
-        if(!statusHeadingOkRef.current) return;
 
         const headingRaw = dataHeading.heading;
 
         if (typeof headingRaw !== 'number'){
-            ultimoHeadingSuavizadoRef.current = null;
-            setHeadingAlfa(null);
-            return
+
+            if (ultimoHeadingSuavizadoRef.current !== null) {
+                ultimoHeadingSuavizadoRef.current = null;
+                setHeadingAlfa(null);
+            }
+
+            return;
         };
+
+        if(!statusHeadingOkRef.current) return;
 
 
         if (ultimoHeadingSuavizadoRef.current === null){

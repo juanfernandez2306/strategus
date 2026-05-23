@@ -6,8 +6,15 @@ export const userGeoJSON = {
     type: 'FeatureCollection' as const,
     features: [{
         type: 'Feature' as const,
-        geometry: { type: 'Point' as const, coordinates: [0, 0] },
-        properties: { heading: 0, esPreciso: false }
+        geometry: { 
+            type: 'Point' as const, 
+            coordinates: [0, 0] as [number, number] 
+        },
+        properties: { 
+            // Forzamos el tipo unión aquí
+            heading: null as number | null, 
+            esPreciso: false 
+        }
     }]
 };
 

@@ -14,7 +14,6 @@ import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
 export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
 
     const mapRef = useRef<MapLibreMap | null>(null);
-    const [mapInstance, setMapInstance] = useState<MapLibreMap | null>(null);
     
 
 
@@ -31,8 +30,6 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
             const mapa = await iniciarServicioMapa(contenedor);
 
             mapRef.current = mapa;
-
-            setMapInstance(mapa);
 
             return mapa;
 
@@ -59,7 +56,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
     return { 
         inicializarMapa,
         refrescarPunto,  
-        mapInstance
+        mapRef
     };
     
 };

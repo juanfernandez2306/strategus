@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { useUpdateSistemaListo } from './useUpdateSistemaListo';
+import { useSistemaStore } from '../../hooks/useSistemaStore';
 
 import { 
     gpsErrorMessage,
@@ -23,6 +24,8 @@ export const useMensajeError = () => {
         errorHeadingRef: ultimoMensajeErrorHeading
     });
 
+    const { setStatusGpsOk } = useSistemaStore();
+
     const procesarMensajeErrorGPS = useCallback((dataGPS: GpsSensorData) => {
 
         let mensajeGPSerrorActual = gpsErrorMessage(
@@ -39,6 +42,7 @@ export const useMensajeError = () => {
 
         if (statusGpsOkRef.current !== gpsSaludable) {
             statusGpsOkRef.current = gpsSaludable;
+            setStatusGpsOk(gpsSaludable);
         }
 
         sincronizarSistemaListo()
@@ -49,7 +53,7 @@ export const useMensajeError = () => {
             conteoValidacionRef.current += 1;
         }
 
-    }, [sincronizarSistemaListo]);
+    }, [sincronizarSistemaListo, setStatusGpsOk]);
 
     const procesarMensajeErrorHeading = useCallback((dataHeading: HeadingSensorData) => {
         

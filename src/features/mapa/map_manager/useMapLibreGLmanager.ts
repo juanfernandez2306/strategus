@@ -8,6 +8,7 @@ import { type SidebarData } from '../../../types';
 import { useMapa } from '../hooks/useMap';
 
 import { useSensorManager } from '../sensor/useSensorManager';
+import { useUserLocation } from '../sensor/renderUserLocation/useUserLocation';
 
 export const useMapLibreGLmanager = () => {
     const mapDivRef = useRef<HTMLDivElement>(null);
@@ -36,9 +37,11 @@ export const useMapLibreGLmanager = () => {
       }, []);
 
     /** */
-    const { inicializarMapa,  } = useMapa(handlePointClick);
+    const { inicializarMapa  } = useMapa(handlePointClick);
 
     const { encenderSensores } = useSensorManager();
+
+    const { conectarSincronizacionStore } = useUserLocation();
     
 
     /** */
@@ -51,6 +54,8 @@ export const useMapLibreGLmanager = () => {
 
     // Almacenamos la función de apagado de sensores en un Ref para el cleanup asíncrono
     const apagarSensoresRef = useRef<(() => void) | null>(null);
+
+    const apagarSincronizacionUsuario = useRef<(() => void) | null>(null);
 
     useEffect(() => {
 
@@ -77,6 +82,8 @@ export const useMapLibreGLmanager = () => {
 
                 apagarSensoresRef.current = encenderSensores();
 
+                apagarSincronizacionUsuario.current = conectarSincronizacionStore(mapa);
+
             }
 
         };
@@ -88,6 +95,11 @@ export const useMapLibreGLmanager = () => {
         return () => {
             
             componenteMontado = false;
+
+            if (apagarSincronizacionUsuario.current){
+                apagarSincronizacionUsuario.current();
+                apagarSincronizacionUsuario.current = null;
+            }
 
             if (apagarSensoresRef.current) {
                 apagarSensoresRef.current();
