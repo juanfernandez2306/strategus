@@ -27,20 +27,10 @@ export const useMapLibreGLmanager = () => {
     
     const sistemaListo = useSistemaStore((s) => s.sistemaListo);
 
-    /**actualizacion y asignacion de la bandera de sistemaListo */
-    const sistemaListoRef = useRef(sistemaListo);
-
-    useEffect(() => { 
-        sistemaListoRef.current = sistemaListo; 
-    }, [sistemaListo]);
+    
 
     const handlePointClick = useCallback((datos: SidebarData) => {
         
-        if (!sistemaListoRef.current) {
-          console.warn("Interacción bloqueada: Sensores no listos");
-          
-          return;
-        }
             
         setDetallePunto(datos);
         setIsSidebarOpen(true);
