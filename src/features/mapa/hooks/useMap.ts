@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { type SidebarData } from '../../../types/index.ts';
 
@@ -11,7 +11,9 @@ import { configurarClusteresEnMapa } from '../services/capaClusteres.ts';
 /**
  * Hook refinado: Actúa como puente entre la UI de React y el Orquestador del Mapa.
  */
-export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
+export const useMapa = (
+    onPointClick: (datos: SidebarData) => void
+) => {
 
     const mapRef = useRef<MapLibreMap | null>(null);
     
@@ -27,7 +29,7 @@ export const useMapa = (onPointClick: (datos: SidebarData) => void) => {
         try {
 
             // El orquestador se encarga de: Instancia, Capas QGIS, Usuario, Sensores y Clústeres.
-            const mapa = await iniciarServicioMapa(contenedor);
+            const mapa = await iniciarServicioMapa(contenedor, onPointClick);
 
             mapRef.current = mapa;
 

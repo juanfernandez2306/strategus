@@ -1,5 +1,9 @@
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { type SidebarData, type RespuestaGeoJsonSidebarData } from '../../../types';
+import { useSistemaStore } from '../hooks/useSistemaStore';
+
+let sistemaListoActual = useSistemaStore.getState().sistemaListo;
+let unsubscribeZustandCluster: (() => void) | null = null;
 
 export const configurarClusteresEnMapa = (
     map: MapLibreMap, 
@@ -13,10 +17,14 @@ export const configurarClusteresEnMapa = (
     const CLUSTER_LAYER = 'clusters';
     const COUNT_LAYER = 'cluster-count';
 
+    
+
     // 1. GESTIÓN DE LA FUENTE (Source)
     const sourceExistente = map.getSource(SOURCE_ID) as any;
     if (sourceExistente) {
+
         sourceExistente.setData(respuesta.data);
+
         return;
     }
 
@@ -89,11 +97,33 @@ export const configurarClusteresEnMapa = (
         });
     });
 
+
+    
+
+    if (!unsubscribeZustandCluster) {
+        unsubscribeZustandCluster = useSistemaStore.subscribe(
+            (state) => state.sistemaListo,
+            (sistemaListo) => {
+                sistemaListoActual = sistemaListo;
+            }
+        );
+    }
+
+    map.once('remove', () => {
+        if (unsubscribeZustandCluster) {
+            unsubscribeZustandCluster();
+            unsubscribeZustandCluster = null;
+            console.log("SIG: Suscripción a Zustand cluster cancelada con éxito mediante map.remove");
+        }
+    });
+
     // Click en una palma específica (Inyecta datos al callback)
     map.on('click', LAYER_ID, (e) => {
         if (e.features && e.features.length > 0) {
             const f = e.features[0];
             const coords = (f.geometry as any).coordinates;
+
+            if (!sistemaListoActual) return;
 
             onPointClick({
                 uuid: f.properties?.uuid,
@@ -106,7 +136,11 @@ export const configurarClusteresEnMapa = (
 
     // Gestión de cursores pointer
     [CLUSTER_LAYER, LAYER_ID].forEach(layer => {
-        map.on('mouseenter', layer, () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseenter', layer, () => {
+            // Si es un punto individual y el sistema NO está listo, dejamos el cursor por defecto
+            if (layer === LAYER_ID && !sistemaListoActual) return;
+            map.getCanvas().style.cursor = 'pointer';
+        });
         map.on('mouseleave', layer, () => map.getCanvas().style.cursor = '');
     });
 };

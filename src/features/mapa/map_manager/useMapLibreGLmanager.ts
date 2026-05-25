@@ -10,34 +10,69 @@ import { useMapa } from '../hooks/useMap';
 import { useSensorManager } from '../sensor/useSensorManager';
 import { useUserLocation } from '../sensor/renderUserLocation/useUserLocation';
 
+import { actualizarEstadoRevisionDB } from '../../../services/indexedbd/palmaActions';
+
+
 export const useMapLibreGLmanager = () => {
     const mapDivRef = useRef<HTMLDivElement>(null);
     const mensajeError = useSistemaStore((s) => s.mensajeError);
-    const sistemaListo = useSistemaStore((s) => s.sistemaListo);
+    const setPosicionDestion = useSistemaStore((s) => s.setPosicionDestion);
 
     /** */
-    const sistemaListoRef = useRef(sistemaListo);
-    useEffect(() => { sistemaListoRef.current = sistemaListo; }, [sistemaListo]);
+    
 
     const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
+    
+    const sistemaListo = useSistemaStore((s) => s.sistemaListo);
 
+    /**actualizacion y asignacion de la bandera de sistemaListo */
+    const sistemaListoRef = useRef(sistemaListo);
+
+    useEffect(() => { 
+        sistemaListoRef.current = sistemaListo; 
+    }, [sistemaListo]);
 
     const handlePointClick = useCallback((datos: SidebarData) => {
         
         if (!sistemaListoRef.current) {
           console.warn("Interacción bloqueada: Sensores no listos");
-          return; 
+          
+          return;
         }
-        
+            
         setDetallePunto(datos);
         setIsSidebarOpen(true);
+        setPosicionDestion({
+            lng: datos.lng,
+            lat: datos.lat
+        })
     
       }, []);
 
+    const handleConfirmarVisita = async () => {
+        if (!detallePunto) return;
+    
+        const nuevoEstado = !detallePunto.revision_planta;
+        const exito = await actualizarEstadoRevisionDB(detallePunto.uuid, nuevoEstado);
+    
+        if (exito) {
+          setDetallePunto({ ...detallePunto, revision_planta: nuevoEstado });
+          // Refrescamos solo la capa de puntos/clústeres sin recargar el mapa
+          refrescarPunto();
+        }
+      };
+
+    
+    const handleCerrarSidebar = useCallback(() => {
+        setIsSidebarOpen(false);
+        setDetallePunto(null);
+        setPosicionDestion(null); 
+    }, [setPosicionDestion]);
+
     /** */
-    const { inicializarMapa  } = useMapa(handlePointClick);
+    const { inicializarMapa, refrescarPunto  } = useMapa(handlePointClick);
 
     const { encenderSensores } = useSensorManager();
 
@@ -120,7 +155,10 @@ export const useMapLibreGLmanager = () => {
         mapDivRef,
         mensajeError,
         detallePunto,
-        isSidebarOpen
+        isSidebarOpen,
+        handleCerrarSidebar,
+        handleConfirmarVisita,
+        sistemaListo
     }
     
 }
