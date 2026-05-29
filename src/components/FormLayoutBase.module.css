@@ -1,138 +1,177 @@
-/* FormLayoutBase.module.css */
-
+/* ==========================================================================
+   CONTENEDOR PRINCIPAL Y FORMULARIO (Mobile-First por defecto)
+   ========================================================================== */
 .formContainer {
-    width: 100%; /* Ocupa todo el ancho disponible para centrar */
-    display: flex;
-    justify-content: center;
-    padding: 1rem; /* Espacio de seguridad para que no toque los bordes del móvil */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem; /* Reducido ligeramente para ganar espacio en pantallas muy chicas */
 }
 
 form.form {
-    background-color: var(--color-fondo);
-    box-shadow: 0 0 20px 5px #CBCBCB;
-    border-radius: 10px;
-    
-    width: 100%;           
-    
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-    padding: 1.5rem;
-    box-sizing: border-box; /* Crucial para que el padding no estire el form */
+  background-color: var(--color-main-container);
+  box-shadow: 0 0 20px 5px #cbcbcb;
+  border-radius: 10px; /* Manteniendo tus bordes redondeados estilizados */
+  width: 100%; /* En móviles ocupa todo el ancho disponible */
+  display: flex;
+  flex-direction: column;
+  gap: .5rem; /* Unificado para mejor ritmo visual */
+  align-items: center;
+  padding: 1.5rem;
+  box-sizing: border-box; /* Crucial para que el padding no desborde el ancho táctil */
 }
 
+/* ==========================================================================
+   ELEMENTOS DE ENTRADA (INPUTS Y LABELS)
+   ========================================================================== */
 .groupInput {
-    width: 100%;           /* Ocupa todo el ancho interno del form */
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  width: 100%; 
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.groupInput label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--color-negro);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .groupInput input {
-    width: 100%;           /* Obliga a todos los inputs a medir lo mismo */
-    font-size: 1.1rem;
-    padding: .7rem;
-    border-radius: 8px;
-    border: 2px solid var(--color-primario);
-    /* El box-sizing de App.css hará que el padding no rompa este 100% */
+  width: 100%; /* Obliga a todos los inputs a medir exactamente lo mismo */
+  font-size: 1.1rem;
+  padding: 0.75rem; /* Tamaño ergonómico y cómodo para pulsaciones táctiles */
+  border-radius: 8px;
+  border: 2px solid var(--color-primario);
+  outline: none;
+  box-sizing: border-box;
 }
 
+.groupInput input:focus {
+  border-color: var(--color-secundario, #e07a5f);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
+}
+
+/* ==========================================================================
+   BOTONES Y ACCIONES (TAMAÑO DE PULGAR REFORZADO)
+   ========================================================================== */
 button.submit {
-    width: 100%;           /* Botón del mismo ancho que los inputs */
-    padding: .8rem;
-    background-color: var(--color-primario);
-    color: var(--color-fondo);
-    font-size: 1.1rem;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
+  width: 100%;
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  padding: 16px 20px; /* Botón alto y cómodo para presionar con el pulgar en el campo */
+  border-radius: 30px; /* Estilo de botón redondeado táctico */
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease, background-color 0.2s ease;
 }
 
-figure.ContainerSvg svg{
-    fill: var(--color-negro);
-    margin: 0;
-    padding: 0;
+button.submit:active {
+  transform: scale(0.98); /* Feedback táctico inmediato al pulsar en pantallas touch */
+  background-color: #2c5233; /* Un tono más oscuro del primario */
 }
 
-.ContainerSvg{
-    margin: 0;
+button.submit:disabled {
+  color: var(--color-negro);
+  background-color: #b6ae9f;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-.groupInput label{
-    font-size: 1.2rem;
+/* TÍTULOS Y TEXTOS */
+.titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 900;
+  line-height: 1.2;
 }
 
-
-
-button.submit:disabled{
-    color: var(--color-negro);
-    background-color: #B6AE9F;
-    cursor: not-allowed;
+.errorText {
+  color: var(--color-error);
+  font-weight: bold;
 }
 
-.titulo{
-    margin: 0;
-    font-size: 1.3rem;
-    text-align: center;
+.successText {
+  color: var(--color-primario);
+  font-weight: bold;
 }
 
-
-/* ... (mantener estilos anteriores) */
-
-/* Modal Overlay */
+/* ==========================================================================
+   MODAL DE FEEDBACK (CANDADO VISUAL GLOBAL)
+   ========================================================================== */
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Un poco más oscuro para aislar el flujo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem; /* Evita que el modal toque los bordes del celular si es muy largo */
 }
 
 .modalContent {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    max-width: 90%;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  background: var(--color-fondo, white);
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%; /* Por defecto toma el ancho disponible en celulares */
+  max-width: 320px; /* Evita que se desparrame en pantallas anchas */
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
-/* Spinner simple para reemplazar CircularProgress */
+.closeButton {
+  background-color: transparent;
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario);
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%; /* Botón de cierre ancho para facilitar el uso con una sola mano */
+  transition: background-color 0.2s;
+}
+
+.closeButton:active {
+  background-color: rgba(56, 102, 65, 0.1);
+}
+
+/* SPINNER DE CARGA ANIDADO */
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--color-primario);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(56, 102, 65, 0.2);
+  border-top: 5px solid var(--color-primario);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.successText { color: #2e7d32; font-weight: 500; }
-.errorText { color: #d32f2f; font-weight: 500; }
-
-.closeButton {
-    padding: 0.6rem 2rem;
-    background-color: var(--color-primario);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
+/* ==========================================================================
+   MEDIANO / ESCRITORIO (Mayor a 450px)
+   ========================================================================== */
+@media (min-width: 450px) {
+  form.form {
+    width: 420px; /* Ancho fijo perfecto para mantener los formularios elegantes en PC/Tablets */
+    padding: 2rem;
+  }
 }

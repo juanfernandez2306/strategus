@@ -31,7 +31,7 @@ const RegistroPosicionLayout = () => {
 
     return (
         <FormBaseLayout
-            titulo="Registro de Posición Geográfica"
+            titulo="Registro GPS"
             buttonText="Grabar Punto"
             iconoCustom={<IconStrategusAloeus size={150} />}
             onExecute={handleSubmit}
