@@ -15,7 +15,8 @@ export const MapLibreGL = () => {
         isSidebarOpen,
         handleCerrarSidebar,
         detallePunto,
-        handleConfirmarVisita
+        handleConfirmarVisita,
+        compassRef
      } = useMapLibreGLmanager();
 
     return(
@@ -49,7 +50,7 @@ export const MapLibreGL = () => {
                     {detallePunto && (
                         <>
                             {/* Acoplamiento de la Ref: Permite la tubería directa desde useSensorManager al DOM */}
-                            <Compass size={260} />
+                            <Compass size={260} ref={compassRef} />
                             
                             {/* Botón de acción contextual para el operario en campo */}
                             <ConfirmButton 

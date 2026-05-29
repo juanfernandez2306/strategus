@@ -12,11 +12,18 @@ import { useUserLocation } from '../sensor/renderUserLocation/useUserLocation';
 
 import { actualizarEstadoRevisionDB } from '../../../services/indexedbd/palmaActions';
 
+import type { CompassHandle } from '../../../components/Compass';
+
 
 export const useMapLibreGLmanager = () => {
     const mapDivRef = useRef<HTMLDivElement>(null);
+    const compassRef = useRef<CompassHandle>(null);
+
     const mensajeError = useSistemaStore((s) => s.mensajeError);
-    const setPosicionDestion = useSistemaStore((s) => s.setPosicionDestion);
+
+    const {setProximityMode, setPosicionDestino} = useSistemaStore()
+
+    
 
     /** */
     
@@ -34,7 +41,7 @@ export const useMapLibreGLmanager = () => {
             
         setDetallePunto(datos);
         setIsSidebarOpen(true);
-        setPosicionDestion({
+        setPosicionDestino({
             lng: datos.lng,
             lat: datos.lat
         })
@@ -56,15 +63,18 @@ export const useMapLibreGLmanager = () => {
 
     
     const handleCerrarSidebar = useCallback(() => {
+
         setIsSidebarOpen(false);
         setDetallePunto(null);
-        setPosicionDestion(null); 
-    }, [setPosicionDestion]);
+        setPosicionDestino(null);
+        setProximityMode(false);
+        
+    }, [setPosicionDestino]);
 
     /** */
     const { inicializarMapa, refrescarPunto  } = useMapa(handlePointClick);
 
-    const { encenderSensores } = useSensorManager();
+    const { encenderSensores } = useSensorManager(compassRef);
 
     const { conectarSincronizacionStore } = useUserLocation();
     
@@ -148,7 +158,8 @@ export const useMapLibreGLmanager = () => {
         isSidebarOpen,
         handleCerrarSidebar,
         handleConfirmarVisita,
-        sistemaListo
+        sistemaListo,
+        compassRef
     }
     
 }

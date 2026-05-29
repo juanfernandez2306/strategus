@@ -1,9 +1,12 @@
-import { useCallback} from 'react';
+import { useCallback, useRef} from 'react';
 import { iniciarSensores } from './activarSensores';
 import { useMensajeError } from './mensajeError/useMensajeError';
 import { useUpdateLocation } from './localizacion/useUpdateLocation';
+import { useNavegacionDestino } from './navegacion/useNavegacionDestino';
+import { type CompassHandle } from '../../../components/Compass';
+import type { CoordenadasGeograficas } from './sensorTypes';
 
-export const useSensorManager = () => {
+export const useSensorManager = (compassRef: React.RefObject<CompassHandle | null>) => {
 
    
     const { 
@@ -21,6 +24,13 @@ export const useSensorManager = () => {
         statusHeadingOkRef
     });
 
+    const { conectarSincronizacionDestino, procesarRafagaNavegacionCruda } = useNavegacionDestino();
+
+    const ultimoGpsCrudoRef = useRef<CoordenadasGeograficas | null>(null);
+
+    const ultimoHeadingCrudoRef = useRef<number | null>(null);
+
+
     const encenderSensores = useCallback(() => {
     
         console.log("Iniciando sensores...");
@@ -32,6 +42,16 @@ export const useSensorManager = () => {
                 procesarMensajeErrorGPS(gps);
 
                 procesarPosicionGPS(gps);
+
+                 if (gps.lat === null || gps.lng === null || statusGpsOkRef.current === false) return;
+
+                
+                const gpsCrudo: CoordenadasGeograficas = { lng: gps.lng, lat: gps.lat };
+
+                ultimoGpsCrudoRef.current = gpsCrudo;
+
+                procesarRafagaNavegacionCruda(compassRef, gpsCrudo, ultimoHeadingCrudoRef.current);
+                
                 
                 
             },
@@ -41,6 +61,13 @@ export const useSensorManager = () => {
                 procesarMensajeErrorHeading(rawHeadingData);
 
                 procesarHeading(rawHeadingData);
+
+                if (typeof rawHeadingData !== 'number' || statusHeadingOkRef.current === false) return;
+
+                ultimoHeadingCrudoRef.current = rawHeadingData;
+
+                procesarRafagaNavegacionCruda(compassRef, ultimoGpsCrudoRef.current, rawHeadingData);
+
             }
         );
 
@@ -50,6 +77,12 @@ export const useSensorManager = () => {
             console.log("Deteniendo sensores y limpiando memoria...");
 
             detenerSensores();
+
+            conectarSincronizacionDestino();
+
+            ultimoGpsCrudoRef.current = null;
+            
+            ultimoHeadingCrudoRef.current = null;
 
         };
 

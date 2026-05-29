@@ -4,7 +4,7 @@ import styles from "./BtnRevision.module.css";
 
 export const ConfirmButton = ({ onClick, detallePunto }: { onClick: () => void, detallePunto: SidebarData | null }) => {
   
-  const isLocked = false;
+  const isLocked = true;
 
   const colorClass = detallePunto?.revision_planta ? styles.colorPendiente : styles.colorConfirmar;
 

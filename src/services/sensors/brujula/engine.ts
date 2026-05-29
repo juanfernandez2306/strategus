@@ -24,10 +24,12 @@ export const watchOrientacionRaw = (
             onHeadingUpdate({
                 heading: headingHorario,
             });
+            
             return;
         }
 
         // Si no hay sensores disponibles
+        
         onHeadingUpdate({ heading: null });
     };
 

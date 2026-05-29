@@ -10,7 +10,8 @@ interface TelemetriaState {
     headingAlfa: number | null;
     primerVueloCompletado: boolean;
     statusGpsOk: boolean;
-    posicionDestiono: CoordenadasGeograficas | null;
+    posicionDestino: CoordenadasGeograficas | null;
+    proximityMode: boolean
     
     setSistemaListo: (val: boolean) => void;
     setMensajeError: (error: string | null) => void;
@@ -19,7 +20,8 @@ interface TelemetriaState {
     setHeadingAlfa: (headingAlfa: number | null) => void;
     setPrimerVueloCompletado: (primerVueloCompletado: boolean) => void;
     setStatusGpsOk: (statusGpsOk: boolean) => void;
-    setPosicionDestion: (posicionDestion: CoordenadasGeograficas | null) => void;
+    setPosicionDestino: (posicionDestion: CoordenadasGeograficas | null) => void;
+    setProximityMode: (proximityMode: boolean) => void;
 }
 
 // Envolvemos el creador del store con el middleware de selección
@@ -32,7 +34,8 @@ export const useSistemaStore = create<TelemetriaState>()(
         headingAlfa: null,
         primerVueloCompletado: false,
         statusGpsOk: false,
-        posicionDestiono: null,
+        posicionDestino: null,
+        proximityMode: false,
 
         setSistemaListo: (sistemaListo) => set({ sistemaListo }),
         setMensajeError: (mensajeError) => set({ mensajeError }),
@@ -41,6 +44,7 @@ export const useSistemaStore = create<TelemetriaState>()(
         setHeadingAlfa: (headingAlfa) => set({ headingAlfa }),
         setPrimerVueloCompletado: (primerVueloCompletado) => set({ primerVueloCompletado }),
         setStatusGpsOk: (statusGpsOk) => set({ statusGpsOk }),
-        setPosicionDestion: (posicionDestiono) => set({ posicionDestiono }),
+        setPosicionDestino: (posicionDestino) => set({ posicionDestino }),
+        setProximityMode: (proximityMode) => set({ proximityMode }),
     }))
 );
