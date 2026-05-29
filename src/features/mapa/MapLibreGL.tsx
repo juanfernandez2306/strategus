@@ -1,9 +1,9 @@
 
 
-import { useMapLibreGLmanager } from './map_manager/useMapLibreGLmanager';
+import { useMapLibreGLmanager } from './hooks/useMapLibreGLmanager';
 import Compass  from './components/Compass';
 import { ConfirmButton } from './components/BtnRevision';
-import styles from './MapLibre.module.css';
+import styles from './MapLibreGL.module.css';
 
 
 
