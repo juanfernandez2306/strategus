@@ -1,50 +1,88 @@
-:root{
+/* ==========================================================================
+   1. VARIABLES Y RESET COMPLETO (Mobile-First)
+   ========================================================================== */
+:root {
   --color-primario: #386641;
   --color-secundario: #E07A5F;
   --color-terciario: #A7C957;
-
-  --color-fondo: #FFFCFB;
+  --color-fondo: #F5E7C6;
+  --color-main-container: #FFFDEB;
   --color-error: #DD0303;
   --color-negro: #1B211A;
+  --color-texto-secundario: #666;
   --font-family-base: 'Roboto', 'Segoe UI', Arial, sans-serif;
-
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-html, body{
+html, body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
+  background-color: #F9F9F9;
+  font-family: var(--font-family-base);
+  overflow-x: hidden; /* Evita scrolls horizontales accidentales en el celular */
 }
 
-body{
-  background-color: #F9F9F9;
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* ==========================================================================
+   2. CONTENEDOR MÓVIL DE LA APP (Por defecto para <= 400px)
+   ========================================================================== */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ocupa todo el alto de la pantalla del teléfono */
+  width: 100%;
+  background-color: var(--color-fondo);
+}
+
+/* El contenido principal por defecto en móviles */
+.main-content {
+  flex: 1; /* Absorbe todo el espacio vertical restante abajo del Header */
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  font-family: var(--font-family-base);
+  padding: 12px; /* Margen sutil de seguridad para pantallas de 400px */
 }
 
-#root {
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  width: 100%; /* Asegura que root use todo el ancho */
-  gap: 1rem;
-  min-height: 100vh;
+/* ==========================================================================
+   3. EXCEPCIÓN CRÍTICA: EL MAPA (Ocupa el 100% real sin paddings)
+   ========================================================================== */
+.main-content[data-view="Mapa"] {
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  width: 100%;
+  height: calc(100vh - 56px); /* Altura exacta restante (Restando el Header móvil) */
 }
 
-body:not(:has(.mapa-contenedor-clase)) #root {
-  padding: 10px;
-}
+/* ==========================================================================
+   4. CONDICIONALES PARA PANTALLAS GRANDES (Media Queries)
+   ========================================================================== */
+@media (min-width: 600px) {
+  /* Si la app se abre en una tablet o computadora, centramos el contenido */
+  body {
+    display: flex;
+    justify-content: center;
+    background-color: #EAEAEA; /* Fondo oscuro exterior solo en escritorio */
+  }
 
-main {
-  width: 100%; /* El main debe expandirse */
-  display: flex;
-  justify-content: center; /* Centra el Layout dentro del main */
-  padding: 16px;
+  .app-container {
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-content {
+    padding: 20px; /* Más aire en pantallas grandes */
+  }
 }

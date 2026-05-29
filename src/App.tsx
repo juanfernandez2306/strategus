@@ -3,7 +3,7 @@ import './App.css';
 
 
 import ExportarGeoJSON from './features/descargarDatos/ExportarGeojson';
-import { useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicionLayout';
 import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson';
 import EliminarRegistros from './features/eliminarBD/EliminarRegistro';
@@ -15,11 +15,7 @@ import ResumenJornadaLayout from './features/resumen/ResumenJornada';
 import { NOMBRE_APP } from './data/finca/appConfig';
 
 
-
-
-const MapLibreGL = lazy(() => 
-    import('./features/mapa/MapLibreGL').then(module => ({ default: module.MapLibreGL }))
-  );
+import { MapLibreGL } from './features/mapa/MapLibreGL';
 
 function App() {
 
@@ -43,15 +39,8 @@ function App() {
       case "EliminarBD":
         return <EliminarRegistros />;
       case "Mapa":
-        return (
-          <Suspense fallback={
-            <div style={{ padding: '2rem', color: 'white', textAlign: 'center' }}>
-              Inicializando motor de mapas...
-            </div>
-          }>
-            <MapLibreGL />
-          </Suspense>
-        );
+        return <MapLibreGL />
+
       case "Resumen":
         return <ResumenJornadaLayout />
       default:
@@ -62,12 +51,17 @@ function App() {
 
 
   return (
-     <>
-      <Header onSelect={setSelectedView} />
-      <main style={selectedView === "Mapa" ? { padding: 0, margin: 0, maxWidth: '100%', width: '100%' } : {}}>
-        {renderContent()}
-      </main>
-    </> 
+     <div className="app-container">
+
+        <Header onSelect={setSelectedView} />
+      
+        <main 
+        className="main-content"
+        data-view={selectedView}>
+          {renderContent()}
+        </main>
+
+    </div>
   )
 }
 
