@@ -1,17 +1,13 @@
 // src/layouts/ResumenJornadaLayout.tsx
 import FormBaseLayout from "../../components/FormLayoutBase";
 import { useResumenJornada } from "./useResumenJornada";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import style from "../../components/FormLayoutBase.module.css";
-// Importa un icono adecuado de tu carpeta de SVGs
+import styleLayoutBase from "../../components/FormLayoutBase.module.css";
+import styleLocal from "./ResumenJornadaLayout.module.css"; // 1. Importamos el nuevo módulo CSS
 import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus"; 
 
 const ResumenJornadaLayout = () => {
   const { registrados, revisados, sumaGalerias, refrescar } = useResumenJornada();
 
-  // onExecute requiere una promesa que retorne string para el modal de éxito
   const handleRefrescar = async () => {
     return await refrescar();
   };
@@ -23,33 +19,39 @@ const ResumenJornadaLayout = () => {
       iconoCustom={<IconStrategusAloeus size={100} />}
       onExecute={handleRefrescar}
     >
-      <Box sx={{ width: '100%', mt: 2, mb: 2 }}>
+      {/* 2. Reemplazamos todos los Box y Typography de MUI por etiquetas HTML semánticas */}
+      <div className={styleLocal.contenedorPrincipal}>
         
         {/* Fila de Conteos Principales */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 3 }}>
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="caption" sx={{ color: 'gray', fontWeight: 'bold' }}>MARCADOS</Typography>
-            <Typography variant="h3" sx={{ fontWeight: 'bold' }}>{registrados}</Typography>
-          </Box>
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="caption" sx={{ color: 'gray', fontWeight: 'bold' }}>REVISADOS</Typography>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#4caf50' }}>{revisados}</Typography>
-          </Box>
-        </Box>
+        <div className={styleLocal.filaConteos}>
+          <div className={styleLocal.columnaConteo}>
+            <p className={styleLocal.etiquetaCorta}>MARCADOS</p>
+            <h3 className={styleLocal.numeroGrande}>{registrados}</h3>
+          </div>
+          
+          <div className={styleLocal.columnaConteo}>
+            <p className={styleLocal.etiquetaCorta}>REVISADOS</p>
+            <h3 className={`${styleLocal.numeroGrande} ${styleLocal.numeroRevisados}`}>
+              {revisados}
+            </h3>
+          </div>
+        </div>
 
-        <Divider sx={{ mb: 1 }} />
+        {/* Separador nativo */}
+        <hr className={styleLocal.divisor} />
 
         {/* El "Corazón" del requerimiento: Sum(Galería) */}
-        <Box className={style.groupInput} sx={{ textAlign: 'center', p: 1, bgcolor: 'rgba(253, 251, 0, 0.05)', borderRadius: '10px', border: '1px dashed var(--color-primario)' }}>
-          <Typography variant="caption" sx={{ color: 'var(--color-primario)', letterSpacing: 1.5, fontWeight: 'bold' }}>
+        {/* Combinamos la clase externa con la local */}
+        <div className={`${styleLayoutBase.groupInput} ${styleLocal.tarjetaAcumulado}`}>
+          <p className={styleLocal.etiquetaAcumulado}>
             VALOR ACUMULADO GALERÍAS
-          </Typography>
-          <Typography variant="h4" sx={{ fontWeight: 'black', color: 'var(--color-primario)' }}>
+          </p>
+          <h4 className={styleLocal.numeroAcumulado}>
             {sumaGalerias}
-          </Typography>
-        </Box>
+          </h4>
+        </div>
 
-      </Box>
+      </div>
     </FormBaseLayout>
   );
 };

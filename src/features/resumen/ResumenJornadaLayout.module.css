@@ -1,0 +1,64 @@
+.contenedorPrincipal {
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Fila de marcados y revisados */
+.filaConteos {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+}
+
+.columnaConteo {
+    text-align: center;
+}
+
+.etiquetaCorta {
+    font-size: 0.75rem; /* Equivalente a variant="caption" */
+    color: gray;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.numeroGrande {
+    font-size: 3rem; /* Equivalente a h3 */
+    font-weight: bold;
+    margin: 0;
+}
+
+.numeroRevisados {
+    color: #4caf50; /* Verde de MUI mantenido */
+}
+
+/* Divisor manual simple */
+.divisor {
+    border: 0;
+    border-top: 1px solid var(--color-borde, #e0e0e0);
+    margin: 0 0 1rem 0;
+}
+
+/* Caja del corazón del requerimiento: Sum(Galería) */
+.tarjetaAcumulado {
+    text-align: center;
+    padding: 0.5rem;
+    background-color: rgba(253, 251, 0, 0.05);
+    border-radius: 10px;
+    border: 1px dashed var(--color-primario);
+}
+
+.etiquetaAcumulado {
+    font-size: 0.75rem;
+    color: var(--color-primario);
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.numeroAcumulado {
+    font-size: 2.125rem; /* Equivalente a h4 */
+    font-weight: 900; /* fontWeight="black" */
+    color: var(--color-primario);
+    margin: 0;
+}
