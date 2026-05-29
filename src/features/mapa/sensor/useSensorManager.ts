@@ -62,11 +62,11 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
 
                 procesarHeading(rawHeadingData);
 
-                if (typeof rawHeadingData !== 'number' || statusHeadingOkRef.current === false) return;
+                if (typeof rawHeadingData.heading !== 'number' || statusHeadingOkRef.current === false) return;
 
-                ultimoHeadingCrudoRef.current = rawHeadingData;
+                ultimoHeadingCrudoRef.current = rawHeadingData.heading;
 
-                procesarRafagaNavegacionCruda(compassRef, ultimoGpsCrudoRef.current, rawHeadingData);
+                procesarRafagaNavegacionCruda(compassRef, ultimoGpsCrudoRef.current, rawHeadingData.heading);
 
             }
         );

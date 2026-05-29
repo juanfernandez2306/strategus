@@ -1,10 +1,13 @@
 
 import { type SidebarData } from "../../../types";
 import styles from "./BtnRevision.module.css";
+import { useSistemaStore } from "../hooks/useSistemaStore";
 
 export const ConfirmButton = ({ onClick, detallePunto }: { onClick: () => void, detallePunto: SidebarData | null }) => {
   
-  const isLocked = true;
+  const proximityMode = useSistemaStore((state) => state.proximityMode);
+  
+  const isLocked = !proximityMode;
 
   const colorClass = detallePunto?.revision_planta ? styles.colorPendiente : styles.colorConfirmar;
 
