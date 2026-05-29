@@ -1,53 +1,120 @@
-import { useEffect, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+// src/features/qr/hook/useQrScanner.ts
+import { useEffect, useRef, useState } from "react";
+import QrScanner from "qr-scanner"; 
+import { useQrManager } from "./useQrManager"; 
 
-export const useQrScanner = (elementId: string) => {
-  const [isScannerActive, setIsScannerActive] = useState(false);
-  const [scanner, setScanner] = useState<Html5Qrcode | null>(null);
+interface UseQrScannerProps {
+    onSuccessMessage: (msg: string) => void;
+    onErrorMessage: (msg: string) => void;
+}
 
-  // Limpieza al desmontar el componente
-  useEffect(() => {
-    return () => {
-      if (scanner && scanner.isScanning) {
-        scanner.stop().catch(console.error);
-      }
+export const useQrScanner = ({ onSuccessMessage, onErrorMessage }: UseQrScannerProps) => {
+    const scannerRef = useRef<QrScanner | null>(null);
+    const procesandoRef = useRef<boolean>(false);
+    
+    const [isScannerActive, setIsScannerActive] = useState(false);
+    const [ultimoContenido, setUltimoContenido] = useState<string>("");
+    const [conteoSesion, setConteoSesion] = useState<number>(0);
+
+    const { procesarEscaneo, isProcessing } = useQrManager();
+
+    // Recibe el elemento de video directamente desde el componente
+    const iniciarEscaneo = async (videoElement: HTMLVideoElement | null) => {
+        if (!videoElement) {
+            onErrorMessage("El visor de video no está listo en el DOM.");
+            return;
+        }
+
+        try {
+            if (scannerRef.current) {
+                scannerRef.current.destroy();
+                scannerRef.current = null;
+            }
+
+            scannerRef.current = new QrScanner(
+                videoElement,
+                async (result: QrScanner.ScanResult) => {
+                    const textoEscaneado = result.data;
+
+                    // Candado de concurrencia y duplicados inmediatos
+                    if (procesandoRef.current || textoEscaneado === ultimoContenido) {
+                        return; 
+                    }
+
+                    procesandoRef.current = true;
+                    setUltimoContenido(textoEscaneado);
+
+                    const resultado = await procesarEscaneo(textoEscaneado);
+
+                    if (resultado.success) {
+                        setConteoSesion(prev => prev + resultado.cantidad);
+                        onSuccessMessage(`¡Éxito! Se sincronizaron ${resultado.cantidad} registros.`);
+                        detenerEscaneo();
+                    } else {
+                        onErrorMessage("No se pudo procesar el contenido del QR.");
+                        procesandoRef.current = false;
+                    }
+                },
+                {
+                    onDecodeError: () => {},
+                    highlightScanRegion: true,
+                    highlightCodeOutline: true,
+                    maxScansPerSecond: 6,
+                    preferredCamera: "environment"
+                }
+            );
+
+            await scannerRef.current.start();
+            setIsScannerActive(true);
+        } catch (err) {
+            console.error("Error de cámara:", err);
+            onErrorMessage("No se pudo acceder a la cámara trasera del dispositivo.");
+            setIsScannerActive(false);
+        }
     };
-  }, [scanner]);
 
-  const iniciarEscaneo = async (onScanSuccess: (text: string) => void) => {
-    try {
-      const qrcodeScanner = new Html5Qrcode(elementId);
-      setScanner(qrcodeScanner);
+    const detenerEscaneo = () => {
+        if (scannerRef.current) {
+            try {
+                scannerRef.current.stop();
+            } catch (e) {
+                console.warn("El escáner ya estaba detenido:", e);
+            }
+            setIsScannerActive(false);
+        }
+    };
 
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
-      };
+    // Corregido: Ahora recibe explícitamente el elemento de video en su propio ámbito
+    const prepararSiguienteEscaneo = async (videoElement: HTMLVideoElement | null): Promise<string> => {
+        setUltimoContenido("");
+        procesandoRef.current = false;
+        
+        if (videoElement) {
+            await iniciarEscaneo(videoElement);
+            return "Escáner reiniciado";
+        }
+        throw new Error("El visor de video no está listo.");
+    };
 
-      await qrcodeScanner.start(
-        { facingMode: "environment" }, // Cámara trasera
-        config,
-        (decodedText) => {
-          // Cuando detecta un código, lo enviamos al callback
-          onScanSuccess(decodedText);
-        },
-        undefined // Ignoramos errores de frame (muy comunes)
-      );
+    // Limpieza automática al desmontar para evitar fugas de memoria del hardware de la cámara
+    useEffect(() => {
+        return () => {
+            if (scannerRef.current) {
+                try {
+                    scannerRef.current.destroy();
+                } catch (e) {
+                    console.error("Error al destruir escáner:", e);
+                }
+            }
+        };
+    }, []);
 
-      setIsScannerActive(true);
-    } catch (err) {
-      console.error("No se pudo iniciar la cámara", err);
-      throw err;
-    }
-  };
-
-  const detenerEscaneo = async () => {
-    if (scanner && scanner.isScanning) {
-      await scanner.stop();
-      setIsScannerActive(false);
-    }
-  };
-
-  return { iniciarEscaneo, detenerEscaneo, isScannerActive };
+    return {
+        iniciarEscaneo,
+        detenerEscaneo,
+        prepararSiguienteEscaneo,
+        isScannerActive,
+        conteoSesion,
+        isProcessing
+    };
 };

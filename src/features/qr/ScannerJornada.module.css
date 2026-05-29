@@ -1,54 +1,56 @@
 .scannerWrapper {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1; /* Mantenemos el contenedor cuadrado */
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: 12px;
-    border: 4px solid var(--color-primario, #fdfb00); /* Tu amarillo de alto contraste */
-    background-color: #000; /* Fondo negro para absorción de luz */
+    border: 4px solid var(--color-primario, #fdfb00);
+    background-color: #000;
 }
 
-/* El contenedor donde html5-qrcode renderiza el video */
-.videoContainer {
-    width: 100% !important;
-    height: 100% !important;
+.videoElemento {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* El video en sí */
-.videoContainer video {
-    object-fit: cover !important;
-    width: 100% !important;
-    height: 100% !important;
-}
-
-/**
- * Superposición Táctica (Overlay)
- * Oscurece los bordes y deja un "visor" central brillante.
- */
 .overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* Un gradiente radial crea el efecto de visor */
     background: radial-gradient(
         circle,
-        transparent 30%, /* Visor central claro */
-        rgba(0, 0, 0, 0.8) 70% /* Bordes muy oscuros */
+        transparent 35%,
+        rgba(0, 0, 0, 0.6) 75%
     );
-    pointer-events: none; /* Permite toques a través de la capa */
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    pointer-events: none;
 }
 
-/* Esquinas guía para el visor */
-.guia {
-    width: 60%;
-    height: 60%;
-    border: 3px solid rgba(253, 251, 0, 0.9); /* Amarillo brillante */
+.laserAnimacion {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #ff0000;
+    box-shadow: 0px 0px 8px #ff0000;
+    animation: scanning 2.5s infinite ease-in-out;
+    pointer-events: none;
+}
+
+.statusDisplay {
+    margin-top: 1rem;
+    padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(253, 251, 0, 0.5); /* Resplandor para visibilidad */
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+@keyframes scanning {
+    0% { top: 10%; }
+    50% { top: 90%; }
+    100% { top: 10%; }
 }

@@ -8,13 +8,14 @@ import RegistroPosicionLayout  from './features/registroPosicion/RegistroPosicio
 import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson';
 import EliminarRegistros from './features/eliminarBD/EliminarRegistro';
 import GenerarQrJornada from './features/qr/GenerarQrJornada';
+import ScannerJornada from './features/qr/ScannerJornada';
 
 import ResumenJornadaLayout from './features/resumen/ResumenJornada';
 
 import { NOMBRE_APP } from './data/finca/appConfig';
 
 
-const ScannerJornada = lazy(() => import('./features/qr/ScannerJornada'));
+
 
 const MapLibreGL = lazy(() => 
     import('./features/mapa/MapLibreGL').then(module => ({ default: module.MapLibreGL }))
@@ -37,15 +38,8 @@ function App() {
       case "GenerarQR": // Nueva vista
         return <GenerarQrJornada />;
       case "EscanearQR": // Nueva vista
-          return (
-            <Suspense fallback={
-              <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>
-                Cargando motor de escaneo...
-              </div>
-            }>
-              <ScannerJornada />
-            </Suspense>
-          );
+             return <ScannerJornada />
+            
       case "EliminarBD":
         return <EliminarRegistros />;
       case "Mapa":
