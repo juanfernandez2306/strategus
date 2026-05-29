@@ -24,17 +24,22 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
         statusHeadingOkRef
     });
 
-    const { conectarSincronizacionDestino, procesarRafagaNavegacionCruda } = useNavegacionDestino();
+    const { 
+        conectarSincronizacionDestino, 
+        procesarRafagaNavegacionCruda } = useNavegacionDestino();
 
     const ultimoGpsCrudoRef = useRef<CoordenadasGeograficas | null>(null);
 
     const ultimoHeadingCrudoRef = useRef<number | null>(null);
 
+    const limpiarSincronizacionRef = useRef<(() => void) | null>(null);
+
 
     const encenderSensores = useCallback(() => {
     
         console.log("Iniciando sensores...");
-    
+
+        limpiarSincronizacionRef.current = conectarSincronizacionDestino();
     
         const detenerSensores = iniciarSensores(
             (gps) => {
@@ -51,7 +56,6 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
                 ultimoGpsCrudoRef.current = gpsCrudo;
 
                 procesarRafagaNavegacionCruda(compassRef, gpsCrudo, ultimoHeadingCrudoRef.current);
-                
                 
                 
             },
@@ -78,7 +82,10 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
 
             detenerSensores();
 
-            conectarSincronizacionDestino();
+            if (limpiarSincronizacionRef.current) {
+                limpiarSincronizacionRef.current();
+                limpiarSincronizacionRef.current = null;
+            }
 
             ultimoGpsCrudoRef.current = null;
             
