@@ -60,29 +60,39 @@ html, body {
 .main-content[data-view="Mapa"] {
   padding: 0;
   margin: 0;
-  max-width: 100%;
   width: 100%;
-  height: calc(100vh - 56px); /* Altura exacta restante (Restando el Header móvil) */
+  height: calc(100vh - 56px); /* Altura restando el Header móvil */
+  
+  /* Lógica de centrado absoluto para el componente hijo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ==========================================================================
    4. CONDICIONALES PARA PANTALLAS GRANDES (Media Queries)
    ========================================================================== */
 @media (min-width: 600px) {
-  /* Si la app se abre en una tablet o computadora, centramos el contenido */
   body {
     display: flex;
     justify-content: center;
-    background-color: #EAEAEA; /* Fondo oscuro exterior solo en escritorio */
+    background-color: #EAEAEA; 
+  }
+
+  /* Forzamos a que en escritorio mantenga el alto correcto respecto a su header */
+  .main-content[data-view="Mapa"] {
+    width: 100%;
+    height: calc(100vh - 60px); 
   }
 
   .app-container {
-    max-width: 500px;
+    max-width: 480px;
+    width: 100%;
     margin: 0 auto;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   }
   
   .main-content {
-    padding: 20px; /* Más aire en pantallas grandes */
+    padding: 20px; 
   }
 }

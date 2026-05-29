@@ -56,8 +56,8 @@ function App() {
         <Header onSelect={setSelectedView} />
       
         <main 
-        className="main-content"
-        data-view={selectedView}>
+          className="main-content"
+          data-view={selectedView}>
           {renderContent()}
         </main>
 
