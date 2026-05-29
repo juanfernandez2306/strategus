@@ -1,0 +1,19 @@
+.contadorContenedor {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.contadorEtiqueta {
+    font-size: 0.875rem; /* Equivalente a body2 */
+    color: var(--color-texto-secundario, gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 4px 0;
+}
+
+.contadorNumero {
+    font-size: 3.75rem; /* Equivalente a h2 de MUI */
+    font-weight: bold;
+    color: var(--color-primario);
+    margin: 0;
+}

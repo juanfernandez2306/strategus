@@ -1,19 +1,17 @@
 import { useState } from "react";
 import FormBaseLayout from "../../components/FormLayoutBase";
-import style from '../../components/FormLayoutBase.module.css';
+import styleLayoutBase from '../../components/FormLayoutBase.module.css';
+import styleLocal from './RegistroPosicionLayout.module.css'; // 1. Importamos el nuevo CSS Module
 import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus";
 import { useRegistroPosicion } from "./useRegistroPosicion";
-import { Typography, Box } from "@mui/material";
 
 const RegistroPosicionLayout = () => {
     const [galeria, setGaleria] = useState<string>("");
     const { registrarPosicionActual, conteoDiario } = useRegistroPosicion();
 
-    // Esta función debe retornar una Promesa de string para que FormBaseLayout la maneje
     const handleSubmit = async (): Promise<string> => {
         const numeroGaleria = parseInt(galeria);
 
-        // Validación estilo Python: rápida y al grano
         if (isNaN(numeroGaleria) || galeria.trim() === "") {
             throw new Error("Por favor, ingrese un número de galería válido.");
         }
@@ -24,11 +22,9 @@ const RegistroPosicionLayout = () => {
 
         const nuevoUuid = crypto.randomUUID();
         
-        // Ejecutamos y retornamos el mensaje de éxito para el modal del Layout
         return await registrarPosicionActual(numeroGaleria, nuevoUuid);
     };
 
-    // Función opcional para limpiar el input tras el éxito
     const handleSuccess = () => {
         setGaleria("");
     };
@@ -41,17 +37,17 @@ const RegistroPosicionLayout = () => {
             onExecute={handleSubmit}
             onSuccess={handleSuccess}
         >
-            {/* Visualización del contador que pediste */}
-            <Box sx={{ textAlign: 'center', mb: 0 }}>
-                <Typography variant="body2" sx={{ color: 'gray', textTransform: 'uppercase', letterSpacing: 1 }}>
+            {/* 2. Reemplazamos Box y Typography por etiquetas HTML nativas con CSS Modules */}
+            <div className={styleLocal.contadorContenedor}>
+                <p className={styleLocal.contadorEtiqueta}>
                     Puntos registrados hoy
-                </Typography>
-                <Typography variant="h2" sx={{ fontWeight: 'bold', color: 'var(--color-primario)' }}>
+                </p>
+                <h2 className={styleLocal.contadorNumero}>
                     {conteoDiario}
-                </Typography>
-            </Box>
+                </h2>
+            </div>
 
-            <aside className={style.groupInput}>
+            <aside className={styleLayoutBase.groupInput}>
                 <label htmlFor="galeria">N° de Galería</label>
                 <input 
                     id="galeria" 
