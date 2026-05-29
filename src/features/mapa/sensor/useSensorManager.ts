@@ -3,7 +3,7 @@ import { iniciarSensores } from './activarSensores';
 import { useMensajeError } from './mensajeError/useMensajeError';
 import { useUpdateLocation } from './localizacion/useUpdateLocation';
 import { useNavegacionDestino } from './navegacion/useNavegacionDestino';
-import { type CompassHandle } from '../../../components/Compass';
+import { type CompassHandle } from '../components/Compass';
 import type { CoordenadasGeograficas } from './sensorTypes';
 
 export const useSensorManager = (compassRef: React.RefObject<CompassHandle | null>) => {

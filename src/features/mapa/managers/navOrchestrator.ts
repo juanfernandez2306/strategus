@@ -1,5 +1,5 @@
 import { navService } from '../../../services/sensors/brujula/navigation';
-import { type CompassHandle } from '../../../components/Compass';
+import { type CompassHandle } from '../components/Compass';
 
 
 /**

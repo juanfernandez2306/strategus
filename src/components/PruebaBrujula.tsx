@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Box, Button, Slider, Typography, Stack } from '@mui/material';
-import Compass, { type CompassHandle } from './Compass';
+import Compass, { type CompassHandle } from '../features/mapa/components/Compass';
 
 export const TestCompass = () => {
   // 1. La referencia sigue siendo la clave

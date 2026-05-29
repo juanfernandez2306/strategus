@@ -2,7 +2,7 @@
 import { useCallback, useRef } from "react";
 import { useSistemaStore } from "../../hooks/useSistemaStore";
 import { ServicioNavegacion } from "./ServicioNavegacion";
-import { type CompassHandle } from "../../../../components/Compass";
+import { type CompassHandle } from "../../components/Compass";
 import type { CoordenadasGeograficas } from "../sensorTypes";
 
 export const useNavegacionDestino = () => {

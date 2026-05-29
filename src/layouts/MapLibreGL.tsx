@@ -7,7 +7,7 @@ import { useMapa } from '../features/mapa/hooks/useMap';
 import { useNavigation } from '../features/mapa/hooks/useNavegation';
 import { actualizarEstadoRevisionDB } from '../services/indexedbd/palmaActions'; 
 import { type SidebarData } from '../types';
-import Compass, { type CompassHandle }  from '../components/Compass';
+import Compass, { type CompassHandle }  from '../features/mapa/components/Compass';
 
 import "maplibre-gl/dist/maplibre-gl.css";
 

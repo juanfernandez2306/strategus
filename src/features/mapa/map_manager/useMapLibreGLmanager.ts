@@ -12,7 +12,7 @@ import { useUserLocation } from '../sensor/renderUserLocation/useUserLocation';
 
 import { actualizarEstadoRevisionDB } from '../../../services/indexedbd/palmaActions';
 
-import type { CompassHandle } from '../../../components/Compass';
+import type { CompassHandle } from '../components/Compass';
 
 
 export const useMapLibreGLmanager = () => {

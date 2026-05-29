@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { CompassHandle } from '../../../components/Compass';
+import type { CompassHandle } from '../components/Compass';
 import { setupNavOrchestrator } from '../managers/navOrchestrator';
 
 export const useNavigation = (

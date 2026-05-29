@@ -13,7 +13,7 @@ import { useNavigation } from './hooks/useNavegation';
 // --- SERVICIOS Y TIPOS ---
 import { actualizarEstadoRevisionDB } from '../../services/indexedbd/palmaActions'; 
 import { type SidebarData } from '../../types';
-import Compass, { type CompassHandle }  from '../../components/Compass';
+import Compass, { type CompassHandle }  from './components/Compass';
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import { type Map as MapLibreMap } from 'maplibre-gl';
