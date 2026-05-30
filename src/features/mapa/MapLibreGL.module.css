@@ -1,3 +1,21 @@
+/* ==========================================================================
+   1. DIMENSIONES BASE (Heredan el tamaño y centrado dictados por App.css)
+   ========================================================================== */
+.screenContainer {
+  /* CAMBIO: De 'relative' a 'absolute' con anclajes para rellenar al padre */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.mapCanvas {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
 /* --- Estilos del Drawer (Panel Inferior) --- */
 .drawerOverlay {

@@ -58,10 +58,11 @@ html, body {
    3. EXCEPCIÓN CRÍTICA: EL MAPA (Ocupa el 100% real sin paddings)
    ========================================================================== */
 .main-content[data-view="Mapa"] {
+  position: relative;
   padding: 0;
-  margin: 0;
+  margin-top: 20px;
   width: 100%;
-  height: calc(100vh - 56px); /* Altura restando el Header móvil */
+  height: calc(100vh - 80px);
   
   /* Lógica de centrado absoluto para el componente hijo */
   display: flex;
@@ -82,7 +83,7 @@ html, body {
   /* Forzamos a que en escritorio mantenga el alto correcto respecto a su header */
   .main-content[data-view="Mapa"] {
     width: 100%;
-    height: calc(100vh - 60px); 
+    height: calc(100vh - 80px); 
   }
 
   .app-container {
