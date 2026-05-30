@@ -15,44 +15,13 @@ form.form {
   width: 100%; /* En móviles ocupa todo el ancho disponible */
   display: flex;
   flex-direction: column;
-  gap: .5rem; /* Unificado para mejor ritmo visual */
+  gap: 1.5rem; /* Unificado para mejor ritmo visual */
   align-items: center;
   padding: 1.5rem;
   box-sizing: border-box; /* Crucial para que el padding no desborde el ancho táctil */
 }
 
-/* ==========================================================================
-   ELEMENTOS DE ENTRADA (INPUTS Y LABELS)
-   ========================================================================== */
-.groupInput {
-  width: 100%; 
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
-.groupInput label {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: var(--color-negro);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.groupInput input {
-  width: 100%; /* Obliga a todos los inputs a medir exactamente lo mismo */
-  font-size: 1.1rem;
-  padding: 0.75rem; /* Tamaño ergonómico y cómodo para pulsaciones táctiles */
-  border-radius: 8px;
-  border: 2px solid var(--color-primario);
-  outline: none;
-  box-sizing: border-box;
-}
-
-.groupInput input:focus {
-  border-color: var(--color-secundario, #e07a5f);
-  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
-}
 
 /* ==========================================================================
    BOTONES Y ACCIONES (TAMAÑO DE PULGAR REFORZADO)

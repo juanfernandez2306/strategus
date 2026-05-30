@@ -1,7 +1,6 @@
 import { useState } from "react";
 import FormBaseLayout from "../../components/FormLayoutBase";
-import styleLayoutBase from '../../components/FormLayoutBase.module.css';
-import styleLocal from './RegistroPosicionLayout.module.css'; // 1. Importamos el nuevo CSS Module
+import styleLocal from './RegistroPosicionLayout.module.css';
 import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus";
 import { useRegistroPosicion } from "./useRegistroPosicion";
 
@@ -33,21 +32,24 @@ const RegistroPosicionLayout = () => {
         <FormBaseLayout
             titulo="Registro GPS"
             buttonText="Grabar Punto"
-            iconoCustom={<IconStrategusAloeus size={150} />}
             onExecute={handleSubmit}
-            onSuccess={handleSuccess}
-        >
-            {/* 2. Reemplazamos Box y Typography por etiquetas HTML nativas con CSS Modules */}
-            <div className={styleLocal.contadorContenedor}>
-                <p className={styleLocal.contadorEtiqueta}>
-                    Puntos registrados hoy
-                </p>
-                <h2 className={styleLocal.contadorNumero}>
-                    {conteoDiario}
-                </h2>
-            </div>
+            onSuccess={handleSuccess}>
+            
+            <section className={styleLocal.contenedorLogo}>
+                <figure>
+                    <IconStrategusAloeus height={150} width={120} />
+                </figure>
+                <aside className={styleLocal.contadorContenedor}>
+                    <p className={styleLocal.contadorEtiqueta}>
+                        Puntos registrados hoy
+                    </p>
+                    <h2 className={styleLocal.contadorNumero}>
+                        {conteoDiario}
+                    </h2>
+                </aside>
+            </section>
 
-            <aside className={styleLayoutBase.groupInput}>
+            <aside className={styleLocal.groupInput}>
                 <label htmlFor="galeria">N° de Galería</label>
                 <input 
                     id="galeria" 
