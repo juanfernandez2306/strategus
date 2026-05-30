@@ -6,7 +6,7 @@ interface FormBaseProps {
   titulo: string;
   buttonText: string;
   children?: ReactNode;
-  iconoCustom: ReactNode;
+  iconoCustom?: ReactNode | null;
   onExecute: () => Promise<string>; 
   onSuccess?: () => void;
   disabled?: boolean;
@@ -16,7 +16,7 @@ const FormBaseLayout = ({
     titulo, 
     buttonText, 
     children,
-    iconoCustom, 
+    iconoCustom = null, 
     onExecute, 
     onSuccess,
     disabled = false }: FormBaseProps) => {
@@ -48,9 +48,12 @@ const FormBaseLayout = ({
   return (
     <div className={style.formContainer}>
       <form className={style.form} onSubmit={handleSubmit}>
-        <figure className={style.ContainerSvg}>
-          {iconoCustom}
-        </figure>
+        
+        {iconoCustom && (
+          <figure className={style.ContainerSvg}>
+            {iconoCustom}
+          </figure>
+        )}
         
         <h3 className={style.titulo} style={{ color: "var(--color-primario)", fontWeight: 'bold' }}>
           {titulo}

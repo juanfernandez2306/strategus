@@ -3,7 +3,7 @@
    ========================================================================== */
 .appBar {
   position: static;
-  background-color: var(--color-main-container);
+  background-color: var(--color-fondo);
   border-radius: 10px; /* Restaurado tu borde redondeado original */
   padding: 0.5rem 1rem;
   width: 100%;
@@ -16,7 +16,7 @@
 }
 
 .menuButton {
-  background-color: var(--color-main-container);
+  background-color: var(--color-fondo);
   border: 2px solid var(--color-primario);
   color: var(--color-primario);
   border-radius: 4px;

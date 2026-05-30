@@ -5,11 +5,11 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 0.5rem; /* Reducido ligeramente para ganar espacio en pantallas muy chicas */
+  padding: 0.5rem;
 }
 
 form.form {
-  background-color: var(--color-main-container);
+  background-color: var(--color-fondo);
   box-shadow: 0 0 20px 5px #cbcbcb;
   border-radius: 10px; /* Manteniendo tus bordes redondeados estilizados */
   width: 100%; /* En móviles ocupa todo el ancho disponible */
