@@ -59,6 +59,11 @@ export interface GpsConfig {
     ALTA_PRECISION: boolean;
 }
 
+export interface IconProps {
+  width?: number;
+  height?: number;
+}
+
 
 
 

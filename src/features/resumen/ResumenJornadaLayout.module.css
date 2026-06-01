@@ -12,32 +12,40 @@
 }
 
 .columnaConteo {
-    text-align: center;
-}
-
-.etiquetaCorta {
-    font-size: 0.75rem; /* Equivalente a variant="caption" */
-    color: gray;
-    font-weight: bold;
-    margin: 0 0 4px 0;
-}
-
-.numeroGrande {
-    font-size: 3rem; /* Equivalente a h3 */
-    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
     margin: 0;
 }
 
-.numeroRevisados {
-    color: #4caf50; /* Verde de MUI mantenido */
+.ContenedorEtiquetaCorta {
+    display: flex;
+    flex-direction: column;
 }
 
-/* Divisor manual simple */
-.divisor {
-    border: 0;
-    border-top: 1px solid var(--color-borde, #e0e0e0);
-    margin: 0 0 1rem 0;
+.etiquetaCorta{
+    font-size: 0.9rem;
+    color: var(--color-texto-secundario);
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
 }
+
+.numeroGrande {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: var(--color-negro);
+}
+
+.numeroRevisados {
+    color: var(--color-terciario);
+    -webkit-text-stroke: 1px var(--color-negro);
+}
+
+
 
 /* Caja del corazón del requerimiento: Sum(Galería) */
 .tarjetaAcumulado {
@@ -50,15 +58,23 @@
 
 .etiquetaAcumulado {
     font-size: 0.75rem;
-    color: var(--color-primario);
+    color: var(--color-terciario);
     letter-spacing: 1.5px;
     font-weight: bold;
     margin: 0 0 4px 0;
 }
 
 .numeroAcumulado {
-    font-size: 2.125rem; /* Equivalente a h4 */
-    font-weight: 900; /* fontWeight="black" */
+    font-size: 2.5rem;
+    font-weight: 900;
     color: var(--color-primario);
     margin: 0;
+}
+
+.titulo {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    color: var(--color-negro);
 }

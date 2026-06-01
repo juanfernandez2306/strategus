@@ -1,7 +1,4 @@
-interface IconProps {
-  width?: number;
-  height?: number;
-}
+import type { IconProps } from "../types"
 
 const IconStrategusAloeus = ({ width, height }: IconProps) => (
   <svg

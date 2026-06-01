@@ -3,7 +3,7 @@ import type { ReactNode, FormEvent } from "react";
 import style from './FormLayoutBase.module.css';
 
 interface FormBaseProps {
-  titulo: string;
+  titulo?: string | null;
   buttonText: string;
   children?: ReactNode;
   iconoCustom?: ReactNode | null;
@@ -13,7 +13,7 @@ interface FormBaseProps {
 }
 
 const FormBaseLayout = ({ 
-    titulo, 
+    titulo = null, 
     buttonText, 
     children,
     iconoCustom = null, 
@@ -55,9 +55,11 @@ const FormBaseLayout = ({
           </figure>
         )}
         
-        <h3 className={style.titulo} style={{ color: "var(--color-primario)", fontWeight: 'bold' }}>
-          {titulo}
-        </h3>
+        {titulo && (
+          <h3 className={style.titulo} style={{ color: "var(--color-primario)", fontWeight: 'bold' }}>
+            {titulo}
+          </h3>
+        )}
         
         {children}
         
