@@ -6,6 +6,7 @@ import { useQrManager } from "./hook/useQrManager";
 
 import styleRegistro from '../registroPosicion/RegistroPosicionLayout.module.css';
 import estiloResumen from '../resumen/ResumenJornadaLayout.module.css';
+import estiloScanner from './ScannerJornada.module.css';
 
 import IconQR from "../../components_svg/IconQR";
 
@@ -58,7 +59,6 @@ const GenerarQrJornada = () => {
                     <h3 className={estiloResumen.titulo}>
                         GENERAR QR DE JORNADA
                     </h3>
-                    
                 </section>
                 
                 <aside className={styleRegistro.groupInput}>
@@ -113,16 +113,7 @@ const GenerarQrJornada = () => {
                             setListaQrs([]); setFecha("");
                             setIsGenerated(false); 
                         }}
-                        style={{
-                            marginTop: '1rem',
-                            padding: '12px 24px',
-                            backgroundColor: 'transparent',
-                            color: '#cc0000',
-                            border: '2px solid #cc0000',
-                            borderRadius: '30px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
-                        }}
+                        className={[estiloScanner.submit, estiloScanner.reset].join(' ')}
                     >
                         Limpiar pantalla
                     </button>
