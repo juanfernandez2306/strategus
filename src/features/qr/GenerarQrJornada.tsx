@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import FormBaseLayout from "../../components/FormLayoutBase";
-import styleBase from '../../components/FormLayoutBase.module.css';
 import { obtenerRegistrosPosicionPorFecha } from "../../services/indexedbd/palmaQueries";  
 import { useQrManager } from "./hook/useQrManager";
+
+import styleRegistro from '../registroPosicion/RegistroPosicionLayout.module.css';
+import estiloResumen from '../resumen/ResumenJornadaLayout.module.css';
+
+import IconQR from "../../components_svg/IconQR";
 
 const GenerarQrJornada = () => {
     const [fecha, setFecha] = useState<string>("");
@@ -42,13 +46,22 @@ const GenerarQrJornada = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <FormBaseLayout
-                titulo="Generar QR de Jornada"
                 buttonText="Crear Códigos"
-                iconoCustom={<div style={{fontSize: '4rem'}}>📱</div>} 
                 onExecute={handleExecute}
-                disabled={isGenerated}
-            >
-                <aside className={styleBase.groupInput}>
+                disabled={isGenerated}>
+
+                <section className={styleRegistro.contenedorLogo}>
+                    <figure>
+                        <IconQR width={100} height={100}/>
+                    </figure>
+                    
+                    <h3 className={estiloResumen.titulo}>
+                        GENERAR QR DE JORNADA
+                    </h3>
+                    
+                </section>
+                
+                <aside className={styleRegistro.groupInput}>
                     <label htmlFor="fecha">Fecha de la Jornada</label>
                     <input 
                         id="fecha" 
