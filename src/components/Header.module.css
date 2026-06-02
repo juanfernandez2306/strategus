@@ -4,7 +4,6 @@
 .appBar {
   position: static;
   background-color: var(--color-fondo);
-  border-radius: 10px; /* Restaurado tu borde redondeado original */
   padding: 0.5rem 1rem;
   width: 100%;
 }
@@ -61,8 +60,11 @@
 /* Cabecera del menú con su degradado original basado en tu amarillo de alto contraste */
 .drawerHeader {
   padding: 1.2rem 1rem;
-  background: linear-gradient(180deg, rgba(253, 251, 0, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
   border-bottom: 1px solid #eee;
+  background: linear-gradient(190deg,
+    rgba(162, 203, 139, 1) 0%, 
+    rgba(232, 245, 189, 1) 40%, 
+    rgba(251, 245, 221, 1) 100%);
 }
 
 .projectLabel {
