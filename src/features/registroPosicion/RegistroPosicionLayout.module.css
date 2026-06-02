@@ -62,6 +62,7 @@
   border: 2px solid var(--color-primario);
   outline: none;
   box-sizing: border-box;
+  background-color: var(--color-fondo);
 }
 
 .groupInput input:focus {

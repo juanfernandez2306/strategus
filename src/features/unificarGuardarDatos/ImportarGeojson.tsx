@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react';
 import FormBaseLayout from '../../components/FormLayoutBase';
 import IconFileJsonMerge from '../../components_svg/IconFileJsonMerge';
-import style from "../../components/FormLayoutBase.module.css";
 import { useImportarManager } from './useImportarManager';
+
+import estiloRegistro from '../registroPosicion/RegistroPosicionLayout.module.css';
+import estiloResumen from '../resumen/ResumenJornadaLayout.module.css';
 
 const ImportarGeojson = () => {
     const [fileList, setFileList] = useState<FileList | null>(null);
@@ -21,13 +23,21 @@ const ImportarGeojson = () => {
 
     return (
        <FormBaseLayout
-        titulo="Sincronizar GeoJSON"
         buttonText={isProcessing ? "Escribiendo..." : "Importar a base de datos"}
-        iconoCustom={<IconFileJsonMerge size={120}/>}
         onExecute={handleExecute}
-        disabled={isProcessing || !fileList}
-       >
-        <aside className={style.groupInput}>
+        disabled={isProcessing || !fileList}>
+
+        <section className={estiloRegistro.contenedorLogo}>
+            <figure>
+                <IconFileJsonMerge size={50} />
+            </figure>
+            
+            <h3 className={estiloResumen.titulo}>
+                SINCRONIZAR GEOJSON
+            </h3>
+        </section>
+
+        <aside className={estiloRegistro.groupInput}>
             <label htmlFor="import_geojson">Cargar archivos de GeoJSON</label>
             <input
                 ref={fileInputRef}
