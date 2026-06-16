@@ -64,6 +64,39 @@ export interface IconProps {
   height?: number;
 }
 
+export interface ConfigVector {
+    centroInicial: [number, number];
+    zoomInicial: number;
+    minZoom: number;
+    maxZoom: number;
+    tilesURL: string;
+    capas: {
+        relieve: string;
+        lotes: string;
+        palmas: string;
+        cercas_divisorias: string;
+        vialidad_principal: string;
+        tendido_electrico: string;
+    };
+    limitesPantalla: [number, number, number, number];
+}
+
+export interface InfoFincaEstructura {
+    nombre: string;
+    razonSocial: string;
+    rif: string;
+    estado: string;
+    municipio: string;
+    parroquia: string;
+    configVector: ConfigVector;
+    configMap: {
+        centroInicial: [number, number];
+        zoomInicial: number;
+        minZoom: number;
+        maxZoom: number;
+        maxBounds: [number, number, number, number];
+    };
+}
 
 
 

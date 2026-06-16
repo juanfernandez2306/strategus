@@ -1,11 +1,13 @@
 import { NOMBRE_CARPETA_DOMINIO } from "./appConfig";
 
+import type { InfoFincaEstructura } from "../../types";
+
 const getTilesURL = () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     return `${origin}/${NOMBRE_CARPETA_DOMINIO}/tiles/{z}/{x}/{y}.pbf`;
 };
 
-export const INFO_FINCA = {
+export const INFO_FINCA: InfoFincaEstructura = {
     nombre: "FINCA DANUBIO",
     razonSocial: "AGROPECUARIA GUAIKINIMA, C.A.",
     rif: "J-29556953-0",
@@ -23,9 +25,12 @@ export const INFO_FINCA = {
         tilesURL: getTilesURL(),
         // Nombres de las capas generadas en QGIS para este cliente
         capas: {
-            lotes: 'plg_lotes_danubio_feb_2026_web_mercator',
-            palmas: 'pts_features_plantacion_palmas_danubio_20260403',
-            lineas: 'ln_features_recorte_densificadas_limites_danubio_20260403_web_mercator'
+            relieve: 'plg_relieve_plantacion_danubio_web_mercator_20260612',
+            lotes: 'plg_lotes_danubio_web_mercator_20260612',
+            palmas: 'pts_palmas_danubio_web_mercator_20260612',
+            cercas_divisorias : 'ln_cerca_danubio_web_mercator_20260608',
+            vialidad_principal: 'ln_vialidad_mision_machiques_web_mercator_20260612',
+            tendido_electrico: 'ln_tendido_electrico_danubio_web_mercator'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
         limitesPantalla:  [-72.706288183, 9.850626825, -72.696354309, 9.877790092] as [number, number, number, number]
