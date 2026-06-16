@@ -28,12 +28,14 @@ export const INFO_FINCA: InfoFincaEstructura = {
             relieve: 'plg_relieve_plantacion_danubio_web_mercator_20260612',
             lotes: 'plg_lotes_danubio_web_mercator_20260612',
             palmas: 'pts_palmas_danubio_web_mercator_20260612',
+            postes: 'pts_postas_electrico_danubio_web_mercator_20260612',
+            aspersores: 'pts_aspersores_vivero_danubio_web_mercator_20260612',
             cercas_divisorias : 'ln_cerca_danubio_web_mercator_20260608',
             vialidad_principal: 'ln_vialidad_mision_machiques_web_mercator_20260612',
             tendido_electrico: 'ln_tendido_electrico_danubio_web_mercator_20260612'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
-        limitesPantalla:  [-72.706288183, 9.850626825, -72.696354309, 9.877790092] as [number, number, number, number]
+        limitesPantalla:  [-72.70916940, 9.85081455, -72.69362371, 9.88029366] as [number, number, number, number]
     },
 
     // --- PARÁMETROS TÉCNICOS DEL VECTOR TILES MAP ---

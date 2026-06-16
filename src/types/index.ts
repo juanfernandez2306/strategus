@@ -74,6 +74,8 @@ export interface ConfigVector {
         relieve: string;
         lotes: string;
         palmas: string;
+        postes: string;
+        aspersores: string;
         cercas_divisorias: string;
         vialidad_principal: string;
         tendido_electrico: string;
