@@ -126,6 +126,22 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         bounds: configVector.limitesPantalla
     });
 
+    map.addLayer({
+        'id': 'tendido-electrico-danubio',
+        'type': 'line',
+        'source': 'finca-danubio-source',
+        'minzoom': 15,
+        'source-layer': configVector.capas.tendido_electrico,
+        'layout': {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        'paint': {
+            'line-color': '#FF4400',
+            'line-width': 1.5
+        }
+    });
+
     //capa de relieve
     map.addLayer({
         'id': 'relieve-danubio-fill',
@@ -325,22 +341,6 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     );
 
     map.addLayer(textoCapaLineaVialidad);
-
-    map.addLayer({
-        'id': 'tendido-electrico-danubio',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'minzoom': 15,
-        'source-layer': configVector.capas.tendido_electrico,
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#FF4400',
-            'line-width': 1.5
-        }
-    });
 
     const capaPalmas = crearCapaPuntos(
         'palmas-base',

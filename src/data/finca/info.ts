@@ -30,7 +30,7 @@ export const INFO_FINCA: InfoFincaEstructura = {
             palmas: 'pts_palmas_danubio_web_mercator_20260612',
             cercas_divisorias : 'ln_cerca_danubio_web_mercator_20260608',
             vialidad_principal: 'ln_vialidad_mision_machiques_web_mercator_20260612',
-            tendido_electrico: 'ln_tendido_electrico_danubio_web_mercator'
+            tendido_electrico: 'ln_tendido_electrico_danubio_web_mercator_20260612'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
         limitesPantalla:  [-72.706288183, 9.850626825, -72.696354309, 9.877790092] as [number, number, number, number]
