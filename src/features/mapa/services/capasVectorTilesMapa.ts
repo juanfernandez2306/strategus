@@ -1,123 +1,18 @@
 import { type Map as MapLibreMap } from 'maplibre-gl';
 import { INFO_FINCA } from '../../../data/finca/info';
 
-import type { ConfigVector as ConfigVectorType }  from '../../../types';
-
-
-import type { 
-    SymbolLayerSpecification,
-    CircleLayerSpecification,
-    FilterSpecification } from 'maplibre-gl';
-
-export function crearCapaPuntos(
-    id: string,
-    nombreCapa: keyof ConfigVectorType['capas'], 
-    filter: FilterSpecification | null,
-    minzoom: number,
-    maxzoom: number | undefined,
-    colorHex: string,
-    configVector: ConfigVectorType
-): CircleLayerSpecification {
-    
-    const paintCompartido: CircleLayerSpecification['paint'] = {
-        // Desvanecimiento suave al aparecer la capa
-        'circle-opacity': [
-            'interpolate', ['linear'], ['zoom'],
-            15, 0,
-            15.5, 1
-        ],
-        // Radio dinámico adaptado al rango de visibilidad real (> 15)
-        'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            15, 1.5,
-            17, 4.5,
-            19, 7.5
-        ],
-        // ASIGNACIÓN DIRECTA: Usamos el parámetro sin condicionales 'match' o 'get'
-        'circle-color': colorHex, 
-        
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#ffffff'
-    };
-
-    const capa: CircleLayerSpecification = {
-        'id': id,
-        'type': 'circle',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas[nombreCapa], 
-        'minzoom': minzoom,
-        'paint': paintCompartido
-    };
-
-    if (maxzoom !== undefined) {
-        capa['maxzoom'] = maxzoom;
-    }
-
-    if (filter !== null) {
-        capa['filter'] = filter;
-    }
-
-    return capa;
-}
-
-function crearCapaEtiquetas(
-    id: string,
-    nombreCapa: keyof ConfigVectorType['capas'],
-    filter: FilterSpecification, 
-    minzoom: number, 
-    maxzoom: number,
-    configVector: ConfigVectorType,
-    caracteresWrap: number | null = null,
-    esLinea: boolean = false
-): SymbolLayerSpecification {
-    
-    const layoutCompartido: SymbolLayerSpecification['layout'] = {
-        'text-field': ['get', 'desc'],
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 10, 10, 15, 14, 18, 18],
-        'text-justify': 'center',
-        'text-transform': 'uppercase',
-        'text-padding': 10,
-        'text-allow-overlap': false
-    };
-
-    if (esLinea) {
-        layoutCompartido['symbol-placement'] = 'line';
-        layoutCompartido['text-rotation-alignment'] = 'map';
-        layoutCompartido['symbol-spacing'] = 250;
-        layoutCompartido['text-offset'] = [0, -1.2]
-    }
-
-    if (caracteresWrap !== null) {
-        // Dividimos entre 1.2 porque text-max-width se mide en 'ems' (ancho de la letra M)
-        layoutCompartido['text-max-width'] = caracteresWrap; 
-    }
-
-    const paintCompartido: SymbolLayerSpecification['paint'] = {
-        'text-color': '#212121',
-        'text-halo-color': '#ffffff',
-        'text-halo-width': 2
-    };
-
-    return {
-        'id': id,
-        'type': 'symbol',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas[nombreCapa],
-        'minzoom': minzoom,
-        'maxzoom': maxzoom,
-        'filter': filter,
-        'layout': layoutCompartido,
-        'paint': paintCompartido
-    };
-}
+import { 
+    crearCapaEtiquetas, 
+    crearCapaPuntos,
+    crearCapaLineas 
+} from './utilsVectorTilesMapa';
 
 
 export const configurarCapasBase = (map: MapLibreMap) => {
 
     const { configVector } = INFO_FINCA;
     
-    // 1. Fuente de Vector Tiles (Configurada según QGIS)
+    // 1. Registro Único de la Fuente de Datos
     map.addSource('finca-danubio-source', {
         type: 'vector',
         tiles: [configVector.tilesURL],
@@ -126,7 +21,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         bounds: configVector.limitesPantalla
     });
 
-    //capa de relieve
+    // 2. Capa Base de Relieve Poligonal
     map.addLayer({
         'id': 'relieve-danubio-fill',
         'type': 'fill',
@@ -141,7 +36,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
 
 
     
-    // 2. Capa de Lotes (Polígonos)
+    // 3. Capa de Lotes (Polígonos Estilizados)
     map.addLayer({
         'id': 'lotes-danubio-fill',
         'type': 'fill',
@@ -156,9 +51,8 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     });
 
 
-    //3. Capa de lineas para el poligono de lotes
+    // 4. Capa de lineas para el poligono de lotes
     // basado en el campo clasificacion por lotes
-
     map.addLayer({
         'id': 'relieve-danubio-line',
         'type': 'line',
@@ -172,7 +66,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
                     [
                         'match',
                         ['get', 'clasificacion'],
-                        'LOTE', '#000000', // Si es LOTE, se pinta negro
+                        'LOTE', '#1A312C', // Si es LOTE, se pinta negro
                         'rgba(0, 0, 0, 0)' // Para cualquier otra clasificación, transparente
                     ],
                     // 2. CORTE EN ZOOM 15:
@@ -182,50 +76,56 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         }
     });
 
-
-    // 4. Texto de los poligonos de los lotes
-    const textoCapaLotes = crearCapaEtiquetas(
-        'labels-lotes-zoom-bajo',
-        'lotes',
-        ['==', ['get', 'clasificacion'], 'LOTE'],
-        0,
-        15,
-        configVector,
-        8
-    );
-
-    map.addLayer(textoCapaLotes);
-
-    // 5. Texto de los poligonos de los lotes pero otros
-    // para zoom mayores a 15
-
-    const textoCapaOtrosEnLotes = crearCapaEtiquetas(
-        'labels-lotes-zoom-alto',
-        'lotes',
-        ["!", ["has", "clasificacion"]] ,
-        15.5,
-        21,
-        configVector,
-        8
-    );
-
-    map.addLayer(textoCapaOtrosEnLotes);
+    
 
     //6. capa de linea para las cercas divisorias
-    map.addLayer({
-        'id': 'cerca-danubio-zoom-bajo',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.cercas_divisorias,
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#424242', // Gris oscuro estándar
-            'line-width': 1.5
-        }
-    });
+
+    const capasLineas = [
+        crearCapaLineas({
+            id: 'cercas-divisorias',
+            nombreCapa: 'cercas_divisorias',
+            colorHex: '#1A312C',
+            grosorMinimoDetalle: 0.7,
+            grosorMaximoDetalle: 2.5,
+            configVector
+        }),
+
+        crearCapaLineas({
+            id: 'tendido-electrico-danubio',
+            nombreCapa: 'tendido_electrico',
+            colorHex: '#FF4400',
+            grosorMinimoDetalle: 2.5,
+            minzoom: 15,
+            configVector
+        }),
+
+        crearCapaLineas({
+            id: 'vialidad-principal-borde',
+            nombreCapa: 'vialidad_principal',
+            colorHex: '#000000',
+            zoomMinimoDetalle: 12,    // Vista global
+            grosorMinimoDetalle: 3.5, // Cuando hay poco detalle la vía es delgada
+            zoomMaximoDetalle: 16,    // Vista enfocada
+            grosorMaximoDetalle: 7.0, // Al máximo detalle la vía se ensancha
+            configVector
+        }),
+
+        crearCapaLineas({
+            id: 'vialidad-principal-centro-dash',
+            nombreCapa: 'vialidad_principal',
+            colorHex: '#FFFFFF',
+            zoomMinimoDetalle: 12,
+            grosorMinimoDetalle: 1.5, // Línea delgada en el mínimo detalle
+            zoomMaximoDetalle: 16,
+            grosorMaximoDetalle: 3.0, // Línea gruesa en el máximo detalle
+            dashArray: [4, 4],
+            configVector
+        })
+    ];
+
+    capasLineas.forEach(capa => map.addLayer(capa));
+
+    
 
     //7. Simboligia de la "x" para la cerca
     map.addLayer({
@@ -270,49 +170,6 @@ export const configurarCapasBase = (map: MapLibreMap) => {
 
     map.addLayer(textoCapaLineaCerca);
 
-
-    map.addLayer({
-        'id': 'vialidad-principal-borde',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.vialidad_principal,
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#000000',
-            'line-width': [
-                'interpolate', ['linear'], ['zoom'],
-                12, 3.5,  // En zoom lejano tiene 3.5px de grosor total
-                16, 7.0   // En zoom cercano se ensancha a 7px total
-            ]
-        }
-    });
-
-    map.addLayer({
-        'id': 'vialidad-principal-centro-dash',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.vialidad_principal, 
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#FFFFFF', // Blanco para el eje central
-            // Debe ser más delgada que la capa negra para que se note el borde de fondo
-            'line-width': [
-                'interpolate', ['linear'], ['zoom'],
-                12, 1.5,  // Deja 1px de borde negro a cada lado (1.5 blanco + 2 negro = 3.5 total)
-                16, 3.0   // Deja 2px de borde negro a cada lado (3 blanco + 4 negro = 7 total)
-            ],
-            // ARRAY DASH: Definición de los segmentos intercalados
-            // [Longitud del guión, Longitud del espacio vacío] medido en múltiplos del ancho de la línea
-            'line-dasharray': [4, 4] 
-        }
-    });
-
     const textoCapaLineaVialidad = crearCapaEtiquetas(
         'labels-vialidad-principal',
         'vialidad_principal',
@@ -326,21 +183,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
 
     map.addLayer(textoCapaLineaVialidad);
 
-    map.addLayer({
-        'id': 'tendido-electrico-danubio',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'minzoom': 15,
-        'source-layer': configVector.capas.tendido_electrico,
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#FF4400',
-            'line-width': 2.5
-        }
-    });
+    
 
     const capaPalmas = crearCapaPuntos(
         'palmas-base',
@@ -401,6 +244,32 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     );
 
     map.addLayer(capaAspersores);
+
+
+    // 4. Texto de los poligonos de los lotes
+    const textoCapaLotes = crearCapaEtiquetas(
+        'labels-lotes-zoom-bajo',
+        'lotes',
+        ['==', ['get', 'clasificacion'], 'LOTE'],
+        0,
+        15,
+        configVector,
+        8
+    );
+
+    map.addLayer(textoCapaLotes);
+
+    const textoCapaOtrosEnLotes = crearCapaEtiquetas(
+        'labels-lotes-zoom-alto',
+        'lotes',
+        ["!", ["has", "clasificacion"]] ,
+        16,
+        21,
+        configVector,
+        8
+    );
+
+    map.addLayer(textoCapaOtrosEnLotes);
 
 };
 

@@ -20,7 +20,7 @@ export const INFO_FINCA: InfoFincaEstructura = {
         centroInicial: [-72.701892, 9.862457] as [number, number],
         zoomInicial: 14,
         minZoom: 0,
-        maxZoom: 14,
+        maxZoom: 15,
         // Configuración de tiles basada en XYZ_TEMPLATE
         tilesURL: getTilesURL(),
         // Nombres de las capas generadas en QGIS para este cliente
@@ -35,7 +35,7 @@ export const INFO_FINCA: InfoFincaEstructura = {
             tendido_electrico: 'ln_tendido_electrico_danubio_web_mercator_20260612'
         },
         // [ [xMin Oeste, yMin Sur], [xMax Este, yMax Norte] ]
-        limitesPantalla:  [-72.70916940, 9.85081455, -72.69362371, 9.88029366] as [number, number, number, number]
+        limitesPantalla:  [-72.70916940, 9.85081455, -72.68403027, 9.88845762] as [number, number, number, number]
     },
 
     // --- PARÁMETROS TÉCNICOS DEL VECTOR TILES MAP ---

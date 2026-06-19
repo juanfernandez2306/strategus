@@ -100,6 +100,26 @@ export interface InfoFincaEstructura {
     };
 }
 
+/**
+ * Opciones de configuración para la creación de capas de líneas vectoriales.
+ */
+export interface OpcionesCapaLinea {
+    id: string;
+    nombreCapa: keyof ConfigVector['capas'];
+    colorHex: string;
+    /** Grosor de la línea en la vista global/general (Mínimo detalle de los elementos, ej: zoom 12) */
+    grosorMinimoDetalle: number;
+    /** Grosor opcional en la vista enfocada/profunda (Máximo detalle de los elementos, ej: zoom 16) */
+    grosorMaximoDetalle?: number | null;
+    configVector: ConfigVector;
+    dashArray?: number[] | null;
+    minzoom?: number | null;
+    /** Nivel de zoom para la escala global/general (Por defecto 12) */
+    zoomMinimoDetalle?: number;     
+    /** Nivel de zoom para la escala enfocada/profunda (Por defecto 16) */
+    zoomMaximoDetalle?: number;
+}
+
 
 
 

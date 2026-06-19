@@ -59,6 +59,7 @@ export const iniciarServicioMapa = (
                 configurarClusteresEnMapa(map, respuestaDB, onPointClick);
 
                 console.log("Orquestador: Pipeline completado. Mapa e infraestructura listos.");
+
                 resolve(map);
 
             } catch (error) {
