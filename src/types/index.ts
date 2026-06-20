@@ -69,6 +69,7 @@ export interface ConfigVector {
     zoomInicial: number;
     minZoom: number;
     maxZoom: number;
+    maxZoomSource: number;
     tilesURL: string;
     capas: {
         relieve: string;

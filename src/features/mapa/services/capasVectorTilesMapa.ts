@@ -20,7 +20,7 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         type: 'vector',
         tiles: [configVector.tilesURL],
         minzoom: configVector.minZoom,
-        maxzoom: configVector.maxZoom,
+        maxzoom: 14,
         bounds: configVector.limitesPantalla
     });
 
