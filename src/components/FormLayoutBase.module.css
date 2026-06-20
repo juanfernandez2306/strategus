@@ -62,6 +62,11 @@ button.submit:disabled {
   line-height: 1.2;
 }
 
+.errorText, .successText{
+  margin: 0;
+  font-size: 1.3rem;
+}
+
 .errorText {
   color: var(--color-error);
   font-weight: bold;
@@ -143,4 +148,174 @@ button.submit:disabled {
     width: 420px; /* Ancho fijo perfecto para mantener los formularios elegantes en PC/Tablets */
     padding: 2rem;
   }
+}
+
+/* ==========================================================================
+   ANIMACIONES DE FEEDBACK (ESTILO LEGACY INTEGRADO)
+   ========================================================================== */
+
+:root {
+  --width-icon: 12px;
+  --height-icon: 24px;
+}
+
+
+
+
+
+
+/* --- ANIMACIÓN DEL CHECK (SUCCESS) --- */
+@keyframes checkIconAnim {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: var(--width-icon);
+    opacity: 1;
+  }
+  40% {
+    height: var(--height-icon);
+    width: var(--width-icon);
+    opacity: 1;
+  }
+  100% {
+    height: var(--height-icon);
+    width: var(--width-icon);
+    opacity: 1;
+  }
+}
+
+
+/* Check corregido sin posiciones relativas aleatorias */
+.checkIcon {
+  position: relative;
+  /* Eliminamos top y left manuales */
+  
+  /* Cambiamos el origen al centro para que rote sobre su propio eje */
+  transform-origin: center;
+  transform: scaleX(-1) rotate(135deg);
+  
+  border-top: 4px solid var(--color-primario);
+  border-right: 4px solid var(--color-primario);
+  height: var(--height-icon);
+  width: var(--width-icon);
+  
+  /* Un pequeño margen para compensar el desbalance visual de la "L" larga */
+  margin-top: -4px; 
+  margin-left: 2px;
+  
+  animation: checkIconAnim 0.5s ease forwards;
+}
+
+/* --- ANIMACIÓN DE LA X (ERROR) --- */
+@keyframes errorIconAnim {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.errorIcon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  animation: errorIconAnim 0.4s ease-out forwards;
+}
+
+.errorIcon::before,
+.errorIcon::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 0;
+  width: 30px;
+  height: 4px;
+  background-color: var(--color-error, red);
+  border-radius: 2px;
+}
+
+.errorIcon::before {
+  transform: rotate(45deg);
+}
+
+.errorIcon::after {
+  transform: rotate(-45deg);
+}
+
+/* ==========================================================================
+   ANIMACIÓN DEL CÍRCULO PERIFÉRICO (PRELOADER QUE SE CIERRA)
+   ========================================================================== */
+
+@keyframes drawCircle {
+  0% {
+    border-color: rgba(0, 0, 0, 0.1); /* Círculo base tenue */
+  }
+  25% {
+    border-top-color: var(--dynamic-color);
+  }
+  50% {
+    border-right-color: var(--dynamic-color);
+  }
+  75% {
+    border-bottom-color: var(--dynamic-color);
+  }
+  100% {
+    border-color: var(--dynamic-color); /* Círculo completamente cerrado */
+  }
+}
+
+.iconWrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+  box-sizing: border-box;
+  
+  /* Inicializamos con un borde transparente/tenue en todos los lados */
+  border: 3px solid rgba(0, 0, 0, 0.05);
+  
+  /* La animación dura 0.6s, es lineal y se queda fija al terminar (forwards) */
+  animation: drawCircle 0.6s linear forwards;
+}
+
+.iconWrapper.success {
+  --dynamic-color: var(--color-primario);
+}
+
+.iconWrapper.error {
+  --dynamic-color: var(--color-error, #d32f2f);
+}
+
+/* --- AJUSTE DE TIEMPOS PARA LOS ICONOS INTERNOS --- */
+
+/* El check se empieza a dibujar justo cuando el círculo se está terminando de cerrar */
+.checkIcon {
+  position: relative;
+  transform-origin: center;
+  transform: scaleX(-1) rotate(135deg);
+  border-top: 4px solid var(--color-primario);
+  border-right: 4px solid var(--color-primario);
+  height: var(--height-icon);
+  width: var(--width-icon);
+  margin-top: -4px; 
+  margin-left: 2px;
+  
+  /* Añadimos un pequeño delay de 0.2s para sincronizar con el cierre del círculo */
+  animation: checkIconAnim 0.4s ease 0.2s forwards;
+  opacity: 0; /* Empieza oculto hasta que actúe la animación */
+}
+
+/* La X de error aparece con un sutil delay también */
+.errorIcon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  animation: errorIconAnim 0.4s ease-out 0.2s forwards;
+  opacity: 0;
 }

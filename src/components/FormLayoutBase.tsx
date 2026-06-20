@@ -82,11 +82,15 @@ const FormBaseLayout = ({
               </>
             ) : (
               <>
-                {/* Iconos manuales para evitar dependencias */}
+                {/* Reemplazo de Emojis por Iconos Animados CSS */}
                 {isError ? (
-                  <span style={{ fontSize: '40px' }}>⚠️</span>
+                  <div className={`${style.iconWrapper} ${style.error}`}>
+                    <div className={style.errorIcon} />
+                  </div>
                 ) : (
-                  <span style={{ fontSize: '40px' }}>✅</span>
+                  <div className={`${style.iconWrapper} ${style.success}`}>
+                    <div className={style.checkIcon} />
+                  </div>
                 )}
                 
                 <p className={isError ? style.errorText : style.successText}>
@@ -101,6 +105,7 @@ const FormBaseLayout = ({
           </div>
         </div>
       )}
+      
     </div>
   );
 };
