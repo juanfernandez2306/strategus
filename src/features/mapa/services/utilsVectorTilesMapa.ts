@@ -2,12 +2,14 @@
 import type { 
     SymbolLayerSpecification,
     LineLayerSpecification,
-    CircleLayerSpecification
+    CircleLayerSpecification,
+    FillLayerSpecification
 } from 'maplibre-gl';
 
 import type { 
     OpcionesCapaPunto,
     OpcionesCapaLinea,
+    OpcionesCapaPoligono,
     OpcionesEtiquetaPunto, 
     OpcionesEtiquetaLinea, 
     OpcionesEtiquetaPoligono
@@ -65,17 +67,19 @@ export function crearCapaPuntos({
 export function crearCapaLineas({
     id,
     nombreCapa,
-    colorHex,
+    colorHex, // Ahora acepta arreglos de expresiones complejas de MapLibre
     grosorMinimoDetalle,
-    grosorMaximoDetalle,
+    grosorMaximoDetalle = null,
     configVector,
     dashArray = null,
     minzoom = null,
+    maxzoom = null,
+    filter = null,
     zoomMinimoDetalle = 12,
     zoomMaximoDetalle = 16
 }: OpcionesCapaLinea): LineLayerSpecification {
     
-    // Si definimos un grosor para cuando el mapa requiera Máximo Detalle, interpolamos de forma ascendente
+    // Si se pasa un grosor máximo se interpola, sino se usa el valor estático fijo (como tu 1.5)
     const lineWidth = (grosorMaximoDetalle != null)
         ? (['interpolate', ['linear'], ['zoom'], zoomMinimoDetalle, grosorMinimoDetalle, zoomMaximoDetalle, grosorMaximoDetalle] as any)
         : grosorMinimoDetalle;
@@ -86,14 +90,39 @@ export function crearCapaLineas({
         'source': 'finca-danubio-source',
         'source-layer': configVector.capas[nombreCapa],
         ...(minzoom != null && { minzoom }),
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
+        ...(maxzoom != null && { maxzoom }),
+        ...(filter != null && { filter }),
         'paint': {
-            'line-color': colorHex,
+            'line-color': colorHex, // MapLibre lo evalúa de forma dinámica si es un arreglo condicional
             'line-width': lineWidth,
             ...(dashArray != null && { 'line-dasharray': dashArray })
+        }
+    };
+}
+
+
+export function crearCapaPoligonos({
+    id,
+    nombreCapa,
+    colorFill,
+    configVector,
+    filter = null,
+    minzoom = null,
+    maxzoom = null,
+    opacidadFill = 0.5
+}: OpcionesCapaPoligono): FillLayerSpecification {
+    
+    return {
+        'id': id,
+        'type': 'fill',
+        'source': 'finca-danubio-source',
+        'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }),
+        ...(maxzoom != null && { maxzoom }),
+        ...(filter != null && { filter }),
+        'paint': {
+            'fill-color': colorFill,
+            'fill-opacity': opacidadFill
         }
     };
 }

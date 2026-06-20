@@ -4,6 +4,7 @@ import { INFO_FINCA } from '../../../data/finca/info';
 import { 
     crearCapaPuntos,
     crearCapaLineas,
+    crearCapaPoligonos,
     crearEtiquetasPuntos,
     crearEtiquetasLineas,
     crearEtiquetasPoligonos
@@ -23,64 +24,49 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         bounds: configVector.limitesPantalla
     });
 
-    // 2. Capa Base de Relieve Poligonal
-    map.addLayer({
-        'id': 'relieve-danubio-fill',
-        'type': 'fill',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.relieve,
-        'paint': {
-            // Convierte el atributo 'color' directamente a un formato de color válido
-            'fill-color': ['concat', 'rgb(', ['get', 'color'], ')'], 
-            'fill-opacity': 0.5
-        }
+    const capaRelieve = crearCapaPoligonos({
+        id: 'relieve-danubio-fill',
+        nombreCapa: 'relieve',
+        colorFill: ['concat', 'rgb(', ['get', 'color'], ')'], // Expresión dinámica nativa
+        opacidadFill: 0.5,
+        configVector
     });
 
+    map.addLayer(capaRelieve);
 
-    
-    // 3. Capa de Lotes (Polígonos Estilizados)
-    map.addLayer({
-        'id': 'lotes-danubio-fill',
-        'type': 'fill',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.lotes,
-        'paint': {
-            'fill-color': ['concat', 'rgb(', ['get', 'color'], ')'],
-            'fill-opacity': 1,
-            'fill-outline-color': '#ffffff'
-        }
-
+    const capaLotesRelleno = crearCapaPoligonos({
+        id: 'lotes-danubio-fill',
+        nombreCapa: 'lotes',
+        colorFill: ['concat', 'rgb(', ['get', 'color'], ')'], 
+        opacidadFill: 0.6,
+        configVector
     });
 
+    map.addLayer(capaLotesRelleno);
 
-    // 4. Capa de lineas para el poligono de lotes
-    // basado en el campo clasificacion por lotes
-    map.addLayer({
-        'id': 'relieve-danubio-line',
-        'type': 'line',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.lotes,
-        'paint': {
-            'line-color': [
-                    'step',
-                    ['zoom'],
-                    // 1. CONDICIÓN PARA ZOOM MENOR A 15:
-                    [
-                        'match',
-                        ['get', 'clasificacion'],
-                        'LOTE', '#1A312C', // Si es LOTE, se pinta negro
-                        'rgba(0, 0, 0, 0)' // Para cualquier otra clasificación, transparente
-                    ],
-                    // 2. CORTE EN ZOOM 15:
-                    15.0, 'rgba(0, 0, 0, 0)' // De zoom 15 en adelante, todo transparente
+    const capaLotesBorde = crearCapaLineas({
+        id: 'relieve-danubio-line',
+        nombreCapa: 'lotes',
+        grosorMinimoDetalle: 1.5, // Tu valor exacto fijado en 'line-width'
+        configVector,
+        // Pasamos tu expresión condicional idéntica basada en zooms y clasificaciones
+        colorHex: [
+            'step',
+            ['zoom'],
+            // 1. Zoom menor a 15: Evalúa clasificación
+            [
+                'match',
+                ['get', 'clasificacion'],
+                'LOTE', '#1A312C',   // Si es lote, verde oscuro
+                'rgba(0, 0, 0, 0)'   // Cualquier otra clasificación, invisible
             ],
-            'line-width': 1.5
-        }
+            // 2. A partir de zoom 15: Todo se oculta (transparente)
+            15.0, 'rgba(0, 0, 0, 0)'
+        ]
     });
-
     
-
-    //6. capa de linea para las cercas divisorias
+    map.addLayer(capaLotesBorde);
+    
 
     const capasLineas = [
         crearCapaLineas({

@@ -106,17 +106,16 @@ export interface InfoFincaEstructura {
 export interface OpcionesCapaLinea {
     id: string;
     nombreCapa: keyof ConfigVector['capas'];
-    colorHex: string;
-    /** Grosor de la línea en la vista global/general (Mínimo detalle de los elementos, ej: zoom 12) */
+    /** Soporta un color string plano (ej: '#1A312C') o una expresión dinámica de MapLibre (ej: ['step', ...]) */
+    colorHex: any; 
     grosorMinimoDetalle: number;
-    /** Grosor opcional en la vista enfocada/profunda (Máximo detalle de los elementos, ej: zoom 16) */
     grosorMaximoDetalle?: number | null;
     configVector: ConfigVector;
     dashArray?: number[] | null;
     minzoom?: number | null;
-    /** Nivel de zoom para la escala global/general (Por defecto 12) */
+    maxzoom?: number | null;
+    filter?: FilterSpecification | null;
     zoomMinimoDetalle?: number;     
-    /** Nivel de zoom para la escala enfocada/profunda (Por defecto 16) */
     zoomMaximoDetalle?: number;
 }
 
@@ -174,6 +173,19 @@ export interface OpcionesEtiquetaLinea extends BaseOpcionesEtiqueta {
 /** 3. Responsabilidad: Textos contenidos dentro de áreas cerradas con wrap automático */
 export interface OpcionesEtiquetaPoligono extends BaseOpcionesEtiqueta {
     caracteresWrap?: number;
+}
+
+export interface OpcionesCapaPoligono {
+    id: string;
+    nombreCapa: keyof ConfigVector['capas'];
+    /** Soporta color estático plano (ej: '#E8F5E9') o expresiones dinámicas nativas de MapLibre */
+    colorFill: any; 
+    configVector: ConfigVector;
+    filter?: FilterSpecification | null;
+    minzoom?: number | null;
+    maxzoom?: number | null;
+    /** Opacidad del relleno entre 0.0 y 1.0 (Por defecto 0.5) */
+    opacidadFill?: number;
 }
 
 
