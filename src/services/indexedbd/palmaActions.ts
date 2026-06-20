@@ -1,4 +1,8 @@
-import { escribirRegistro, limpiarAlmacenDatos } from "./actions.ts";
+import { 
+  escribirRegistro, 
+  limpiarAlmacenDatos,
+  borrarRegistroPorUUID 
+} from "./actions.ts";
 import { obtenerRegistroFiltro } from "./queries.ts";
 import { type RegistroPosicion } from "../../types/index.ts";
 import dayjs from "dayjs";
@@ -127,5 +131,19 @@ export const limpiarRegistrosPosiciones = async (): Promise<string> => {
   } catch (error) {
     console.error("Error al purgar la base de datos:", error);
     throw new Error("Fallo al limpiar la base de datos local.");
+  }
+};
+
+export const eliminarPalmaYRegistroDB = async (uuid: string): Promise<string> => {
+  try {
+    // Invocamos la función genérica que busca por el índice 'uuid_idx' y borra la idInterna
+    await borrarRegistroPorUUID(uuid);
+    
+    // Retornamos un string explícito siguiendo la convención de tu proyecto
+    return "Registro eliminado correctamente";
+
+  } catch (error) {
+    console.error("Error en la capa de negocio al intentar eliminar la palma:", error);
+    throw new Error("No se pudo eliminar el punto del almacenamiento local");
   }
 };

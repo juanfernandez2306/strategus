@@ -1,0 +1,116 @@
+/* ==========================================================================
+   SISTEMA DE PESTAÑAS (CON ESPACIO DE RESGUARDO PARA BOTÓN CERRAR)
+   ========================================================================== */
+.tabsContainer {
+  display: flex;
+  width: 100%;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  padding-right: 45px; /* Libera el espacio exacto del botón .btnClose absoluto del mapa */
+  box-sizing: border-box;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  font-size: 1.05rem;
+  color: #718096;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tabButtonActiveNav {
+  font-weight: bold;
+  color: var(--color-primario);
+  border-bottom-color: var(--color-primario);
+}
+
+.tabButtonActiveAdmin {
+  font-weight: bold;
+  color: var(--color-error, #dc3545);
+  border-bottom-color: var(--color-error, #dc3545);
+}
+
+/* ==========================================================================
+   CONTENIDO Y ACCIONES DE ADMINISTRACIÓN
+   ========================================================================== */
+.tabContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.adminPanel {
+  width: 100%;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+.adminTitle {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+}
+
+.adminMeta {
+  font-size: 0.9rem;
+  color: #718096;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   BOTÓN DE ELIMINACIÓN REFORZADO (TAMAÑO DE PULGAR)
+   ========================================================================== */
+.btnDelete {
+  width: 100%;
+  max-width: 350px;
+  padding: 16px 0;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border: 2px solid var(--color-error, #dc3545);
+  background-color: transparent;
+  color: var(--color-error, #dc3545);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.btnDelete:active:not(:disabled) {
+  background-color: var(--color-error, #dc3545);
+  color: #ffffff;
+  transform: scale(0.98);
+}
+
+.btnDelete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Contenedor envolvente intermedio para centrar el feedback */
+.feedbackWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  width: 100%;
+  text-align: center;
+}
+
+.spinnerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  gap: 1rem;
+}

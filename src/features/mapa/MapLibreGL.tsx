@@ -1,9 +1,9 @@
 
 
 import { useMapLibreGLmanager } from './hooks/useMapLibreGLmanager';
-import Compass  from './components/Compass';
-import { ConfirmButton } from './components/BtnRevision';
 import styles from './MapLibreGL.module.css';
+
+import { MapSidebar } from './components/MapSidebar';
 
 
 
@@ -16,6 +16,7 @@ export const MapLibreGL = () => {
         handleCerrarSidebar,
         detallePunto,
         handleConfirmarVisita,
+        handleEliminarPunto,
         compassRef
      } = useMapLibreGLmanager();
 
@@ -30,37 +31,14 @@ export const MapLibreGL = () => {
                 {mensajeError}
             </section>
 
-            {/* --- ESTRATEGIA DEL DRAWER / SIDEBAR ACOPLADA --- */}
-            <section 
-                className={`${styles.drawerOverlay} ${isSidebarOpen ? styles.overlayActive : ''}`} 
-                onClick={handleCerrarSidebar} // Al hacer click afuera, limpia el destino en Zustand
-            >
-                <div 
-                    className={`${styles.drawerPaper} ${isSidebarOpen ? styles.drawerOpen : ''}`}
-                    onClick={(e) => e.stopPropagation()} // Evita que se cierre al tocar dentro del panel
-                >
-                    {/* Botón de cierre superior derecha */}
-                    <button className={styles.btnClose} onClick={handleCerrarSidebar}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
-                    </button>
-
-                    {/* El contenido se monta de forma condicional solo si hay un punto seleccionado */}
-                    {detallePunto && (
-                        <>
-                            {/* Acoplamiento de la Ref: Permite la tubería directa desde useSensorManager al DOM */}
-                            <Compass size={260} ref={compassRef} />
-                            
-                            {/* Botón de acción contextual para el operario en campo */}
-                            <ConfirmButton 
-                                onClick={handleConfirmarVisita} 
-                                detallePunto={detallePunto} 
-                            />
-                        </>
-                    )}
-                </div>
-            </section>
+            <MapSidebar 
+                isOpen={isSidebarOpen}
+                detallePunto={detallePunto}
+                onClose={handleCerrarSidebar}
+                onConfirmarVisita={handleConfirmarVisita}
+                onEliminarPunto={handleEliminarPunto} // <-- TS comprobará que las firmas coinciden perfectamente
+                compassRef={compassRef}
+            />
 
         </main>
     );

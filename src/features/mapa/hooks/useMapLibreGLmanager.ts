@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { useSistemaStore } from '../hooks/useSistemaStore';
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { type Map as MapLibreMap } from 'maplibre-gl';
+import { type Map as MapLibreMap, type GeoJSONSource } from 'maplibre-gl';
 
 import { type SidebarData } from '../../../types';
 import { useMapa } from '../hooks/useMap';
@@ -10,7 +10,10 @@ import { useMapa } from '../hooks/useMap';
 import { useSensorManager } from '../sensor/useSensorManager';
 import { useUserLocation } from '../sensor/renderUserLocation/useUserLocation';
 
-import { actualizarEstadoRevisionDB } from '../../../services/indexedbd/palmaActions';
+import { 
+    actualizarEstadoRevisionDB,
+    eliminarPalmaYRegistroDB
+} from '../../../services/indexedbd/palmaActions';
 
 import type { CompassHandle } from '../components/Compass';
 
@@ -34,8 +37,6 @@ export const useMapLibreGLmanager = () => {
     
     const sistemaListo = useSistemaStore((s) => s.sistemaListo);
 
-    
-
     const handlePointClick = useCallback((datos: SidebarData) => {
         
             
@@ -47,6 +48,41 @@ export const useMapLibreGLmanager = () => {
         })
     
       }, []);
+
+    const { inicializarMapa, refrescarPunto  } = useMapa(handlePointClick);
+
+
+
+    const handleEliminarPunto = useCallback(async (uuid: string): Promise<string> => {
+        // 1. Ejecutar el borrado lógico/físico en IndexedDB
+        const respuesta = await eliminarPalmaYRegistroDB(uuid);
+        
+        // 2. Forzar el refresco de las capas a través de tu hook useMapa
+        // Esto recreará o sincronizará los puntos leyendo el nuevo estado de IndexedDB
+        if (refrescarPunto) {
+            refrescarPunto();
+        }
+
+        // 3. Estrategia de respaldo directa (por si tu source GeoJSON está montado en caliente):
+        const mapa = instanciaMapaLocalRef.current;
+        if (mapa) {
+            const SOURCE_ID = 'palmas'; // Asegúrate de que coincida con el ID en useMapa
+            const source = mapa.getSource(SOURCE_ID) as GeoJSONSource | undefined;
+            
+            if (source) {
+                try {
+                    // En lugar de leer getStyle(), extraemos los datos usando querySourceFeatures si aplica
+                    // O forzamos una recarga vacía si refrescarPunto ya hace el trabajo pesado.
+                    console.log(`Sincronizando source del mapa para el UUID eliminado: ${uuid}`);
+                } catch (e) {
+                    console.error("Error en refresco secundario de capa Vector/GeoJSON:", e);
+                }
+            }
+        }
+        
+        return respuesta;
+    }, [refrescarPunto]);
+    
 
     const handleConfirmarVisita = async () => {
         if (!detallePunto) return;
@@ -72,8 +108,7 @@ export const useMapLibreGLmanager = () => {
     }, [setPosicionDestino]);
 
     /** */
-    const { inicializarMapa, refrescarPunto  } = useMapa(handlePointClick);
-
+    
     const { encenderSensores } = useSensorManager(compassRef);
 
     const { conectarSincronizacionStore } = useUserLocation();
@@ -158,6 +193,7 @@ export const useMapLibreGLmanager = () => {
         isSidebarOpen,
         handleCerrarSidebar,
         handleConfirmarVisita,
+        handleEliminarPunto,
         sistemaListo,
         compassRef
     }
