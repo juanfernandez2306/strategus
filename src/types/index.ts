@@ -120,6 +120,62 @@ export interface OpcionesCapaLinea {
     zoomMaximoDetalle?: number;
 }
 
+import type { FilterSpecification } from "maplibre-gl";
+
+/**
+ * Opciones de configuración para la creación de capas de puntos (círculos).
+ */
+export interface OpcionesCapaPunto {
+    id: string;
+    nombreCapa: keyof ConfigVector['capas'];
+    colorHex: string;
+    configVector: ConfigVector;
+    filter?: FilterSpecification | null;
+    minzoom: number;
+    maxzoom?: number | null;
+    /** Radio del punto en la vista lejana (Mínimo detalle del elemento, por defecto zoom 15) */
+    radioMinimoDetalle?: number;
+    /** Radio del punto en la vista a ras de suelo (Máximo detalle del elemento, por defecto zoom 19) */
+    radioMaximoDetalle?: number;
+    /** Nivel de zoom de inicio para calcular el tamaño (Por defecto 15) */
+    zoomMinimoDetalle?: number;
+    /** Nivel de zoom de fin para calcular el tamaño (Por defecto 19) */
+    zoomMaximoDetalle?: number;
+}
+
+
+/** Configuración compartida por todas las fábricas de etiquetas */
+interface BaseOpcionesEtiqueta {
+    id: string;
+    nombreCapa: keyof ConfigVector['capas'];
+    configVector: ConfigVector;
+    filter?: FilterSpecification | null;
+    minzoom?: number | null;
+    maxzoom?: number | null;
+    tamanoMinimoDetalle?: number;
+    tamanoMaximoDetalle?: number;
+    zoomMinimoDetalle?: number;
+    zoomMaximoDetalle?: number;
+    textoEstatico?: string | null;
+    campoContenedorTexto?: string | null;
+}
+
+/** 1. Responsabilidad: Textos flotantes sobre geometrías puntuales */
+export interface OpcionesEtiquetaPunto extends BaseOpcionesEtiqueta {
+    desplazamientoTexto?: [number, number];
+    anclajeTexto?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+}
+
+/** 2. Responsabilidad: Textos y simbologías continuas a lo largo de un eje */
+export interface OpcionesEtiquetaLinea extends BaseOpcionesEtiqueta {
+    espaciadoSimbologia?: number;
+}
+
+/** 3. Responsabilidad: Textos contenidos dentro de áreas cerradas con wrap automático */
+export interface OpcionesEtiquetaPoligono extends BaseOpcionesEtiqueta {
+    caracteresWrap?: number;
+}
+
 
 
 

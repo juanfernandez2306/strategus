@@ -2,9 +2,11 @@ import { type Map as MapLibreMap } from 'maplibre-gl';
 import { INFO_FINCA } from '../../../data/finca/info';
 
 import { 
-    crearCapaEtiquetas, 
     crearCapaPuntos,
-    crearCapaLineas 
+    crearCapaLineas,
+    crearEtiquetasPuntos,
+    crearEtiquetasLineas,
+    crearEtiquetasPoligonos
 } from './utilsVectorTilesMapa';
 
 
@@ -103,10 +105,10 @@ export const configurarCapasBase = (map: MapLibreMap) => {
             id: 'vialidad-principal-borde',
             nombreCapa: 'vialidad_principal',
             colorHex: '#000000',
-            zoomMinimoDetalle: 12,    // Vista global
-            grosorMinimoDetalle: 3.5, // Cuando hay poco detalle la vía es delgada
-            zoomMaximoDetalle: 16,    // Vista enfocada
-            grosorMaximoDetalle: 7.0, // Al máximo detalle la vía se ensancha
+            zoomMinimoDetalle: 12,   
+            grosorMinimoDetalle: 3.5,
+            zoomMaximoDetalle: 16,
+            grosorMaximoDetalle: 7.0,
             configVector
         }),
 
@@ -125,151 +127,101 @@ export const configurarCapasBase = (map: MapLibreMap) => {
 
     capasLineas.forEach(capa => map.addLayer(capa));
 
-    
+    const capaPuntos = [
+        crearCapaPuntos({
+            id: 'palmas-base',
+            nombreCapa: 'palmas',
+            colorHex: '#212121', // Negro directo para las palmas
+            configVector,
+            minzoom: 15
+        }),
 
-    //7. Simboligia de la "x" para la cerca
-    map.addLayer({
-        'id': 'cerca-danubio-simbologia-x',
-        'type': 'symbol',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.cercas_divisorias,
-        'minzoom': 15, 
-        'layout': {
-            // Configuramos la variable de texto estática 'X'
-            'text-field': 'X',
-            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-size': 13,
-            
-            // UBICACIÓN DE LA SIMBOLOGÍA SOBRE LA GEOMETRÍA
-            'symbol-placement': 'line',        // Fuerza a que las 'X' se distribuyan a lo largo de la línea
-            'text-rotation-alignment': 'map', // Sincroniza la rotación de la 'X' con el rumbo de la línea
-            
-            // INTERVALO DE DISTANCIA
-            'symbol-spacing': 35,             // Cada 35 píxeles de pantalla se intercalará una 'X' automáticamente
-            
-            'text-keep-upright': true,        // Evita que los símbolos queden de cabeza si la línea cambia de dirección
-            'text-allow-overlap': true        // Permite el renderizado forzado para que no se oculten entre sí
-        },
-        'paint': {
-            'text-color': '#000000',      // Color negro para las equis
-            'text-halo-color': '#ffffff', // Halo blanco de respaldo para mantener visibilidad sobre el relieve
-            'text-halo-width': 1.5
-        }
-    });
+        crearCapaPuntos({
+            id: 'poste-base',
+            nombreCapa: 'postes',
+            colorHex: '#FF4400',
+            configVector,
+            minzoom: 15
+        }),
 
-    const textoCapaLineaCerca = crearCapaEtiquetas(
-        'labels-cerca divisoria',
-        'cercas_divisorias',
-        ["has", "desc"],
-        0,
-        21,
-        configVector,
-        null,
-        true
-    );
+        crearCapaPuntos({
+            id: 'aspersores-base',
+            nombreCapa: 'aspersores',
+            colorHex: '#0288D1', // Azul hidráulico para los aspersores
+            configVector,
+            // Si quisieras cambiar el tamaño de los aspersores de forma específica, ahora es tan fácil como hacer esto:
+            radioMinimoDetalle: 2.0, 
+            radioMaximoDetalle: 9.0,
+            minzoom: 15
+        })
+    ];
 
-    map.addLayer(textoCapaLineaCerca);
+    capaPuntos.forEach(capa => map.addLayer(capa));
 
-    const textoCapaLineaVialidad = crearCapaEtiquetas(
-        'labels-vialidad-principal',
-        'vialidad_principal',
-        ["has", "desc"],
-        0,
-        21,
-        configVector,
-        null,
-        true
-    );
+    const capasEtiquetas = [
+        
+        crearEtiquetasLineas({
+            id: 'cerca-danubio-simbologia-x',
+            nombreCapa: 'cercas_divisorias',
+            textoEstatico: 'X',
+            minzoom: 15,
+            espaciadoSimbologia: 35, // Patrón denso de cruces
+            tamanoMinimoDetalle: 13, 
+            tamanoMaximoDetalle: 13, // Tamaño fijo
+            configVector
+        }),
+       
+        crearEtiquetasLineas({
+            id: 'labels-vialidad-principal',
+            nombreCapa: 'vialidad_principal',
+            filter: ["has", "desc"],
+            minzoom: 12,
+            configVector
+        }),
 
-    map.addLayer(textoCapaLineaVialidad);
+        crearEtiquetasPuntos({
+            id: 'etiquetas-postes-danubio',
+            nombreCapa: 'postes',
+            textoEstatico: 'POSTE',
+            minzoom: 17,
+            tamanoMinimoDetalle: 9, zoomMinimoDetalle: 17,
+            tamanoMaximoDetalle: 14, zoomMaximoDetalle: 18,
+            desplazamientoTexto: [2.5, 0], // Exclusivo de puntos
+            anclajeTexto: 'top',          // Exclusivo de puntos
+            configVector
+        }),
 
-    
+        crearEtiquetasPoligonos({
+            id: 'labels-lotes-zoom-bajo',
+            nombreCapa: 'lotes',
+            filter: ['==', ['get', 'clasificacion'], 'LOTE'],
+            minzoom: 0, maxzoom: 15,
+            caracteresWrap: 8, // Exclusivo de polígonos
+            configVector
+        }),
 
-    const capaPalmas = crearCapaPuntos(
-        'palmas-base',
-        'palmas',
-        null, // Filtro para aislar las palmas
-        15,
-        undefined,
-        '#212121', // Negro directo para las palmas
-        configVector
-    );
+        crearEtiquetasPoligonos({
+            id: 'labels-lotes-zoom-alto',
+            nombreCapa: 'lotes',
+            filter: ['==', ['get', 'clasificacion'], 'AREA'],
+            minzoom: 16, maxzoom: 21,
+            caracteresWrap: 8, // Exclusivo de polígonos
+            configVector
+        }),
 
-    map.addLayer(capaPalmas);
-
-    const capaPostes = crearCapaPuntos(
-        'poste-base',
-        'postes',
-        null, // Filtro para aislar las palmas
-        15,
-        undefined,
-        '#FF4400',
-        configVector
-    );
-
-    map.addLayer(capaPostes);
-
-    map.addLayer({
-        'id': 'etiquetas-postes-danubio',
-        'type': 'symbol',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas.postes,
-        'minzoom': 17,
-        'layout': {
-            'text-field': 'POSTE', // Texto estático según tu requerimiento
-            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-size': [
-                'interpolate', ['linear'], ['zoom'],
-                17, 9,
-                18, 14
-            ],
-            'text-offset': [2.5, 0], // Desplaza el texto hacia abajo del punto/triángulo
-            'text-anchor': 'top'
-        },
-        'paint': {
-            'text-color': '#212121', // Gris carbón coincidente con el punto
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1.5
-        }
-    });
-
-    const capaAspersores = crearCapaPuntos(
-        'aspersores-base',
-        'aspersores',
-        null, // Filtro para aislar las palmas
-        15,
-        undefined,
-        '#0288D1',
-        configVector
-    );
-
-    map.addLayer(capaAspersores);
+        crearEtiquetasPoligonos({
+            id: 'labels-lotes-bomba',
+            nombreCapa: 'lotes',
+            filter: ['==', ['get', 'clasificacion'], 'BOMBA'],
+            minzoom: 18.5, maxzoom: 21,
+            caracteresWrap: 8, // Exclusivo de polígonos
+            configVector
+        })
 
 
-    // 4. Texto de los poligonos de los lotes
-    const textoCapaLotes = crearCapaEtiquetas(
-        'labels-lotes-zoom-bajo',
-        'lotes',
-        ['==', ['get', 'clasificacion'], 'LOTE'],
-        0,
-        15,
-        configVector,
-        8
-    );
+    ];
 
-    map.addLayer(textoCapaLotes);
-
-    const textoCapaOtrosEnLotes = crearCapaEtiquetas(
-        'labels-lotes-zoom-alto',
-        'lotes',
-        ["!", ["has", "clasificacion"]] ,
-        16,
-        21,
-        configVector,
-        8
-    );
-
-    map.addLayer(textoCapaOtrosEnLotes);
+    capasEtiquetas.forEach(capa => map.addLayer(capa));
 
 };
 

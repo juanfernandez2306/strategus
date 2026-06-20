@@ -1,118 +1,66 @@
-import type { ConfigVector as ConfigVectorType }  from '../../../types';
-
 
 import type { 
     SymbolLayerSpecification,
     LineLayerSpecification,
-    CircleLayerSpecification,
-    FilterSpecification 
+    CircleLayerSpecification
 } from 'maplibre-gl';
 
-import type { OpcionesCapaLinea } from '../../../types';
+import type { 
+    OpcionesCapaPunto,
+    OpcionesCapaLinea,
+    OpcionesEtiquetaPunto, 
+    OpcionesEtiquetaLinea, 
+    OpcionesEtiquetaPoligono
+ } from '../../../types';
 
-export function crearCapaPuntos(
-    id: string,
-    nombreCapa: keyof ConfigVectorType['capas'], 
-    filter: FilterSpecification | null,
-    minzoom: number,
-    maxzoom: number | undefined,
-    colorHex: string,
-    configVector: ConfigVectorType
-): CircleLayerSpecification {
-    
-    const paintCompartido: CircleLayerSpecification['paint'] = {
-        // Desvanecimiento suave al aparecer la capa
-        'circle-opacity': [
-            'interpolate', ['linear'], ['zoom'],
-            15, 0,
-            15.5, 1
-        ],
-        // Radio dinámico adaptado al rango de visibilidad real (> 15)
-        'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            15, 1.5,
-            17, 4.5,
-            19, 7.5
-        ],
-        // ASIGNACIÓN DIRECTA: Usamos el parámetro sin condicionales 'match' o 'get'
-        'circle-color': colorHex, 
-        
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#ffffff'
-    };
-
-    const capa: CircleLayerSpecification = {
-        'id': id,
-        'type': 'circle',
-        'source': 'finca-danubio-source',
-        'source-layer': configVector.capas[nombreCapa], 
-        'minzoom': minzoom,
-        'paint': paintCompartido
-    };
-
-    if (maxzoom !== undefined) {
-        capa['maxzoom'] = maxzoom;
-    }
-
-    if (filter !== null) {
-        capa['filter'] = filter;
-    }
-
-    return capa;
-}
-
-export function crearCapaEtiquetas(
-    id: string,
-    nombreCapa: keyof ConfigVectorType['capas'],
-    filter: FilterSpecification | null, 
-    minzoom: number, 
-    maxzoom: number,
-    configVector: ConfigVectorType,
-    caracteresWrap: number | null = null,
-    esLinea: boolean = false
-): SymbolLayerSpecification {
-    
-    const layoutCompartido: SymbolLayerSpecification['layout'] = {
-        'text-field': ['get', 'desc'],
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-size': ['interpolate', ['linear'], ['zoom'], 10, 10, 15, 14, 18, 18],
-        'text-justify': 'center',
-        'text-transform': 'uppercase',
-        'text-padding': 10,
-        'text-allow-overlap': false
-    };
-
-    if (esLinea) {
-        layoutCompartido['symbol-placement'] = 'line';
-        layoutCompartido['text-rotation-alignment'] = 'map';
-        layoutCompartido['symbol-spacing'] = 250;
-        layoutCompartido['text-offset'] = [0, -1.2]
-    }
-
-    if (caracteresWrap !== null) {
-        // Dividimos entre 1.2 porque text-max-width se mide en 'ems' (ancho de la letra M)
-        layoutCompartido['text-max-width'] = caracteresWrap; 
-    }
-
-    const paintCompartido: SymbolLayerSpecification['paint'] = {
-        'text-color': '#212121',
-        'text-halo-color': '#ffffff',
-        'text-halo-width': 2
-    };
+/**
+ * Fábrica (Factory) encargada de generar objetos de configuración de capas de puntos (círculos)
+ * compatibles con la especificación oficial de MapLibre GL JS.
+ */
+export function crearCapaPuntos({
+    id,
+    nombreCapa,
+    colorHex,
+    configVector,
+    filter = null,
+    minzoom,
+    maxzoom = null,
+    radioMinimoDetalle = 1.5, // Valores por defecto extraídos de tu diseño original
+    radioMaximoDetalle = 7.5,  // Valores por defecto extraídos de tu diseño original
+    zoomMinimoDetalle = 15,
+    zoomMaximoDetalle = 19
+}: OpcionesCapaPunto): CircleLayerSpecification {
 
     return {
         'id': id,
-        'type': 'symbol',
+        'type': 'circle',
         'source': 'finca-danubio-source',
         'source-layer': configVector.capas[nombreCapa],
-        'minzoom': minzoom,
-        'maxzoom': maxzoom,
-        ...(filter && { filter }),
-        'layout': layoutCompartido,
-        'paint': paintCompartido
+        // Inyecciones condicionales limpias e inline igual que en crearCapaLineas
+        ...(minzoom != null && { minzoom }),
+        ...(maxzoom != null && { maxzoom }),
+        ...(filter != null && { filter }),
+        'paint': {
+            // Desvanecimiento suave al aparecer la capa a partir de su zoom inicial
+            'circle-opacity': [
+                'interpolate', ['linear'], ['zoom'],
+                minzoom, 0,
+                (minzoom + 0.5), 1
+            ] as any,
+            
+            // Radio dinámico adaptado de forma continua según el nivel de detalle
+            'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                zoomMinimoDetalle, radioMinimoDetalle,
+                zoomMaximoDetalle, radioMaximoDetalle
+            ] as any,
+            
+            'circle-color': colorHex,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#ffffff'
+        }
     };
 }
-
 
 export function crearCapaLineas({
     id,
@@ -147,5 +95,97 @@ export function crearCapaLineas({
             'line-width': lineWidth,
             ...(dashArray != null && { 'line-dasharray': dashArray })
         }
+    };
+}
+
+/** Helper privado para resolver la expresión de texto común */
+const obtenerExpresionTexto = (estatico: string | null | undefined, campo: string | null | undefined) => {
+    return estatico != null ? estatico : ['get', campo || 'desc'];
+};
+
+/** Helper privado para resolver el text-size dinámico común */
+const obtenerTextSize = (zMin: number, tMin: number, zMax: number, tMax: number) => [
+    'interpolate', ['linear'], ['zoom'], zMin, tMin, zMax, tMax
+];
+
+const paintCompartidoBase = {
+    'text-halo-color': '#ffffff',
+    'text-halo-width': 1.5
+};
+
+// =========================================================================
+// 1. RESPONSABILIDAD: ETIQUETAS PARA PUNTOS (Postes, Aspersores, Palmas)
+// =========================================================================
+export function crearEtiquetasPuntos({
+    id, nombreCapa, configVector, filter = null, minzoom = null, maxzoom = null,
+    textoEstatico = null, campoContenedorTexto = 'desc',
+    tamanoMinimoDetalle = 10, tamanoMaximoDetalle = 16, zoomMinimoDetalle = 15, zoomMaximoDetalle = 19,
+    desplazamientoTexto = [0, 0], anclajeTexto = 'center'
+}: OpcionesEtiquetaPunto): SymbolLayerSpecification {
+    return {
+        id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }), ...(maxzoom != null && { maxzoom }), ...(filter != null && { filter }),
+        'layout': {
+            'text-field': obtenerExpresionTexto(textoEstatico, campoContenedorTexto) as any,
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': obtenerTextSize(zoomMinimoDetalle, tamanoMinimoDetalle, zoomMaximoDetalle, tamanoMaximoDetalle) as any,
+            'text-anchor': anclajeTexto,
+            'text-offset': desplazamientoTexto,
+            'text-justify': 'center',
+            'text-transform': 'uppercase'
+        },
+        'paint': { ...paintCompartidoBase, 'text-color': '#212121' }
+    };
+}
+
+// =========================================================================
+// 2. RESPONSABILIDAD: ETIQUETAS PARA LÍNEAS (Vías, Líneas de Cerca, Tendidos)
+// =========================================================================
+export function crearEtiquetasLineas({
+    id, nombreCapa, configVector, filter = null, minzoom = null, maxzoom = null,
+    textoEstatico = null, campoContenedorTexto = 'desc',
+    tamanoMinimoDetalle = 10, tamanoMaximoDetalle = 14, zoomMinimoDetalle = 12, zoomMaximoDetalle = 16,
+    espaciadoSimbologia = 250
+}: OpcionesEtiquetaLinea): SymbolLayerSpecification {
+    return {
+        id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }), ...(maxzoom != null && { maxzoom }), ...(filter != null && { filter }),
+        'layout': {
+            'text-field': obtenerExpresionTexto(textoEstatico, campoContenedorTexto) as any,
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': obtenerTextSize(zoomMinimoDetalle, tamanoMinimoDetalle, zoomMaximoDetalle, tamanoMaximoDetalle) as any,
+            'symbol-placement': 'line',
+            'text-rotation-alignment': 'map',
+            'symbol-spacing': espaciadoSimbologia,
+            'text-keep-upright': true,
+            'text-transform': 'uppercase',
+            // Si es un nombre dinámico (ej: vía), lo elevamos del eje; si es simbología estática (ej: 'X') va en el centro
+            'text-offset': textoEstatico == null ? [0, -1.2] : [0, 0]
+        },
+        'paint': { ...paintCompartidoBase, 'text-color': textoEstatico != null ? '#000000' : '#212121' }
+    };
+}
+
+// =========================================================================
+// 3. RESPONSABILIDAD: ETIQUETAS PARA POLÍGONOS (Lotes / Parcelas)
+// =========================================================================
+export function crearEtiquetasPoligonos({
+    id, nombreCapa, configVector, filter = null, minzoom = null, maxzoom = null,
+    campoContenedorTexto = 'desc',
+    tamanoMinimoDetalle = 10, tamanoMaximoDetalle = 18, zoomMinimoDetalle = 10, zoomMaximoDetalle = 18,
+    caracteresWrap = 8
+}: OpcionesEtiquetaPoligono): SymbolLayerSpecification {
+    return {
+        id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }), ...(maxzoom != null && { maxzoom }), ...(filter != null && { filter }),
+        'layout': {
+            'text-field': obtenerExpresionTexto(null, campoContenedorTexto) as any,
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': obtenerTextSize(zoomMinimoDetalle, tamanoMinimoDetalle, zoomMaximoDetalle, tamanoMaximoDetalle) as any,
+            'text-max-width': caracteresWrap,
+            'text-justify': 'center',
+            'text-transform': 'uppercase'
+        },
+        'paint': { ...paintCompartidoBase, 'text-color': '#212121' }
     };
 }
