@@ -2,7 +2,6 @@
 import FormBaseLayout from "../../components/FormLayoutBase";
 import { useResumenJornada } from "./useResumenJornada";
 
-import styleLayoutBase from "../../components/FormLayoutBase.module.css";
 import styleLocal from "./ResumenJornadaLayout.module.css";
 
 
@@ -11,7 +10,7 @@ import styleRegistro from "../registroPosicion/RegistroPosicionLayout.module.css
 import IconFumigadora from "../../components_svg/IconFumigadora";
 
 const ResumenJornadaLayout = () => {
-  const { registrados, revisados, sumaGalerias, refrescar } = useResumenJornada();
+  const { registrados, revisados, refrescar } = useResumenJornada();
 
   const handleRefrescar = async () => {
     return await refrescar();
