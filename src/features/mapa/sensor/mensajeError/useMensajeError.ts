@@ -3,85 +3,144 @@ import { useUpdateSistemaListo } from './useUpdateSistemaListo';
 import { useSistemaStore } from '../../hooks/useSistemaStore';
 
 import { 
-    gpsErrorMessage,
-    headingErrorMessage
- } from './utilsMensajeError';
+    gpsErrorMessagePrecisionCoordenadas,
+    headingErrorMessage,
+    haSuperadoUmbralDistancia,
+    validarGeocerca,
+    concatenarMensajes
+} from './utilsMensajeError';
 
- import { type GpsSensorData, type HeadingSensorData } from '../sensorTypes';
+import type { 
+    CoordenadasGeograficas, 
+    GpsSensorData, 
+    HeadingSensorData 
+} from '../sensorTypes';
 
 export const useMensajeError = () => {
+    // Almacenamiento persistente de alertas individuales
+    const ultimoMensajeErrorGPS = useRef<string | null>(null);
+    const ultimoMensajeHardwareGPS = useRef<string | null>(null);
+    const ultimoMensajeGeocerca = useRef<string | null>(null);
+    
+    // Pivote geográfico para cálculo de distancias
+    const ultimaPosicionGuardada = useRef<CoordenadasGeograficas>({ lat: 0, lng: 0 });
 
-    let ultimoMensajeErrorGps = useRef<string | null>(null);
-    let statusGpsOkRef = useRef<boolean>(false);
-    let ultimoMensajeErrorHeading = useRef<null | string>(null);
-    let statusHeadingOkRef = useRef<boolean>(false);
-    let conteoValidacionRef = useRef<number>(0);
+    // Semáforos de control de fases
+    const statusPrecisionCoordenadasRef = useRef<boolean>(false);
+    const statusGeocercaOkRef = useRef<boolean>(false);
+    
+    // Referencias de enlace externo
+    const statusGpsOkRef = useRef<boolean>(false);
+    const ultimoMensajeErrorHeading = useRef<null | string>(null);
+    const statusHeadingOkRef = useRef<boolean>(false);
 
     const { sincronizarSistemaListo } = useUpdateSistemaListo({
         statusGpsOkRef,
         statusHeadingOkRef,
-        errorGpsRef: ultimoMensajeErrorGps,
+        errorGpsRef: ultimoMensajeErrorGPS,
         errorHeadingRef: ultimoMensajeErrorHeading
     });
 
     const { setStatusGpsOk } = useSistemaStore();
 
-    const procesarMensajeErrorGPS = useCallback((dataGPS: GpsSensorData) => {
-
-        let mensajeGPSerrorActual = gpsErrorMessage(
-            dataGPS, 
-            conteoValidacionRef.current
-        );
-
-        if (ultimoMensajeErrorGps.current !== mensajeGPSerrorActual){
-            ultimoMensajeErrorGps.current = mensajeGPSerrorActual
-        }
-
+    /**
+     * FASE 1: Evalúa exclusivamente la salud e integridad física del hardware y señal GPS.
+     */
+    const validarFasePrecisionHardware = useCallback((dataGPS: GpsSensorData) => {
+        const errorHardwareActual = gpsErrorMessagePrecisionCoordenadas(dataGPS);
         
-        const gpsSaludable = ultimoMensajeErrorGps.current === null;
+        ultimoMensajeHardwareGPS.current = errorHardwareActual;
+        statusPrecisionCoordenadasRef.current = (errorHardwareActual === null);
+    }, []);
 
-        if (statusGpsOkRef.current !== gpsSaludable) {
-            statusGpsOkRef.current = gpsSaludable;
-            setStatusGpsOk(gpsSaludable);
+    /**
+     * FASE 2: Evalúa condiciones espaciales (Arranque y Desplazamiento lineal) con Turf.
+     */
+    const validarFaseGeocerca = useCallback((dataGPS: GpsSensorData) => {
+        // Si el hardware falla, reseteamos el estado de la geocerca para evitar residuos colaterales
+        if (!statusPrecisionCoordenadasRef.current) {
+            ultimoMensajeGeocerca.current = null;
+            statusGeocercaOkRef.current = true; // Por defecto true para no duplicar errores si el hardware está roto
+            return;
         }
 
-        sincronizarSistemaListo()
+        const lngActual = dataGPS.lng!;
+        const latActual = dataGPS.lat!;
 
-        if (conteoValidacionRef.current >= 16) {
-            conteoValidacionRef.current = 1;
-        } else {
-            conteoValidacionRef.current += 1;
-        }
+        // Evaluación de disparo: Primer pulso (0,0) o movimiento significativo > 30 metros
+        const esPrimerPulso = ultimaPosicionGuardada.current.lat === 0 && ultimaPosicionGuardada.current.lng === 0;
+        const seSuperoDistancia = esPrimerPulso || haSuperadoUmbralDistancia(dataGPS, ultimaPosicionGuardada.current);
 
+        // Si no se cumple el umbral cinemático, se mantiene intacto el veredicto anterior (Persistencia)
+        if (!seSuperoDistancia) return;
+
+        // Actualizamos la posición de pivote y recalculamos la geocerca
+        ultimaPosicionGuardada.current = { lng: lngActual, lat: latActual };
+        
+        // Pasamos una copia limpia del objeto de coordenadas
+        const errorGeocerca = validarGeocerca({ lng: lngActual, lat: latActual });
+
+        ultimoMensajeGeocerca.current = errorGeocerca;
+        statusGeocercaOkRef.current = (errorGeocerca === null);
+    }, []);
+
+    /**
+     * FASE 3: Orquesta la fusión de strings y gatilla eventos de Zustand/Sincronizador.
+     */
+    const sincronizarFaseFinal = useCallback(() => {
+        const errorCombinadoActual = concatenarMensajes([
+            ultimoMensajeHardwareGPS.current, 
+            ultimoMensajeGeocerca.current
+        ]);
+        
+        const gpsSaludableActual = statusPrecisionCoordenadasRef.current && statusGeocercaOkRef.current;
+
+        const huboCambioMensaje = ultimoMensajeErrorGPS.current !== errorCombinadoActual;
+        const huboCambioSalud = statusGpsOkRef.current !== gpsSaludableActual;
+
+        // Cláusula de guarda para protección de re-renders redundantes
+        if (!huboCambioMensaje && !huboCambioSalud) return;
+
+        // Mutación controlada de estados globales
+        ultimoMensajeErrorGPS.current = errorCombinadoActual;
+        statusGpsOkRef.current = gpsSaludableActual;
+        setStatusGpsOk(gpsSaludableActual);
+
+        sincronizarSistemaListo();
     }, [sincronizarSistemaListo, setStatusGpsOk]);
 
+    /**
+     * Pipeline secuencial de telemetría GPS
+     */
+    const procesarMensajeErrorGPS = useCallback((dataGPS: GpsSensorData) => {
+        validarFasePrecisionHardware(dataGPS);
+        validarFaseGeocerca(dataGPS);
+        sincronizarFaseFinal();
+    }, [validarFasePrecisionHardware, validarFaseGeocerca, sincronizarFaseFinal]);
+
+    /**
+     * Pipeline de telemetría de Orientación (Brújula)
+     */
     const procesarMensajeErrorHeading = useCallback((dataHeading: HeadingSensorData) => {
-        
-        let mensajeHeadingActual = headingErrorMessage(dataHeading);
+        const mensajeHeadingActual = headingErrorMessage(dataHeading);
 
-        if (ultimoMensajeErrorHeading.current !== mensajeHeadingActual){
-            ultimoMensajeErrorHeading.current = mensajeHeadingActual
+        if (ultimoMensajeErrorHeading.current !== mensajeHeadingActual) {
+            ultimoMensajeErrorHeading.current = mensajeHeadingActual;
         }
 
-        const headingSaludable = (
-            mensajeHeadingActual === null && 
-            dataHeading.heading !== null 
-        );
+        const headingSaludable = mensajeHeadingActual === null && dataHeading.heading !== null;
 
-        if (statusHeadingOkRef.current !== headingSaludable){
-            statusHeadingOkRef.current = headingSaludable
+        if (statusHeadingOkRef.current !== headingSaludable) {
+            statusHeadingOkRef.current = headingSaludable;
         }
 
-        sincronizarSistemaListo()
-
-    }, [sincronizarSistemaListo])
+        sincronizarSistemaListo();
+    }, [sincronizarSistemaListo]);
 
     return {
         statusGpsOkRef,
         statusHeadingOkRef,
         procesarMensajeErrorGPS,
         procesarMensajeErrorHeading
-    }
-
-}
-
+    };
+};
