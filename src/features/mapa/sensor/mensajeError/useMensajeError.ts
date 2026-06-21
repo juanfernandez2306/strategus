@@ -44,73 +44,83 @@ export const useMensajeError = () => {
     const { setStatusGpsOk } = useSistemaStore();
 
     /**
-     * FASE 1: Evalúa exclusivamente la salud e integridad física del hardware y señal GPS.
+     * FASE 1: Validación de Precisión de Hardware
+     * Verifica que lat/lng sean números y accuracy <= 20m.
      */
     const validarFasePrecisionHardware = useCallback((dataGPS: GpsSensorData) => {
-        const errorHardwareActual = gpsErrorMessagePrecisionCoordenadas(dataGPS);
+        const mensajeHardwareActual = gpsErrorMessagePrecisionCoordenadas(dataGPS);
         
-        ultimoMensajeHardwareGPS.current = errorHardwareActual;
-        statusPrecisionCoordenadasRef.current = (errorHardwareActual === null);
+        if (ultimoMensajeHardwareGPS.current !== mensajeHardwareActual) {
+            ultimoMensajeHardwareGPS.current = mensajeHardwareActual;
+        }
+        
+        // Es verdadero SI Y SOLO SI no hay mensaje de error de hardware (es null)
+        statusPrecisionCoordenadasRef.current = (mensajeHardwareActual === null);
     }, []);
 
     /**
-     * FASE 2: Evalúa condiciones espaciales (Arranque y Desplazamiento lineal) con Turf.
+     * FASE 2: Validación de Geocerca
+     * Si la fase anterior falló (statusPrecisionCoordenadasRef es false), se aborta inmediatamente.
      */
     const validarFaseGeocerca = useCallback((dataGPS: GpsSensorData) => {
-        // Si el hardware falla, reseteamos el estado de la geocerca para evitar residuos colaterales
+        // CONDICIÓN DE CORTE: Si el hardware reportó error, cortamos y no calculamos nada
         if (!statusPrecisionCoordenadasRef.current) {
-            ultimoMensajeGeocerca.current = null;
-            statusGeocercaOkRef.current = true; // Por defecto true para no duplicar errores si el hardware está roto
+            statusGeocercaOkRef.current = false;
+            ultimoMensajeGeocerca.current = null; // Limpiamos para evitar residuos viejos
             return;
         }
 
-        const lngActual = dataGPS.lng!;
-        const latActual = dataGPS.lat!;
+        // Si el hardware está OK, procedemos a evaluar la distancia y envolvente
+        const requiereValidacionDura = haSuperadoUmbralDistancia(dataGPS, ultimaPosicionGuardada.current);
 
-        // Evaluación de disparo: Primer pulso (0,0) o movimiento significativo > 30 metros
-        const esPrimerPulso = ultimaPosicionGuardada.current.lat === 0 && ultimaPosicionGuardada.current.lng === 0;
-        const seSuperoDistancia = esPrimerPulso || haSuperadoUmbralDistancia(dataGPS, ultimaPosicionGuardada.current);
+        if (requiereValidacionDura) {
+            const posicionActual: CoordenadasGeograficas = { lat: dataGPS.lat!, lng: dataGPS.lng! };
+            const mensajeGeocercaActual = validarGeocerca(posicionActual);
 
-        // Si no se cumple el umbral cinemático, se mantiene intacto el veredicto anterior (Persistencia)
-        if (!seSuperoDistancia) return;
+            if (ultimoMensajeGeocerca.current !== mensajeGeocercaActual) {
+                ultimoMensajeGeocerca.current = mensajeGeocercaActual;
+            }
 
-        // Actualizamos la posición de pivote y recalculamos la geocerca
-        ultimaPosicionGuardada.current = { lng: lngActual, lat: latActual };
-        
-        // Pasamos una copia limpia del objeto de coordenadas
-        const errorGeocerca = validarGeocerca({ lng: lngActual, lat: latActual });
+            statusGeocercaOkRef.current = (mensajeGeocercaActual === null);
 
-        ultimoMensajeGeocerca.current = errorGeocerca;
-        statusGeocercaOkRef.current = (errorGeocerca === null);
+            if (statusGeocercaOkRef.current) {
+                ultimaPosicionGuardada.current = posicionActual;
+            }
+        }
     }, []);
 
     /**
-     * FASE 3: Orquesta la fusión de strings y gatilla eventos de Zustand/Sincronizador.
+     * FASE TERMINAL: Sincronización y Compuerta AND Infranqueable
      */
     const sincronizarFaseFinal = useCallback(() => {
+        // Concatenamos los mensajes actuales de ambas fases
         const errorCombinadoActual = concatenarMensajes([
-            ultimoMensajeHardwareGPS.current, 
+            ultimoMensajeHardwareGPS.current,
             ultimoMensajeGeocerca.current
         ]);
-        
-        const gpsSaludableActual = statusPrecisionCoordenadasRef.current && statusGeocercaOkRef.current;
 
-        const huboCambioMensaje = ultimoMensajeErrorGPS.current !== errorCombinadoActual;
-        const huboCambioSalud = statusGpsOkRef.current !== gpsSaludableActual;
+        // COMPUERTA AND PURA: El GPS está OK si no hay strings de error (null)
+        // Y el hardware pasó Y la geocerca pasó.
+        const gpsSaludableActual = (errorCombinadoActual === null) && 
+                                   statusPrecisionCoordenadasRef.current && 
+                                   statusGeocercaOkRef.current;
 
-        // Cláusula de guarda para protección de re-renders redundantes
-        if (!huboCambioMensaje && !huboCambioSalud) return;
+        // Condición de guardia para evitar loops innecesarios en ráfagas
+        if (gpsSaludableActual === statusGpsOkRef.current && errorCombinadoActual === ultimoMensajeErrorGPS.current) {
+            return;
+        }
 
-        // Mutación controlada de estados globales
+        // Guardamos los estados reales definitivos
         ultimoMensajeErrorGPS.current = errorCombinadoActual;
         statusGpsOkRef.current = gpsSaludableActual;
         setStatusGpsOk(gpsSaludableActual);
 
+        // Despierta al unificador para evaluar si el sistema completo (GPS + Brújula) está listo
         sincronizarSistemaListo();
     }, [sincronizarSistemaListo, setStatusGpsOk]);
 
     /**
-     * Pipeline secuencial de telemetría GPS
+     * Orquestador secuencial lineal (Pipeline sin anidamientos peligrosos)
      */
     const procesarMensajeErrorGPS = useCallback((dataGPS: GpsSensorData) => {
         validarFasePrecisionHardware(dataGPS);
@@ -119,7 +129,7 @@ export const useMensajeError = () => {
     }, [validarFasePrecisionHardware, validarFaseGeocerca, sincronizarFaseFinal]);
 
     /**
-     * Pipeline de telemetría de Orientación (Brújula)
+     * Procesamiento del Heading (Brújula)
      */
     const procesarMensajeErrorHeading = useCallback((dataHeading: HeadingSensorData) => {
         const mensajeHeadingActual = headingErrorMessage(dataHeading);
