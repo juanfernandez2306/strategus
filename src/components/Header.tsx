@@ -84,6 +84,15 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
               <div className={styles.versionTag}>
                 SIGAL v1.0 - Gestión Palma Digital
               </div>
+
+              <button 
+                type="button"
+                className={styles.closeMenuButton}
+                onClick={() => setOpen(false)}
+              >
+                Cerrar Menú
+              </button>
+
             </footer>
           </aside>
         </>

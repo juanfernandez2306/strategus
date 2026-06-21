@@ -29,7 +29,7 @@ form.form {
 button.submit {
   width: 100%;
   background-color: var(--color-primario);
-  color: white;
+  color: var(--color-fondo);
   border: none;
   padding: 16px 20px; /* Botón alto y cómodo para presionar con el pulgar en el campo */
   border-radius: 30px; /* Estilo de botón redondeado táctico */
@@ -110,13 +110,14 @@ button.submit:disabled {
 }
 
 .closeButton {
-  background-color: transparent;
-  border: 2px solid var(--color-primario);
+  background-color: var(--color-body-container);
+  border: 3px solid var(--color-primario);
   color: var(--color-primario);
   padding: 10px 24px;
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 1.2rem;
   width: 100%; /* Botón de cierre ancho para facilitar el uso con una sola mano */
   transition: background-color 0.2s;
 }

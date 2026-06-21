@@ -18,8 +18,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: [
-        'logo_header.png',
-        'tiles/**/*.pbf'
+        'logo_header.png'
       ],
       workbox: {
         globPatterns: ['**/*.{js,css,html,pbf,png,svg}']
@@ -54,7 +53,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           // Separamos el motor pesado del escáner en su propio archivo
-          if (id.includes('html5-qrcode')) {
+          if (id.includes('qr-scanner')) {
             return 'vendor-scanner';
           }
           // Separamos MapLibre y Turf que también son grandes
