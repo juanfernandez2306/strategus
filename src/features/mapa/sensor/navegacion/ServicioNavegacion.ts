@@ -11,6 +11,8 @@ export class ServicioNavegacion {
   private lastStoredDistance: number = 0;
   private alphaDistance: number = 0.25;
 
+  private esPrimerPulso: boolean = true;
+
   /**
    * Algoritmo LERP corregido para evitar saltos bruscos en el paso por el Norte (0°/360°)
    */
@@ -18,7 +20,7 @@ export class ServicioNavegacion {
     let diferencia = (objetivo - actual) % 360;
     if (diferencia > 180) diferencia -= 360;
     if (diferencia < -180) diferencia += 360;
-    return (actual + diferencia * alpha + 360) % 360;
+    return actual + (diferencia * alpha);
   }
 
   /**
@@ -35,10 +37,16 @@ export class ServicioNavegacion {
     // 1. Distancia mediante Turf
     const rawDistance = distance(from, to, { units: 'meters' });
 
-    // 2. Filtro de estabilidad de distancia (Umbral de ruido)
-    const diff = Math.abs(rawDistance - this.lastStoredDistance);
-    if (diff > this.GPS_NOISE_THRESHOLD) {
-      this.lastStoredDistance = this.lastStoredDistance + this.alphaDistance * (rawDistance - this.lastStoredDistance);
+    if (this.esPrimerPulso){
+      this.lastStoredDistance = rawDistance;
+      this.esPrimerPulso = false;
+    }else{
+      // 2. Filtro de estabilidad de distancia (Umbral de ruido)
+      const diff = Math.abs(rawDistance - this.lastStoredDistance);
+      if (diff > this.GPS_NOISE_THRESHOLD) {
+        this.lastStoredDistance = this.lastStoredDistance + this.alphaDistance * (rawDistance - this.lastStoredDistance);
+      }
+
     }
 
     // 3. Cálculo de rumbo base (Bearing)
@@ -56,5 +64,11 @@ export class ServicioNavegacion {
       anguloFiltrado: Math.round(this.currentLerpAngle),
       proximidadModo: this.lastStoredDistance <= 12
     };
+  }
+
+  public resetearNavegacion() {
+    this.esPrimerPulso = true;
+    this.currentLerpAngle = 0;
+    this.lastStoredDistance = 0;
   }
 }

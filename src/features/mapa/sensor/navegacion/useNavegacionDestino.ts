@@ -42,6 +42,11 @@ export const useNavegacionDestino = () => {
                 unsubscribeZustandPosicionDestinoRef.current = null;
             }
             posicionDestinoActualRef.current = null;
+
+            if (engineRef.current) {
+                engineRef.current.resetearNavegacion();
+            }
+            
             hasVibratedRef.current = false;
         };
     }, []);
