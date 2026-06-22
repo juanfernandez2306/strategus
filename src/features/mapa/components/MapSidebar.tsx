@@ -8,6 +8,7 @@ import { useSistemaStore } from '../hooks/useSistemaStore';
 import mapStyles from '../MapLibreGL.module.css';
 import sidebarStyles from './MapSidebar.module.css';
 import formStyles from '../../../components/FormLayoutBase.module.css'; // <-- Alias limpio para reciclar animaciones
+import IconDeleteDB from '../../../components_svg/IconDeleteDB';
 
 interface MapSidebarProps {
   isOpen: boolean;
@@ -181,6 +182,7 @@ export const MapSidebar = ({
                 </>
               ) : (
                 <div className={sidebarStyles.adminPanel}>
+                  <IconDeleteDB size={100} />
                   <h4 className={sidebarStyles.adminTitle}>Gestión del Punto</h4>
                   <p className={sidebarStyles.adminMeta}>
                     <strong>UUID:</strong> {detallePunto.uuid} <br />
