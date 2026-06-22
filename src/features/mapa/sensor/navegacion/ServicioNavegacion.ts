@@ -5,7 +5,7 @@ import bearing from '@turf/bearing';
 import type { CoordenadasGeograficas } from '../sensorTypes';
 
 export class ServicioNavegacion {
-  private readonly GPS_NOISE_THRESHOLD = 3; 
+  private readonly GPS_NOISE_THRESHOLD = 2; 
   private currentLerpAngle: number = 0;
   private alphaAngle: number = 0.15;
   private lastStoredDistance: number = 0;

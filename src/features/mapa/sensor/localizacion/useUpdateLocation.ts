@@ -24,8 +24,8 @@ export const useUpdateLocation = ({
     statusHeadingOkRef
 }: syncReferenciasSaludSensores)  => {
 
-    // 3 metros / 111111.11 metros
-    const UMBRAL_TOLERANCIA = 0.000027;
+    // 1 metros / 111111.11 metros
+    const UMBRAL_TOLERANCIA = 0.000009;
 
     const primerVueloCompletado = useRef<boolean>(false);
 
