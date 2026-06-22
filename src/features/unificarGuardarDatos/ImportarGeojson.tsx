@@ -47,7 +47,10 @@ const ImportarGeojson = () => {
                 accept=".geojson,.json"
                 onChange={(e) => setFileList(e.target.files)}
             />
-            <p style={{ fontSize: '0.85rem', opacity: 0.8, marginTop: '8px' }}>
+            <p style={{ fontSize: '0.85rem', 
+                opacity: 0.8, 
+                marginTop: '8px',
+                color: 'var(--color-negro)'}}>
                 {fileList 
                     ? `${fileList.length} archivo(s) seleccionados` 
                     : "Puedes seleccionar varios archivos .geojson"}
