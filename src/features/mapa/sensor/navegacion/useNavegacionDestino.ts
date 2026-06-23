@@ -29,6 +29,11 @@ export const useNavegacionDestino = () => {
             (state) => state.posicionDestino,
             (nuevaPosicionDestino) => {
                 posicionDestinoActualRef.current = nuevaPosicionDestino as CoordenadasGeograficas | null;
+
+                if (engineRef.current) {
+                    engineRef.current.resetearNavegacion();
+                }
+
                 if (!nuevaPosicionDestino) {
                     hasVibratedRef.current = false;
                 }
