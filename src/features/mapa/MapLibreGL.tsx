@@ -12,6 +12,7 @@ export const MapLibreGL = () => {
     const { 
         mapDivRef, 
         mensajeError,
+        sistemaListo,
         isSidebarOpen,
         handleCerrarSidebar,
         detallePunto,
@@ -27,7 +28,8 @@ export const MapLibreGL = () => {
                 className={styles.mapCanvas} 
             />
 
-            <section className={`${styles.snackbarError} ${mensajeError ? styles.visible : styles.hidden}`}>
+            <section 
+                className={`${styles.snackbarError} ${(mensajeError && !sistemaListo) ? styles.visible : styles.hidden}`}>
                 {mensajeError}
             </section>
 
