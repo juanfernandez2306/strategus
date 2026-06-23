@@ -27,7 +27,7 @@ export const haSuperadoUmbralHeading = (
             diferencia = 360 - diferencia;
         }
 
-        return (diferencia > 6);
+        return (diferencia > 1.5);
 
 }
 

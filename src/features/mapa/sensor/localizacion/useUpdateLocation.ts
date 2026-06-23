@@ -140,7 +140,7 @@ export const useUpdateLocation = ({
             const headingSuviazado = lerpAnguloAlfaRaw(
                 ultimoHeadingSuavizadoRef.current,
                 headingRaw,
-                0.2
+                0.35
             );
             
             ultimoHeadingSuavizadoRef.current = headingSuviazado;
