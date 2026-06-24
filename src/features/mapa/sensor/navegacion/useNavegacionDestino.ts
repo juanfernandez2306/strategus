@@ -36,6 +36,8 @@ export const useNavegacionDestino = () => {
 
                 if (!nuevaPosicionDestino) {
                     hasVibratedRef.current = false;
+                    proximityModeRef.current = false; 
+                    setProximityMode(false);
                 }
             }
         );
@@ -53,6 +55,8 @@ export const useNavegacionDestino = () => {
             }
             
             hasVibratedRef.current = false;
+            proximityModeRef.current = false;
+            setProximityMode(false);
         };
     }, []);
 
