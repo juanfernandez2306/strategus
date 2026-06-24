@@ -62,7 +62,7 @@ export class ServicioNavegacion {
     return {
       distanciaFiltrada: Math.round(this.lastStoredDistance),
       anguloFiltrado: Math.round(this.currentLerpAngle),
-      proximidadModo: this.lastStoredDistance <= 9
+      proximidadModo: this.lastStoredDistance <= 12
     };
   }
 
