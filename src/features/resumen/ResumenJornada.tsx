@@ -11,11 +11,13 @@ import IconFumigadora from "../../components_svg/IconFumigadora";
 
 import { useAuthStore } from "../../hooks/useAuthStore";
 
+import { sincronizarRegistrosPendientes } from "../../services/indexedbd/sincronizacionActions";
+
 const ResumenJornadaLayout = () => {
-  const { registrados, revisados, refrescar } = useResumenJornada();
+  const { registrados, revisados } = useResumenJornada();
 
   const handleRefrescar = async () => {
-    return await refrescar();
+    return await sincronizarRegistrosPendientes();
   };
 
 
@@ -46,12 +48,12 @@ const ResumenJornadaLayout = () => {
 
   return (
     <FormBaseLayout
-      buttonText="Actualizar Indicadores"
+      buttonText="Sincronizar datos"
       onExecute={handleRefrescar}>
 
       <div className={styleLocal.headerUsuario}>
         <p className={styleLocal.textoBienvenida}>
-          👤 HOLA {nombreUsuario}
+          HOLA {nombreUsuario}
         </p>
         <button 
           type="button" 

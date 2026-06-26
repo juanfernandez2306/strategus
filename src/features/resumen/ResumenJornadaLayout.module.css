@@ -42,7 +42,7 @@
 
 .numeroRevisados {
     color: var(--color-terciario);
-    -webkit-text-stroke: 1px var(--color-negro);
+    -webkit-text-stroke: 2px var(--color-primario);
 }
 
 
