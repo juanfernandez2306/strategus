@@ -78,3 +78,46 @@
     margin: 0;
     color: var(--color-negro);
 }
+
+/* src/layouts/ResumenJornada/ResumenJornadaLayout.module.css */
+
+/* ... Tus clases anteriores se quedan igual ... */
+
+.headerUsuario {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--color-body-container);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.textoBienvenida {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--color-negro);
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.botonLogout {
+    background-color: transparent;
+    color: var(--color-error);
+    border: 2px solid var(--color-error);
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.1s ease;
+}
+
+.botonLogout:active {
+    background-color: var(--color-error);
+    color: var(--color-fondo);
+}

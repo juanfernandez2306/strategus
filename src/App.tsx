@@ -17,11 +17,17 @@ import { NOMBRE_APP } from './data/finca/appConfig';
 
 import { MapLibreGL } from './features/mapa/MapLibreGL';
 
+import LoginLayout from './layouts/LoginLayout';
+
+import { useAuthStore } from './hooks/useAuthStore';
+
 function App() {
 
   document.title = NOMBRE_APP;
 
   const [selectedView, setSelectedView] = useState("Inicio");
+
+  const isLogged = useAuthStore((state) => state.isLogged);
 
   const renderContent = () => {
     switch (selectedView) {
@@ -42,7 +48,9 @@ function App() {
         return <MapLibreGL />
 
       case "Resumen":
-        return <ResumenJornadaLayout />
+        return isLogged ? 
+        <ResumenJornadaLayout /> : 
+        <LoginLayout />;
       default:
         return <RegistroPosicionLayout />;
     }

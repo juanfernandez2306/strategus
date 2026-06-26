@@ -9,6 +9,8 @@ import styleRegistro from "../registroPosicion/RegistroPosicionLayout.module.css
 
 import IconFumigadora from "../../components_svg/IconFumigadora";
 
+import { useAuthStore } from "../../hooks/useAuthStore";
+
 const ResumenJornadaLayout = () => {
   const { registrados, revisados, refrescar } = useResumenJornada();
 
@@ -16,10 +18,49 @@ const ResumenJornadaLayout = () => {
     return await refrescar();
   };
 
+
+
+  const nombreUsuarioStore = useAuthStore((state) => state.nombreUsuario);
+  const tokenStore = useAuthStore((state) => state.token);
+  const logoutStore = useAuthStore((state) => state.logout);
+
+  const nombreUsuario = (nombreUsuarioStore || "USUARIO").toUpperCase();
+
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost/api-gepad/usuarios/logout", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${tokenStore}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error al revocar sesión en servidor:", error);
+    } finally {
+      // Independientemente de si el servidor responde o no, limpiamos 
+      // el Store localmente. Al hacerlo, la vista cambiará al Login de inmediato.
+      logoutStore();
+    }
+  };
+
   return (
     <FormBaseLayout
       buttonText="Actualizar Indicadores"
       onExecute={handleRefrescar}>
+
+      <div className={styleLocal.headerUsuario}>
+        <p className={styleLocal.textoBienvenida}>
+          👤 HOLA {nombreUsuario}
+        </p>
+        <button 
+          type="button" 
+          className={styleLocal.botonLogout} 
+          onClick={handleLogout}
+        >
+          Cerrar Sesión
+        </button>
+      </div>
 
       
       <section className={styleRegistro.contenedorLogo}>
