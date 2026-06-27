@@ -154,15 +154,24 @@ export const configurarCapasBase = (map: MapLibreMap) => {
             espaciadoSimbologia: 35, // Patrón denso de cruces
             tamanoMinimoDetalle: 13, 
             tamanoMaximoDetalle: 13, // Tamaño fijo
-            configVector
+            configVector,
+            textOffset: [0, 0]
         }),
        
         crearEtiquetasLineas({
             id: 'labels-vialidad-principal',
             nombreCapa: 'vialidad_principal',
             filter: ["has", "desc"],
-            minzoom: 12,
-            configVector
+            minzoom: 14,
+            zoomMinimoDetalle: 14,
+            espaciadoSimbologia: 50,
+            configVector,
+            textOffset: [
+                'interpolate', ['linear'], ['zoom'],
+                14, ['literal', [0, -0.5]], 
+        16, ['literal', [0, -1.2]],
+        18, ['literal', [0, -2.0]]
+            ]
         }),
 
         crearEtiquetasPuntos({

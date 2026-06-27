@@ -42,7 +42,7 @@ export const iniciarServicioMapa = (
         map.on('load', async () => {
             console.log("Orquestador: Estilos base cargados. Iniciando pipeline SIG...");
             if (mapaRemovido) return;
-
+            
             try {
                 // 2. PARALELISMO CONTROLADO: Traemos los datos de IndexedDB mientras cargamos capas vectoriales
                 const [respuestaDB] = await Promise.all([

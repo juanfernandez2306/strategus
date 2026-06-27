@@ -169,6 +169,7 @@ export interface OpcionesEtiquetaPunto extends BaseOpcionesEtiqueta {
 /** 2. Responsabilidad: Textos y simbologías continuas a lo largo de un eje */
 export interface OpcionesEtiquetaLinea extends BaseOpcionesEtiqueta {
     espaciadoSimbologia?: number;
+    textOffset?: [number, number] | any[];
 }
 
 /** 3. Responsabilidad: Textos contenidos dentro de áreas cerradas con wrap automático */

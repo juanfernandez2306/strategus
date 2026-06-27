@@ -174,7 +174,13 @@ export function crearEtiquetasLineas({
     id, nombreCapa, configVector, filter = null, minzoom = null, maxzoom = null,
     textoEstatico = null, campoContenedorTexto = 'desc',
     tamanoMinimoDetalle = 10, tamanoMaximoDetalle = 14, zoomMinimoDetalle = 12, zoomMaximoDetalle = 16,
-    espaciadoSimbologia = 250
+    espaciadoSimbologia = 250,
+    // Definimos un comportamiento por defecto que también use interpolación por zoom
+    textOffset = [
+        'interpolate', ['exponential', 1.5], ['zoom'],
+        12, ['literal', [0, -0.5]], // Envoltura obligatoria para arreglos en interpolaciones
+        16, ['literal', [0, -1.5]]
+    ]
 }: OpcionesEtiquetaLinea): SymbolLayerSpecification {
     return {
         id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
@@ -188,13 +194,15 @@ export function crearEtiquetasLineas({
             'symbol-spacing': espaciadoSimbologia,
             'text-keep-upright': true,
             'text-transform': 'uppercase',
-            // Si es un nombre dinámico (ej: vía), lo elevamos del eje; si es simbología estática (ej: 'X') va en el centro
-            'text-offset': textoEstatico == null ? [0, -1.2] : [0, 0]
+
+            'text-max-width': 12,
+            
+            // Asignamos el parámetro (sea estático o una expresión) si textoEstatico es null
+            'text-offset': (textoEstatico == null ? textOffset : [0, 0]) as any
         },
         'paint': { ...paintCompartidoBase, 'text-color': textoEstatico != null ? '#000000' : '#212121' }
     };
 }
-
 // =========================================================================
 // 3. RESPONSABILIDAD: ETIQUETAS PARA POLÍGONOS (Lotes / Parcelas)
 // =========================================================================
