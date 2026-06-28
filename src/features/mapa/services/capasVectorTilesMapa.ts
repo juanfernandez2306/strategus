@@ -7,7 +7,8 @@ import {
     crearCapaPoligonos,
     crearEtiquetasPuntos,
     crearEtiquetasLineas,
-    crearEtiquetasPoligonos
+    crearEtiquetasPoligonos,
+    crearEtiquetasPuntosPersonalizadas
 } from './utilsVectorTilesMapa';
 
 
@@ -157,21 +158,26 @@ export const configurarCapasBase = (map: MapLibreMap) => {
             configVector,
             textOffset: [0, 0]
         }),
+
+        crearEtiquetasLineas({
+            id: 'cerca-danubio-etiquetas',
+            nombreCapa: 'cercas_divisorias',
+            filter: ["has", "desc"],
+            minzoom: 16,
+            espaciadoSimbologia: 150,
+            configVector,
+            textOffset: [0, -2]
+        }),
        
         crearEtiquetasLineas({
             id: 'labels-vialidad-principal',
             nombreCapa: 'vialidad_principal',
             filter: ["has", "desc"],
-            minzoom: 14,
+            minzoom: 15,
             zoomMinimoDetalle: 14,
-            espaciadoSimbologia: 50,
+            espaciadoSimbologia: 250,
             configVector,
-            textOffset: [
-                'interpolate', ['linear'], ['zoom'],
-                14, ['literal', [0, -0.5]], 
-        16, ['literal', [0, -1.2]],
-        18, ['literal', [0, -2.0]]
-            ]
+            textOffset: [0, -2]
         }),
 
         crearEtiquetasPuntos({
@@ -217,6 +223,44 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     ];
 
     capasEtiquetas.forEach(capa => map.addLayer(capa));
+
+    const capaEtiquetaPersonalizadas = [
+
+        crearEtiquetasPuntosPersonalizadas({
+            id: 'punto-vialidad-machiques-la-mision',
+            coordenadas: [-72.7114, 9.8743], // Coordenadas geográficas exactas
+            texto: 'CARRETERA LA MISION - MACHIQUES',
+            minzoom: 14,
+            maxzoom: 14.8,
+            rotacion: -44,
+            desplazamiento: [10, 1]
+        }),
+
+        crearEtiquetasPuntosPersonalizadas({
+            id: 'punto-finca-el-carmen',
+            coordenadas: [-72.7075, 9.8662 ], // Coordenadas geográficas exactas
+            texto: 'LINDERO FINCA EL CARMEN',
+            minzoom: 14,
+            maxzoom: 15,
+            rotacion: -94,
+            desplazamiento: [0, -0.5]
+        }),
+
+        crearEtiquetasPuntosPersonalizadas({
+            id: 'punto-via-al-campamento',
+            coordenadas: [-72.6995, 9.8695], // Coordenadas geográficas exactas
+            texto: 'VIA AL CAMPAMENTO',
+            minzoom: 14,
+            maxzoom: 15.5,
+            rotacion: 58,
+            desplazamiento: [0, .5]
+        })
+
+
+
+    ];
+
+    capaEtiquetaPersonalizadas.forEach(capa => map.addLayer(capa));
 
 };
 

@@ -169,7 +169,7 @@ export interface OpcionesEtiquetaPunto extends BaseOpcionesEtiqueta {
 /** 2. Responsabilidad: Textos y simbologías continuas a lo largo de un eje */
 export interface OpcionesEtiquetaLinea extends BaseOpcionesEtiqueta {
     espaciadoSimbologia?: number;
-    textOffset?: [number, number] | any[];
+    textOffset?: [number, number];
 }
 
 /** 3. Responsabilidad: Textos contenidos dentro de áreas cerradas con wrap automático */
@@ -188,6 +188,16 @@ export interface OpcionesCapaPoligono {
     maxzoom?: number | null;
     /** Opacidad del relleno entre 0.0 y 1.0 (Por defecto 0.5) */
     opacidadFill?: number;
+}
+
+export interface OpcionesEtiquetaPuntoPersonalizada {
+    id: string;
+    coordenadas: [number, number]; // [longitud, latitud]
+    texto: string;
+    minzoom: number;
+    maxzoom?: number;
+    rotacion: number; // El ángulo exacto en grados para orientar la 'V'
+    desplazamiento?: [number, number];
 }
 
 

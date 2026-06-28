@@ -170,21 +170,23 @@ export function crearEtiquetasPuntos({
 // =========================================================================
 // 2. RESPONSABILIDAD: ETIQUETAS PARA LÍNEAS (Vías, Líneas de Cerca, Tendidos)
 // =========================================================================
+
 export function crearEtiquetasLineas({
     id, nombreCapa, configVector, filter = null, minzoom = null, maxzoom = null,
     textoEstatico = null, campoContenedorTexto = 'desc',
     tamanoMinimoDetalle = 10, tamanoMaximoDetalle = 14, zoomMinimoDetalle = 12, zoomMaximoDetalle = 16,
     espaciadoSimbologia = 250,
-    // Definimos un comportamiento por defecto que también use interpolación por zoom
-    textOffset = [
-        'interpolate', ['exponential', 1.5], ['zoom'],
-        12, ['literal', [0, -0.5]], // Envoltura obligatoria para arreglos en interpolaciones
-        16, ['literal', [0, -1.5]]
-    ]
+    textOffset = [0, 0] // 👈 Valor por defecto plano y limpio
 }: OpcionesEtiquetaLinea): SymbolLayerSpecification {
+
     return {
-        id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
-        ...(minzoom != null && { minzoom }), ...(maxzoom != null && { maxzoom }), ...(filter != null && { filter }),
+        id, 
+        'type': 'symbol', 
+        'source': 'finca-danubio-source', 
+        'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }), 
+        ...(maxzoom != null && { maxzoom }), 
+        ...(filter != null && { filter }),
         'layout': {
             'text-field': obtenerExpresionTexto(textoEstatico, campoContenedorTexto) as any,
             'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
@@ -194,15 +196,17 @@ export function crearEtiquetasLineas({
             'symbol-spacing': espaciadoSimbologia,
             'text-keep-upright': true,
             'text-transform': 'uppercase',
-
-            'text-max-width': 12,
             
-            // Asignamos el parámetro (sea estático o una expresión) si textoEstatico es null
-            'text-offset': (textoEstatico == null ? textOffset : [0, 0]) as any
+            // 👇 Asignación directa del parámetro plano enviado por el usuario 👇
+            'text-offset': textOffset as any 
         },
-        'paint': { ...paintCompartidoBase, 'text-color': textoEstatico != null ? '#000000' : '#212121' }
+        'paint': { 
+            ...paintCompartidoBase, 
+            'text-color': textoEstatico != null ? '#000000' : '#212121' 
+        }
     };
 }
+
 // =========================================================================
 // 3. RESPONSABILIDAD: ETIQUETAS PARA POLÍGONOS (Lotes / Parcelas)
 // =========================================================================
@@ -224,5 +228,56 @@ export function crearEtiquetasPoligonos({
             'text-transform': 'uppercase'
         },
         'paint': { ...paintCompartidoBase, 'text-color': '#212121' }
+    };
+}
+
+
+import type { OpcionesEtiquetaPuntoPersonalizada } from '../../../types';
+
+export function crearEtiquetasPuntosPersonalizadas({
+    id,
+    coordenadas,
+    texto,
+    minzoom,
+    maxzoom = 22,
+    rotacion,
+    desplazamiento = [0, 0]
+}: OpcionesEtiquetaPuntoPersonalizada): SymbolLayerSpecification {
+    return {
+        id,
+        'type': 'symbol',
+        // Generamos un source GeoJSON dinámico único para este punto exacto
+        'source': {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': coordenadas
+                },
+                'properties': {}
+            }
+        } as any,
+        'minzoom': minzoom,
+        'maxzoom': maxzoom,
+        'layout': {
+            'text-field': texto,
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 14, // Tamaño fijo o rampa si prefieres
+            'symbol-placement': 'point',
+            
+            // 🌟 AQUÍ ESTÁ EL TRUCO DE LA ORIENTACIÓN 🌟
+            'text-rotate': rotacion, 
+            'text-rotation-alignment': 'map', // Hace que rote respecto al mapa, no a la pantalla
+            
+            'text-offset': desplazamiento,
+            'text-max-width': 50,
+            'text-justify': 'center'
+        },
+        'paint': {
+            'text-color': '#000000',
+            'text-halo-color': '#FFFFFF', // Color del contorno (Blanco)
+            'text-halo-width': 1.5
+        }
     };
 }
