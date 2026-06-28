@@ -19,6 +19,8 @@ interface syncReferenciasSaludSensores {
     statusHeadingOkRef: React.RefObject<boolean>;
 }
 
+
+
 export const useUpdateLocation = ({
     statusGpsOkRef,
     statusHeadingOkRef
@@ -46,6 +48,13 @@ export const useUpdateLocation = ({
         setHeadingAlfa,
         setPrimerVueloCompletado,
      } = useSistemaStore();
+
+     const resetearPrimerVuelo = useCallback(() => {
+        primerVueloCompletado.current = false;
+        setPrimerVueloCompletado(false);
+        ultimoHeadingSuavizadoRef.current = null;
+        esPrecisoGpsRef.current = false;
+    }, [setPrimerVueloCompletado]);
 
     const procesarPosicionGPS = useCallback((dataGPS: GpsSensorData) => {
 
@@ -153,7 +162,8 @@ export const useUpdateLocation = ({
 
     return {
         procesarPosicionGPS,
-        procesarHeading
+        procesarHeading,
+        resetearPrimerVuelo
     }
 
 }
