@@ -18,7 +18,8 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
 
     const { 
         procesarPosicionGPS, 
-        procesarHeading 
+        procesarHeading,
+        resetearPrimerVuelo
     } = useUpdateLocation({
         statusGpsOkRef,
         statusHeadingOkRef
@@ -81,6 +82,8 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
             console.log("Deteniendo sensores y limpiando memoria...");
 
             detenerSensores();
+
+            resetearPrimerVuelo();
 
             if (limpiarSincronizacionRef.current) {
                 limpiarSincronizacionRef.current();
