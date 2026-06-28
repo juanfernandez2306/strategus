@@ -35,6 +35,8 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
 
     const limpiarSincronizacionRef = useRef<(() => void) | null>(null);
 
+    const resetearPrimerVueloRef = useRef<(() => void) | null>(resetearPrimerVuelo);
+
 
     const encenderSensores = useCallback(() => {
     
@@ -83,7 +85,10 @@ export const useSensorManager = (compassRef: React.RefObject<CompassHandle | nul
 
             detenerSensores();
 
-            resetearPrimerVuelo();
+            if (resetearPrimerVueloRef.current) {
+                resetearPrimerVueloRef.current();
+                resetearPrimerVueloRef.current = null;
+            }
 
             if (limpiarSincronizacionRef.current) {
                 limpiarSincronizacionRef.current();

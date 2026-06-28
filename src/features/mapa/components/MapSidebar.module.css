@@ -114,3 +114,33 @@
   padding: 2rem 0;
   gap: 1rem;
 }
+
+/* ==========================================================================
+   BOTÓN CERRAR ABSOLUTO (ESQUINA SUPERIOR DERECHA)
+   ========================================================================== */
+.btnClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: #a0aec0; /* Gris suave elegante */
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 50; /* Garantiza que flote sobre las pestañas */
+}
+
+.btnClose:hover {
+  color: #4a5568;
+  background-color: #edf2f7; /* Feedback visual al pasar el mouse */
+}
+
+.btnClose:active {
+  transform: scale(0.92);
+}
