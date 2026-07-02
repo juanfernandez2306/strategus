@@ -14,10 +14,17 @@ import { useAuthStore } from "../../hooks/useAuthStore";
 import { sincronizarRegistrosPendientes } from "../../services/indexedbd/sincronizacionActions";
 
 const ResumenJornadaLayout = () => {
-  const { registrados, revisados } = useResumenJornada();
+  const { registrados, revisados, refrescar } = useResumenJornada();
 
   const handleRefrescar = async () => {
-    return await sincronizarRegistrosPendientes();
+    try{
+      return await sincronizarRegistrosPendientes();
+    } catch (error){
+      console.error("Error al refrescar la jornada:", error);
+      throw error;
+    } finally{
+      refrescar();
+    }
   };
 
 
