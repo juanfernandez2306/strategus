@@ -12,6 +12,7 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
 
   const menuItems = [
     { text: "Registro de datos", view: "Registro" },
+    { text: "Lista de registro pedientes", view: "ListaPendiente"},
     { text: "Mapa", view: "Mapa" },
     { text: "Resumen Jornada", view: "Resumen" },
     { text: "Exportar GeoJSON", view: "DescargarDatos" },
