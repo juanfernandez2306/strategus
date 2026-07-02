@@ -1,48 +1,81 @@
-import { useRegistroSidebar } from "./useRegistroSidebar";
-import TarjetaRegistro from "./TarjetaRegistro";
+import { TarjetaRegistro } from "./TarjetaRegistro";
+import { MapSidebar } from "../mapa/components/MapSidebar"; 
+import { useListaDestino } from "./useListaDestino"; 
+
+// Importación de tus estilos modulares
+import styleAlert from "../mapa/MapLibreGL.module.css";
+import styles from "./ListaDestino.module.css";
+import styleBase from "../../components/FormLayoutBase.module.css";
 
 export const ListaDestino = () => {
-  // 1. Invocamos el hook correctamente con ()
-  // El hook ya maneja internamente el useState, el useEffect y el filtro de pendientes
-  const { data: listaRegistros, cargando, error } = useRegistroSidebar();
+  // Consumimos toda la lógica encapsulada en el hook
+  const {
+    mensajeError,
+    sistemaListo,
+    registrosConDistancia,
+    sidebarOpen,
+    puntoSeleccionado,
+    compassRef,
+    setSidebarOpen,
+    handleAbrirNavegacion,
+    handleConfirmarVisita,
+    handleEliminarPunto
+  } = useListaDestino();
 
-  // 2. Control de estado de carga
-  if (cargando) {
-    return <div className="main-content">Cargando registros pendientes...</div>;
-  }
-
-  // 3. Control de posibles errores de IndexedDB
-  if (error) {
-    return <div className="main-content" style={{ color: "var(--color-error)" }}>{error}</div>;
-  }
-
+ 
   return (
-    <div className="main-content">
-      {listaRegistros.length === 0 ? (
-        <p style={{ color: "var(--color-texto-secundario)", marginTop: "20px" }}>
-          No hay plantas pendientes por revisar.
-        </p>
-      ) : (
-        listaRegistros.map((item, indice) => {
-          // Adaptamos las propiedades de SidebarData (lat, lng) al objeto completo 
-          // que espera la TarjetaRegistro (latitud, longitud) usando un cast seguro (as any)
-          const registroAdaptado = {
-            ...item,
-            latitud: item.lat,
-            longitud: item.lng,
-            galeria: 0 // Valor por defecto
-          };
+    <div className={`${styleBase.form} ${styles.container}`}>
+      <h3 className={styleBase.titulo} style={
+        { color: "var(--color-negro)", 
+        fontWeight: 'bold' }}>
+            Lista de registros pendientes
+        </h3>
 
-          return (
-            <TarjetaRegistro 
-              key={item.uuid} 
-              registro={registroAdaptado as any} 
-              consecutivo={indice + 1} 
-              distanciaMetros={0} // Aquí puedes inyectar cálculos de distancia más adelante
-            />
-          );
-        })
-      )}
+        <div className={styles.listaContainer}>
+            {registrosConDistancia.length === 0 ? (
+                <p className={styles.mensajeInformativo}>
+                    No hay plantas pendientes por revisar.
+                </p>
+            ) : (
+            registrosConDistancia.map((item, indice) => {
+            const registroAdaptado = {
+                ...item,
+                latitud: item.lat,
+                longitud: item.lng,
+                galeria: 0
+            };
+
+                return (
+                    <div 
+                    key={item.uuid} 
+                    className={styles.tarjetaWrapper} // Aplica el feedback táctil en móviles (:active)
+                    onClick={() => handleAbrirNavegacion(item)} 
+                    >
+                    <TarjetaRegistro 
+                        registro={registroAdaptado as any} 
+                        consecutivo={indice + 1} 
+                        distanciaMetros={item.distanciaCalculada} 
+                    />
+                    </div>
+                );
+            })
+        )}
+        </div>
+
+        <section 
+        className={`${styleAlert.snackbarError} ${(mensajeError && !sistemaListo) ? styleAlert.visible : styleAlert.hidden}`}
+        >
+            <span>{mensajeError}</span>
+        </section>
+
+        <MapSidebar
+            isOpen={sidebarOpen}
+            detallePunto={puntoSeleccionado}
+            onClose={() => setSidebarOpen(false)}
+            onConfirmarVisita={handleConfirmarVisita}
+            onEliminarPunto={handleEliminarPunto}
+            compassRef={compassRef} 
+        />
     </div>
   );
 };

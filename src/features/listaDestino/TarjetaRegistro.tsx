@@ -1,6 +1,8 @@
 import styles from './TarjetaRegistro.module.css';
 import { type SidebarData } from '../../types/index';
 
+import { useSistemaStore } from '../mapa/hooks/useSistemaStore'; 
+
 // 1. Definimos la estructura de las propiedades
 interface TarjetaRegistroProps {
   registro: SidebarData;
@@ -14,14 +16,19 @@ export const TarjetaRegistro = ({
   consecutivo,
   distanciaMetros = 0,
 }: TarjetaRegistroProps) => {
+
+    const sistemaListo = useSistemaStore((state) => state.sistemaListo);
   
-  const handleNavegar = () => {
+  const handleNavegar = (e: React.MouseEvent) => {
+
+    if (!sistemaListo) {
+      e.stopPropagation();
+      return;
+    }
+
     if (registro.lat && registro.lng) {
 
         console.log(registro.uuid);
-      
-      const url = `https://www.google.com/maps/search/?api=1&query=${registro.lat},${registro.lng}`;
-      window.open(url, '_blank', 'noopener,noreferrer');
 
     } else {
       alert("Coordenadas no disponibles para la navegación.");
@@ -45,26 +52,23 @@ export const TarjetaRegistro = ({
         <div className={styles.datoGrupo}>
           <p className={styles.etiqueta}>DISTANCIA ESTIMADA</p>
           <p className={styles.valorDestacado}>
-            {distanciaMetros > 0 ? `${distanciaMetros.toFixed(1)} metros` : 'Calculando...'}
+            {sistemaListo && distanciaMetros > 0 
+              ? `${distanciaMetros.toFixed(1)} metros` 
+              : 'Calculando...'}
           </p>
         </div>
 
-        <div className={styles.detallesGrid}>
-          <div className={styles.miniDato}>
-            <span className={styles.miniEtiqueta}>Revisión:</span>
-            <span className={styles.miniValor}>
-              {registro.revision_planta ? 'Revisada' : 'Pendiente'}
-            </span>
-          </div>
-        </div>
+        
       </div>
 
       {/* Botón de acción masivo para móviles */}
       <footer className={styles.pieCard}>
         <button 
           type="button" 
-          className={styles.botonNavegar} 
+          className={`${styles.botonNavegar} 
+            ${!sistemaListo ? styles.botonDeshabilitado : ''}`}
           onClick={handleNavegar}
+          disabled={!sistemaListo}
         >
           <span>Navegar al punto</span>
           <svg 

@@ -8,7 +8,7 @@
   padding: 0.5rem;
 }
 
-form.form {
+div.form, form.form {
   background-color: var(--color-fondo);
   box-shadow: 0 0 20px 5px #cbcbcb;
   border-radius: 10px; /* Manteniendo tus bordes redondeados estilizados */
