@@ -1,0 +1,135 @@
+.tarjeta {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e0e5de;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  margin-bottom: 14px;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta:active {
+  transform: scale(0.99);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed #e6e9e4;
+  padding-bottom: 8px;
+}
+
+.badgeConsecutivo {
+  background-color: #386641; /* --color-primario */
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.statusBadge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.pendiente {
+  background-color: #fffdeb; /* --color-main-container */
+  color: #b08000;
+  border: 1px solid #fbe7a1;
+}
+
+.sincronizado {
+  background-color: #e8f9e7;
+  color: #08cb00; /* --color-terciario */
+}
+
+.cuerpo {
+  margin-bottom: 16px;
+}
+
+.datoGrupo {
+  margin-bottom: 12px;
+}
+
+.etiqueta {
+  font-size: 10px;
+  color: #666666; /* --color-texto-secundario */
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  margin: 0 0 4px 0;
+}
+
+.valorDestacado {
+  font-size: 20px;
+  color: #1b211a; /* --color-negro */
+  font-weight: 800;
+  margin: 0;
+}
+
+.detallesGrid {
+  display: table;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.miniDato {
+  display: table-cell;
+  width: 50%;
+  font-size: 13px;
+}
+
+.miniEtiqueta {
+  color: #666666;
+  margin-right: 4px;
+}
+
+.miniValor {
+  font-weight: 600;
+  color: #1b211a;
+}
+
+.pieCard {
+  width: 100%;
+}
+
+.botonNavegar {
+  width: 100%;
+  background-color: #e07a5f; /* --color-secundario */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.botonNavegar:active {
+  background-color: #c9654b;
+}
+
+.botonNavegar svg {
+  transition: transform 0.2s ease;
+}
+
+.botonNavegar:active svg {
+  transform: translate(2px, -2px);
+}
