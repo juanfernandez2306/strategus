@@ -9,6 +9,7 @@ import ImportarGeojson from './features/unificarGuardarDatos/ImportarGeojson';
 import EliminarRegistros from './features/eliminarBD/EliminarRegistro';
 import GenerarQrJornada from './features/qr/GenerarQrJornada';
 import ScannerJornada from './features/qr/ScannerJornada';
+import { ListaDestino } from './features/listaDestino/ListaDestino';
 
 import ResumenJornadaLayout from './features/resumen/ResumenJornada';
 
@@ -51,6 +52,8 @@ function App() {
         return isLogged ? 
         <ResumenJornadaLayout /> : 
         <LoginLayout />;
+      case "ListaPendiente":
+        return <ListaDestino />
       default:
         return <RegistroPosicionLayout />;
     }
