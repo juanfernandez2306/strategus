@@ -103,7 +103,7 @@
 
 div.container{
     height: calc(100dvh - 120px);
-    width: 90dvw;
+    width: 90%;
     overflow-y: auto;
     margin-top: 20px;
 }
