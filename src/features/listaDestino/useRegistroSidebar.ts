@@ -48,7 +48,7 @@ export const useRegistroSidebar = (): UseRegistroSidebarReturn => {
     data,
     cargando,
     error,
-    refrescarSidebar: cargarDatos // Permite forzar una recarga manual desde el componente
+    refrescarSidebar: cargarDatos
   };
   
 };

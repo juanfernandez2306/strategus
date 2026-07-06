@@ -85,6 +85,7 @@ export const useMapLibreGLmanager = () => {
     
 
     const handleConfirmarVisita = async () => {
+        
         if (!detallePunto) return;
     
         const nuevoEstado = !detallePunto.revision_planta;
