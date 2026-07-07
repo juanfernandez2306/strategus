@@ -3,6 +3,8 @@ import { escribirRegistro, borrarRegistroPorUUID } from "./actions";
 import { useAuthStore } from "../../hooks/useAuthStore";
 import { type RegistroPosicion } from "../../types/index";
 
+import { URL_API_BACKEND } from "../../data/finca/info";
+
 /**
  * Coordina la sincronización masiva y atómica de los registros locales con el backend.
  * Si todo el lote se guarda con éxito, limpia o actualiza los estados en IndexedDB.
@@ -32,7 +34,7 @@ export const sincronizarRegistrosPendientes = async (): Promise<string> => {
     }
 
     // 3. Enviar el lote completo en una única petición HTTP POST
-    const respuesta = await fetch("http://localhost/api-gepad/strategus/sincronizar", {
+    const respuesta = await fetch(`${URL_API_BACKEND}/strategus/sincronizar`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,

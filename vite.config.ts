@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from "rollup-plugin-visualizer";
 import { 
-  NOMBRE_CARPETA_DOMINIO,
   NOMBRE_APP,
   NOMBRE_CORTO
  } from './src/data/finca/appConfig';
@@ -11,7 +10,7 @@ import {
 
 
 export default defineConfig({
-  base: `/${NOMBRE_CARPETA_DOMINIO}/`,
+  base: '/',
   assetsInclude: ['**/*.pbf'],
   plugins: [
     react(),
@@ -26,8 +25,8 @@ export default defineConfig({
       manifest: {
         name: NOMBRE_APP,
         short_name: NOMBRE_CORTO,
-        start_url: `/${NOMBRE_CARPETA_DOMINIO}/`, // Ajustado para GitHub Pages
-        scope: `/${NOMBRE_CARPETA_DOMINIO}/`,      // Ajustado para GitHub Pages
+        start_url: '/', // Ajustado para empezar desde la raiz
+        scope: '/',      // Ajustado para empezar desde la raiz
         display: 'standalone',
         background_color: '#FFFCFB',
         theme_color: '#386641',

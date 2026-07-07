@@ -1,10 +1,9 @@
-import { NOMBRE_CARPETA_DOMINIO } from "./appConfig";
 
 import type { InfoFincaEstructura } from "../../types";
 
 const getTilesURL = () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return `${origin}/${NOMBRE_CARPETA_DOMINIO}/tiles/{z}/{x}/{y}.pbf`;
+    return `${origin}/tiles/{z}/{x}/{y}.pbf`;
 };
 
 export const INFO_FINCA: InfoFincaEstructura = {
@@ -49,3 +48,7 @@ export const INFO_FINCA: InfoFincaEstructura = {
     }
 
 }
+
+/** */
+
+export const URL_API_BACKEND = "https://api.juanfgeo.com";
