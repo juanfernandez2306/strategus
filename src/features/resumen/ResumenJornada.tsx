@@ -13,6 +13,8 @@ import { useAuthStore } from "../../hooks/useAuthStore";
 
 import { sincronizarRegistrosPendientes } from "../../services/indexedbd/sincronizacionActions";
 
+import { URL_API_BACKEND } from "../../data/finca/info";
+
 const ResumenJornadaLayout = () => {
   const { registrados, revisados, refrescar } = useResumenJornada();
 
@@ -37,7 +39,7 @@ const ResumenJornadaLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost/api-gepad/usuarios/logout", {
+      await fetch(`${URL_API_BACKEND}/usuarios/logout`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${tokenStore}`,
