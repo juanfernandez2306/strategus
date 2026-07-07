@@ -1,7 +1,9 @@
+import { URL_API_BACKEND } from "../data/finca/info";
+
 export const useLogin = () => {
   const autenticar = async (email: string, password: string): Promise<string> => {
     // URL de tu API basada en Slim Framework
-    const respuesta = await fetch("http://localhost/api-gepad/usuarios/login", {
+    const respuesta = await fetch(`${URL_API_BACKEND}/usuarios/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
