@@ -1,5 +1,5 @@
 .tarjeta {
-  background-color: var(--color-body-container);
+  background-color: var(--color-blanco);
   border-radius: 12px;
   border: 1px solid #e0e5de;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -136,8 +136,8 @@
 
 /* Estado deshabilitado para el botón de navegación */
 .botonDeshabilitado {
-  background-color: var(--color-fondo-deshabilitado, #454040) !important;
-  color: var(--color-texto-deshabilitado, #ffff) !important;
+  background-color: var(--color-fondo-app, #454040) !important;
+  color: var(--color-texto-deshabilitado, var(--color-blanco)) !important;
   cursor: not-allowed !important;
   box-shadow: none !important;
   opacity: 0.7;

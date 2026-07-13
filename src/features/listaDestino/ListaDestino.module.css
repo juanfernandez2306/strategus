@@ -18,7 +18,7 @@
   justify-content: center;
   gap: 10px;
   background-color: var(--color-error, #DD0303); /* Usa tu variable de App.css */
-  color: #ffffff;
+  color: var(--color-blanco);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -71,7 +71,7 @@
    ========================================================================== */
 .mensajeInformativo {
   text-align: center;
-  color: var(--color-texto-secundario, #666);
+  color: var(--color-gris-claro, #666);
   font-size: 0.95rem;
   margin-top: 32px;
   padding: 0 16px;

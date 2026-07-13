@@ -2,41 +2,23 @@
 @import "@fontsource/nunito/700.css";
 @import "@fontsource/nunito/500.css";
 
-/* ==========================================================================
-   1. VARIABLES Y RESET COMPLETO (Mobile-First)
-   ========================================================================== */
 
 :root {
-  /* ==========================================================================
-     PALETA DE MARCA (Identidad Visual)
-     ========================================================================== */
-  --color-primario: #386641;         /* Verde principal */
-  --color-primario-dark: #2c5233;    /* Verde oscuro para estados Hover/Active */
-  --color-secundario: #E07A5F;       /* Coral/Naranja interactivo */
-  --color-terciario: #08CB00;        /* Verde brillante (opcional) */
-  --color-destaque: #FF8AAE;         /* Rosa (antiguo third-color) */
-  
-  /* Tonos Neutros y Fondos */
-  --color-blanco: #ffffff;
-  --color-crema: #EDE6DB;            /* Antiguo fourth-color */
-  --color-crema-encendido: #FFFDEB;  /* Antiguo color-main-container */
-  --color-gris-claro: #DFDFDE;       /* Antiguo second-color */
-  --color-gris-mutado: #666666;      /* Texto secundario */
-  --color-negro: #1B211A;            /* Negro suave unificado */
-  
-  --color-fondo-body: #F9F9F9;
-  --color-fondo-app: #e6e9e4;        /* Fondo del contenedor móvil simulado */
 
-  /* ==========================================================================
-     ESTADOS DE INTERFAZ Y REUTILIZACIÓN
-     ========================================================================== */
-  --success-color: var(--color-primario);
-  --error-color: #DD0303;            /* Unificado tu color-error y error-color */
-  --border-neutral-color: #cbcbcb;   /* Gris para bordes de inputs */
-  
+  --color-primario: #386641;
+  --color-secundario: #E07A5F;
+  --color-terciario: #08CB00;
+  --color-blanco: #ffffff;
+  --color-gris-claro: #DFDFDE;
+
+  /** para el texto*/
+  --color-negro: #1B211A;
+  --color-rojo: #DD0303;
+
+
   /* Sombras y Overlays */
-  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --modal-overlay-color: rgba(0, 0, 0, 0.6);
+  --shadow-subtle: 0 4px 20px color-mix(in srgb, var(--color-negro) 10%, transparent);;
+  --modal-overlay-color: color-mix(in srgb, var(--color-negro) 60%, transparent);;
 
   /* Typography & Layout */
   --font-family-base: 'Nunito', Arial, sans-serif;
@@ -52,7 +34,7 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
-  background-color: #F9F9F9;
+  background-color: var(--color-gris-claro);
   font-family: var(--font-family-base);
   overflow-x: hidden;
 }
@@ -68,14 +50,14 @@ html, body {
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ocupa todo el alto de la pantalla del teléfono */
+  min-height: 100vh;
   width: 100%;
   background-color: var(--color-body-container);
 }
 
 /* El contenido principal por defecto en móviles */
 .main-content {
-  flex: 1; /* Absorbe todo el espacio vertical restante abajo del Header */
+  flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -107,7 +89,6 @@ html, body {
   body {
     display: flex;
     justify-content: center;
-    background-color: #EAEAEA; 
   }
 
   /* Forzamos a que en escritorio mantenga el alto correcto respecto a su header */
@@ -120,10 +101,11 @@ html, body {
     max-width: 480px;
     width: 100%;
     margin: 0 auto;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 20px color-mix(in srgb, var(--color-negro) 10%, transparent);
   }
   
   .main-content {
     padding: 20px; 
   }
+
 }
