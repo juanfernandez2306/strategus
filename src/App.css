@@ -1,44 +1,46 @@
 @import "@fontsource/nunito";
+@import "@fontsource/nunito/700.css";
+@import "@fontsource/nunito/500.css";
+
 /* ==========================================================================
    1. VARIABLES Y RESET COMPLETO (Mobile-First)
    ========================================================================== */
 
 :root {
-  --color-primario: #386641;
-  --color-secundario: #E07A5F;
-  --color-terciario: #08CB00;
-  --color-fondo: #ffffff;
-  --color-body-container: #e6e9e4;
-  --color-main-container: #FFFDEB;
-  --color-error: #DD0303;
-  --color-negro: #1B211A;
-  --color-texto-secundario: #666;
-  --font-family-base: 'Nunito', Arial, sans-serif;
-
-
-  --font-header: 'Nunito', Arial, Helvetica, sans-serif;
-  --height-header: 3.5rem;
-  --firts-color: #386641;
-  --second-color: #DFDFDE;
-  --third-color: #FF8AAE;
-  --fourth-color: #EDE6DB;
-  --color-negro: #222222;
+  /* ==========================================================================
+     PALETA DE MARCA (Identidad Visual)
+     ========================================================================== */
+  --color-primario: #386641;         /* Verde principal */
+  --color-primario-dark: #2c5233;    /* Verde oscuro para estados Hover/Active */
+  --color-secundario: #E07A5F;       /* Coral/Naranja interactivo */
+  --color-terciario: #08CB00;        /* Verde brillante (opcional) */
+  --color-destaque: #FF8AAE;         /* Rosa (antiguo third-color) */
+  
+  /* Tonos Neutros y Fondos */
+  --color-blanco: #ffffff;
+  --color-crema: #EDE6DB;            /* Antiguo fourth-color */
+  --color-crema-encendido: #FFFDEB;  /* Antiguo color-main-container */
+  --color-gris-claro: #DFDFDE;       /* Antiguo second-color */
+  --color-gris-mutado: #666666;      /* Texto secundario */
+  --color-negro: #1B211A;            /* Negro suave unificado */
+  
+  --color-fondo-body: #F9F9F9;
+  --color-fondo-app: #e6e9e4;        /* Fondo del contenedor móvil simulado */
 
   /* ==========================================================================
-      NUEVAS VARIABLES: ESTADOS DE INTERFAZ Y REUTILIZACIÓN DE COMPONENTES
-      ========================================================================== */
-  --success-color: var(--firts-color);     /* Éxito alineado a tu marca */
-  --error-color: #d32f2f;                  /* Rojo estándar de alta visibilidad */
+     ESTADOS DE INTERFAZ Y REUTILIZACIÓN
+     ========================================================================== */
+  --success-color: var(--color-primario);
+  --error-color: #DD0303;            /* Unificado tu color-error y error-color */
+  --border-neutral-color: #cbcbcb;   /* Gris para bordes de inputs */
   
-  /* Estados Interactivos (Hover / Active) */
-  --button-active-color: #2c5233;          /* Variación oscura de tu verde para el click */
-  --border-neutral-color: #cbcbcb;         /* Gris neutro para bordes de inputs */
-  
-  /* Sombras y Opacidades Reutilizables */
+  /* Sombras y Overlays */
   --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.08);
   --modal-overlay-color: rgba(0, 0, 0, 0.6);
 
-
+  /* Typography & Layout */
+  --font-family-base: 'Nunito', Arial, sans-serif;
+  --height-header: 3.5rem;
 }
 
 *, *::before, *::after {
@@ -52,7 +54,7 @@ html, body {
   width: 100%;
   background-color: #F9F9F9;
   font-family: var(--font-family-base);
-  overflow-x: hidden; /* Evita scrolls horizontales accidentales en el celular */
+  overflow-x: hidden;
 }
 
 #root {

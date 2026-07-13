@@ -3,7 +3,7 @@
    ========================================================================== */
 .appBar {
   position: static;
-  background-color: var(--color-fondo);
+  background-color: var(--color-blanco);
   padding: 0.5rem 1rem;
   width: 100%;
 }
@@ -15,7 +15,7 @@
 }
 
 .menuButton {
-  background-color: var(--color-fondo);
+  background-color: var(--color-blanco);
   border: 2px solid var(--color-primario);
   color: var(--color-primario);
   border-radius: 4px;
@@ -49,7 +49,7 @@
   left: 0;
   width: 100%; /* Ocupa todo el ancho en celulares de 400px o menos */
   height: 100%;
-  background: var(--color-main-container, white);
+  background: var(--color-crema-encendido, white);
   z-index: 2001;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -151,9 +151,10 @@
 .closeMenuButton {
   margin-top: 1.25rem;
   background-color: transparent;
-  border: 2px solid var(--color-texto-secundario);
+  border: 2px solid var(--color-gris-mutado);
   border-radius: 10px;
-  color: var(--color-texto-secundario);
+  color: var(--color-negro);
+  font-weight: 500;
   padding: 12px 16px; /* Tamaño táctil óptimo para el operador */
   width: 100%;
   font-size: 0.95rem;
@@ -166,6 +167,6 @@
 /* Efecto al presionar en pantallas táctiles o hacer hover en escritorio */
 .closeMenuButton:active {
   background-color: rgba(217, 4, 4, 0.08); /* Sutil color de advertencia al pulsar */
-  color: var(--color-error);
-  border-color: var(--color-error);
+  color: var(--error-color);
+  border-color: var(--error-color);
 }
