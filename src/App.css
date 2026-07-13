@@ -1,5 +1,6 @@
 @import "@fontsource/nunito";
 @import "@fontsource/nunito/700.css";
+@import "@fontsource/nunito/600.css";
 @import "@fontsource/nunito/500.css";
 
 
@@ -10,6 +11,7 @@
   --color-terciario: #08CB00;
   --color-blanco: #ffffff;
   --color-gris-claro: #DFDFDE;
+  --color-amarillo: #FAFFC4;
 
   /** para el texto*/
   --color-negro: #1B211A;

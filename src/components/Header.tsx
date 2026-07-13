@@ -78,10 +78,10 @@ const Header: React.FC<HeaderProps> = ({ onSelect }) => {
 
             <footer className={styles.footer}>
               <span className={styles.footerLabel}>DESARROLLADO POR:</span>
-              <div style={{ fontWeight: 500, color: 'var(--color-primario)' }}>
+              <div style={{ fontWeight: 700, color: 'var(--color-primario)' }}>
                 Ing. Juan Fernandez
               </div>
-              <div style={{ color: '#666' }}>juanfernandez2306@gmail.com</div>
+              <div>juanfernandez2306@gmail.com</div>
               <div className={styles.versionTag}>
                 SIGAL v1.0 - Gestión Palma Digital
               </div>
