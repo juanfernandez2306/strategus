@@ -44,9 +44,7 @@
   100% { transform: scale(1); }
 }
 
-div.container{
-    height: calc(100dvh - 120px);
-    width: 90%;
-    overflow-y: auto;
-    margin-top: 20px;
+.container{
+    height: calc(100dvh - 130px);
+    max-height: none !important;
 }

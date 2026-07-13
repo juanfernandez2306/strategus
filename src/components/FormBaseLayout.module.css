@@ -11,7 +11,7 @@
   font-family: var(--font-family-base);
 }
 
-form.form {
+.form {
   background-color: var(--color-blanco);
   box-shadow: var(--shadow-subtle);
   border-radius: 10px;
