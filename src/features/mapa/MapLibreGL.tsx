@@ -7,6 +7,8 @@ import { MapSidebar } from './components/MapSidebar';
 
 import LegendMap from './components/LegendMap';
 
+import SnackBarError from './components/snackbarError';
+
 
 export const MapLibreGL = () => {
 
@@ -31,10 +33,10 @@ export const MapLibreGL = () => {
 
             <LegendMap />
 
-            <section 
-                className={`${styles.snackbarError} ${(mensajeError && !sistemaListo) ? styles.visible : styles.hidden}`}>
-                {mensajeError}
-            </section>
+            <SnackBarError 
+                mensajeError={mensajeError} 
+                sistemaListo={sistemaListo} 
+            />
 
             <MapSidebar 
                 isOpen={isSidebarOpen}
