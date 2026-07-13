@@ -13,7 +13,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 100px; /* Más angosta y compacta */
+  width: 125px; /* Más angosta y compacta */
   font-family: 'Nunito', sans-serif;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
