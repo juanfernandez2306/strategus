@@ -1,5 +1,5 @@
 .contenedorLogo{
-    background-color: var(--color-body-container);
+    background-color: var(--color-gris-claro);
     display: flex;
     flex-direction: row;
     padding: 10px;
@@ -41,7 +41,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background-color: var(--color-body-container);
+  background-color: var(--color-gris-claro);
   padding: 20px 10px;
   border-radius: 10px;
 }
@@ -54,7 +54,7 @@
   letter-spacing: 0.5px;
 }
 
-.groupInput input {
+.input {
   width: 100%;
   font-size: 1.2rem;
   padding: 0.75rem;
@@ -62,11 +62,11 @@
   border: 2px solid var(--color-primario);
   outline: none;
   box-sizing: border-box;
-  background-color: var(--color-fondo);
+  background-color: var(--color-blanco);
   color: var(--color-negro);
 }
 
-.groupInput input:focus {
+.input:focus {
   border-color: var(--color-secundario, #e07a5f);
   box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.2);
 }

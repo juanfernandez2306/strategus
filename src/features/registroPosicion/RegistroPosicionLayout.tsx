@@ -52,6 +52,7 @@ const RegistroPosicionLayout = () => {
             <aside className={styleLocal.groupInput}>
                 <label htmlFor="galeria">N° de Galería</label>
                 <input 
+                    className={styleLocal.input}
                     id="galeria" 
                     type="number" 
                     min={1} 
