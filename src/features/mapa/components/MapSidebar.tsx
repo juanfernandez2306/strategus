@@ -10,6 +10,7 @@ import sidebarStyles from './MapSidebar.module.css';
 import formStyles from '../../../components/FormLayoutBase.module.css'; // <-- Alias limpio para reciclar animaciones
 import IconDeleteDB from '../../../components_svg/IconDeleteDB';
 
+
 interface MapSidebarProps {
   isOpen: boolean;
   detallePunto: SidebarData | null;

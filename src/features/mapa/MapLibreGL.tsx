@@ -5,6 +5,7 @@ import styles from './MapLibreGL.module.css';
 
 import { MapSidebar } from './components/MapSidebar';
 
+import LegendMap from './components/LegendMap';
 
 
 export const MapLibreGL = () => {
@@ -27,6 +28,8 @@ export const MapLibreGL = () => {
                 ref={mapDivRef} 
                 className={styles.mapCanvas} 
             />
+
+            <LegendMap />
 
             <section 
                 className={`${styles.snackbarError} ${(mensajeError && !sistemaListo) ? styles.visible : styles.hidden}`}>
