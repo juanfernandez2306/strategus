@@ -50,7 +50,9 @@ const RegistroPosicionLayout = () => {
             </section>
 
             <aside className={styleLocal.groupInput}>
-                <label htmlFor="galeria">N° de Galería</label>
+                <label
+                    className={styleLocal.label} 
+                    htmlFor="galeria">N° de Galería</label>
                 <input 
                     className={styleLocal.input}
                     id="galeria" 
