@@ -14,6 +14,31 @@
   --color-negro: #1B211A;
   --color-texto-secundario: #666;
   --font-family-base: 'Nunito', Arial, sans-serif;
+
+
+  --font-header: 'Nunito', Arial, Helvetica, sans-serif;
+  --height-header: 3.5rem;
+  --firts-color: #386641;
+  --second-color: #DFDFDE;
+  --third-color: #FF8AAE;
+  --fourth-color: #EDE6DB;
+  --color-negro: #222222;
+
+  /* ==========================================================================
+      NUEVAS VARIABLES: ESTADOS DE INTERFAZ Y REUTILIZACIÓN DE COMPONENTES
+      ========================================================================== */
+  --success-color: var(--firts-color);     /* Éxito alineado a tu marca */
+  --error-color: #d32f2f;                  /* Rojo estándar de alta visibilidad */
+  
+  /* Estados Interactivos (Hover / Active) */
+  --button-active-color: #2c5233;          /* Variación oscura de tu verde para el click */
+  --border-neutral-color: #cbcbcb;         /* Gris neutro para bordes de inputs */
+  
+  /* Sombras y Opacidades Reutilizables */
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --modal-overlay-color: rgba(0, 0, 0, 0.6);
+
+
 }
 
 *, *::before, *::after {

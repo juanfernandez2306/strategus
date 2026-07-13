@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: var(--font-body);
+  font-family: var(--font-header);
 }
 
 form.form {
@@ -44,8 +44,8 @@ form.form {
 button.submit {
   width: 100%;
   font-family: var(--font-header);
-  background-color: var(--firts-color);
-  color: var(--second-color);
+  background-color: var(--color-primario);
+  color: var(--color-fondo);
   border: none;
   padding: 16px 20px;
   border-radius: 30px;
