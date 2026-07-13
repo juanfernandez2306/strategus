@@ -3,9 +3,10 @@ import { MapSidebar } from "../mapa/components/MapSidebar";
 import { useListaDestino } from "./useListaDestino"; 
 
 // Importación de tus estilos modulares
-import styleAlert from "../mapa/MapLibreGL.module.css";
 import styles from "./ListaDestino.module.css";
 import styleBase from "../../components/FormBaseLayout.module.css";
+
+import SnackBarError from "../mapa/components/snackbarError";
 
 export const ListaDestino = () => {
   // Consumimos toda la lógica encapsulada en el hook
@@ -62,11 +63,10 @@ export const ListaDestino = () => {
         )}
         </div>
 
-        <section 
-        className={`${styleAlert.snackbarError} ${(mensajeError && !sistemaListo) ? styleAlert.visible : styleAlert.hidden}`}
-        >
-            <span>{mensajeError}</span>
-        </section>
+        <SnackBarError
+            mensajeError={mensajeError}
+            sistemaListo={sistemaListo}
+        />
 
         <MapSidebar
             isOpen={sidebarOpen}
