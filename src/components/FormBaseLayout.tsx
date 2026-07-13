@@ -101,7 +101,9 @@ const FormBaseLayout = ({
                   {mensaje}
                 </p>
                 
-                <button className={style.closeButton} onClick={closeModal}>
+                <button 
+                  className={[style.closeButton, isError ? style.closeButtonError : ''].join(' ')}
+                  onClick={closeModal}>
                   Cerrar
                 </button>
               </>
