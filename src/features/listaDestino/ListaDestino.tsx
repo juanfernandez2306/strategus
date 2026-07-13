@@ -5,7 +5,7 @@ import { useListaDestino } from "./useListaDestino";
 // Importación de tus estilos modulares
 import styleAlert from "../mapa/MapLibreGL.module.css";
 import styles from "./ListaDestino.module.css";
-import styleBase from "../../components/FormLayoutBase.module.css";
+import styleBase from "../../components/FormBaseLayout.module.css";
 
 export const ListaDestino = () => {
   // Consumimos toda la lógica encapsulada en el hook

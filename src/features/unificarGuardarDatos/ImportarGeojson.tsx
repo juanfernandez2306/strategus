@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import FormBaseLayout from '../../components/FormLayoutBase';
+import FormBaseLayout from '../../components/FormBaseLayout';
 import IconFileJsonMerge from '../../components_svg/IconFileJsonMerge';
 import { useImportarManager } from './useImportarManager';
 

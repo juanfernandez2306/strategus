@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import FormBaseLayout from "../../components/FormLayoutBase";
+import FormBaseLayout from "../../components/FormBaseLayout";
 import { obtenerRegistrosPosicionPorFecha } from "../../services/indexedbd/palmaQueries";  
 import { useQrManager } from "./hook/useQrManager";
 

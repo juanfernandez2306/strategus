@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import FormBaseLayout from "../components/FormLayoutBase";
+import FormBaseLayout from "../components/FormBaseLayout";
 import { useLogin } from "../hooks/useLogin";
 
 import styleLocal from "./LoginLayout.module.css";

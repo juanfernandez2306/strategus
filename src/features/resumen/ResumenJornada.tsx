@@ -1,5 +1,6 @@
-// src/layouts/ResumenJornadaLayout.tsx
-import FormBaseLayout from "../../components/FormLayoutBase";
+
+import FormBaseLayout from "../../components/FormBaseLayout";
+
 import { useResumenJornada } from "./useResumenJornada";
 
 import styleLocal from "./ResumenJornadaLayout.module.css";

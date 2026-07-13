@@ -1,4 +1,4 @@
-import FormBaseLayout from "../../components/FormLayoutBase";
+import FormBaseLayout from "../../components/FormBaseLayout";
 import IconDeleteDB from "../../components_svg/IconDeleteDB";
 import { limpiarRegistrosPosiciones } from "../../services/indexedbd/palmaActions"; 
 
@@ -22,10 +22,10 @@ const EliminarRegistros = () => {
         <FormBaseLayout
             titulo="Eliminar registros de la base de datos"
             buttonText="Borrar todos los datos"
-            iconoCustom={<IconDeleteDB size={180} />}
             onExecute={handleSubmit}
         >
             <div style={{ textAlign: 'center', padding: '1rem' }}>
+                <IconDeleteDB size={180} />
                 <p style={{ color: 'var(--color-texto-secundario)', margin: 0 }}>
                     Esta acción es <strong>irreversible</strong>. Se borrarán permanentemente todos los puntos 
                     almacenados en este dispositivo que no hayan sido exportados.

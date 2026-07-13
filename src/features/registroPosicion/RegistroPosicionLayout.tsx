@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FormBaseLayout from "../../components/FormLayoutBase";
+import FormBaseLayout from "../../components/FormBaseLayout";
 import styleLocal from './RegistroPosicionLayout.module.css';
 import IconStrategusAloeus from "../../components_svg/IconStrategusAloeus";
 import { useRegistroPosicion } from "./useRegistroPosicion";

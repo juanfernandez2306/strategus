@@ -1,4 +1,4 @@
-import FormBaseLayout from "../../components/FormLayoutBase";
+import FormBaseLayout from "../../components/FormBaseLayout";
 import IconFileGEOJSON from "../../components_svg/IconFileGEOJSON";
 import { useExportarTodo } from "./useExportar";
 
@@ -9,10 +9,10 @@ const ExportarGeoJSON = () => {
         <FormBaseLayout
             titulo="Copia de Seguridad Completa"
             buttonText="Exportar Todo (GeoJSON)"
-            iconoCustom={<IconFileGEOJSON size={150}/>}
             onExecute={ejecutarExportacionTotal} // Pasamos la función directamente
         >
             <div style={{ textAlign: 'center', padding: '1rem' }}>
+                <IconFileGEOJSON size={150}/>
                 <p style={{ color: 'var(--color-texto-secundario)', margin: 0 }}>
                     Esta acción generará un archivo con <strong>todos los puntos</strong> registrados en este dispositivo.
                 </p>

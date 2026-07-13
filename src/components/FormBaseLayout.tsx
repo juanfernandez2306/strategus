@@ -1,25 +1,26 @@
 import { useState } from "react";
 import type { ReactNode, FormEvent } from "react";
-import style from './FormLayoutBase.module.css';
+import style from './FormBaseLayout.module.css';
 
 interface FormBaseProps {
   titulo?: string | null;
   buttonText: string;
   children?: ReactNode;
-  iconoCustom?: ReactNode | null;
   onExecute: () => Promise<string>; 
   onSuccess?: () => void;
   disabled?: boolean;
+  redirectOnSubmit?: boolean;
 }
 
 const FormBaseLayout = ({ 
     titulo = null, 
     buttonText, 
     children,
-    iconoCustom = null, 
     onExecute, 
     onSuccess,
-    disabled = false }: FormBaseProps) => {
+    disabled = false,
+    redirectOnSubmit = false
+  }: FormBaseProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [mensaje, setMensaje] = useState<string>("");
@@ -33,7 +34,9 @@ const FormBaseLayout = ({
     try {
       const mensajeExito = await onExecute();
       setMensaje(mensajeExito);
-      if (onSuccess) onSuccess();
+
+      if (onSuccess && !redirectOnSubmit) onSuccess();
+      
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
       setMensaje(`Error: ${msg}`);
@@ -43,20 +46,22 @@ const FormBaseLayout = ({
     }
   };
 
-  const closeModal = () => setMensaje("");
+  const closeModal = () => {
+    setMensaje("");
+
+    if (!isError && redirectOnSubmit && onSuccess) {
+      onSuccess();
+    }
+
+  };
 
   return (
     <div className={style.formContainer}>
       <form className={style.form} onSubmit={handleSubmit}>
         
-        {iconoCustom && (
-          <figure className={style.ContainerSvg}>
-            {iconoCustom}
-          </figure>
-        )}
-        
         {titulo && (
-          <h3 className={style.titulo} style={{ color: "var(--color-primario)", fontWeight: 'bold' }}>
+          /* Removido el estilo inline manual para evitar dependencias rotas */
+          <h3 className={style.titulo}>
             {titulo}
           </h3>
         )}
@@ -71,7 +76,7 @@ const FormBaseLayout = ({
         </button>
       </form>
 
-      {/* Modal de Feedback (Sustituye a Dialog) */}
+      {/* Modal de Feedback */}
       {(isSubmitting || !!mensaje) && (
         <div className={style.modalOverlay}>
           <div className={style.modalContent}>
@@ -82,7 +87,6 @@ const FormBaseLayout = ({
               </>
             ) : (
               <>
-                {/* Reemplazo de Emojis por Iconos Animados CSS */}
                 {isError ? (
                   <div className={`${style.iconWrapper} ${style.error}`}>
                     <div className={style.errorIcon} />
@@ -105,7 +109,6 @@ const FormBaseLayout = ({
           </div>
         </div>
       )}
-      
     </div>
   );
 };
