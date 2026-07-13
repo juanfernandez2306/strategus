@@ -10,63 +10,6 @@
 }
 
 /* ==========================================================================
-   Componente Snackbar (Alerta de Sensores / Hardware)
-   ========================================================================== */
-.snackbarError {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background-color: var(--color-error, #DD0303); /* Usa tu variable de App.css */
-  color: var(--color-blanco);
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  width: 100%;
-  box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(221, 3, 3, 0.25);
-  
-  /* Animación de transición suave */
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              max-height 0.3s ease,
-              margin-bottom 0.3s ease;
-  
-  /* Estado inicial por defecto colapsado */
-  max-height: 0;
-  margin-bottom: 0;
-  opacity: 0;
-  transform: translateY(-10px);
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* Estado Activo / Visible */
-.visible {
-  max-height: 80px; /* Permite que se expanda visualmente */
-  margin-bottom: 16px;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* Estado Inactivo / Oculto */
-.hidden {
-  max-height: 0;
-  margin-bottom: 0;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-}
-
-/* Icono dentro del snackbar (opcional por si renderizas un SVG) */
-.snackbarError svg {
-  flex-shrink: 0;
-  animation: sutilPulso 2s infinite ease-in-out;
-}
-
-/* ==========================================================================
    Mensajes de Estado (Vacío o Cargando)
    ========================================================================== */
 .mensajeInformativo {
