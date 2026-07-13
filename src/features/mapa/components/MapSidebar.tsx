@@ -7,7 +7,7 @@ import { useSistemaStore } from '../hooks/useSistemaStore';
 // Importación modular de estilos usando Alias para evitar colisiones
 import mapStyles from '../MapLibreGL.module.css';
 import sidebarStyles from './MapSidebar.module.css';
-import formStyles from '../../../components/FormLayoutBase.module.css'; // <-- Alias limpio para reciclar animaciones
+import formStyles from '../../../components/FormBaseLayout.module.css'; // <-- Alias limpio para reciclar animaciones
 import IconDeleteDB from '../../../components_svg/IconDeleteDB';
 
 
