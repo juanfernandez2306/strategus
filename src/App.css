@@ -1,3 +1,4 @@
+@import "@fontsource/nunito";
 /* ==========================================================================
    1. VARIABLES Y RESET COMPLETO (Mobile-First)
    ========================================================================== */
@@ -12,7 +13,7 @@
   --color-error: #DD0303;
   --color-negro: #1B211A;
   --color-texto-secundario: #666;
-  --font-family-base: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  --font-family-base: 'Nunito', Arial, sans-serif;
 }
 
 *, *::before, *::after {
