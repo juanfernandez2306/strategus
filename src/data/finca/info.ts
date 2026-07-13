@@ -49,6 +49,8 @@ export const INFO_FINCA: InfoFincaEstructura = {
 
 }
 
-/** */
 
-export const URL_API_BACKEND = "https://api.juanfgeo.com";
+
+// export const URL_API_BACKEND = "https://api.juanfgeo.com";
+
+export const URL_API_BACKEND = "http://localhost/api-gepad";
