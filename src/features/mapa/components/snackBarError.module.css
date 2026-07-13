@@ -1,0 +1,37 @@
+/* --- Snackbar de Error --- */
+.snackbarError {
+  position: absolute;
+  bottom: 30px; /* Separación del borde inferior */
+  left: 50%;
+  transform: translate(-50%, 100px); /* Empieza fuera de la pantalla (abajo) */
+  width: 90%;
+  max-width: 500px;
+  background-color: rgba(220, 53, 69, 0.95); /* Rojo semi-transparente */
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  
+  /* Transición suave */
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.4s ease;
+  opacity: 0;
+  z-index: 2000; /* Por encima del mapa (z-index 1) y del drawer (z-index 100) */
+  pointer-events: none;
+}
+
+.visible {
+  opacity: 1;
+  transform: translate(-50%, 0); /* Sube a su posición */
+  pointer-events: auto;
+}
+
+.hidden {
+  opacity: 0;
+  transform: translate(-50%, 100px); /* Baja y desaparece */
+  pointer-events: none;
+}
