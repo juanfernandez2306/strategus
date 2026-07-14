@@ -48,3 +48,28 @@
     height: calc(100dvh - 130px);
     max-height: none !important;
 }
+
+
+@scope (.container) {
+  :scope {
+    --color-rojizo-lista: color-mix(in srgb, var(--color-rojo) 60%, var(--color-secundario));
+    --color-negro-difuminado: color-mix(in srgb, var(--color-negro) 60%, transparent);
+  }
+
+  .svg{
+    fill: var(--color-rojizo-lista);
+    stroke-width: .5px;
+    stroke: var(--color-negro-difuminado);
+  }
+
+  .contadorNumero{
+    color: var(--color-rojizo-lista);
+    text-shadow: 
+    -1px -1px 0 var(--color-negro-difuminado),  
+     1px -1px 0 var(--color-negro-difuminado),
+    -1px  1px 0 var(--color-negro-difuminado),
+     1px  1px 0 var(--color-negro-difuminado);
+  }
+}
+
+

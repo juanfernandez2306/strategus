@@ -1,10 +1,13 @@
 import { TarjetaRegistro } from "./TarjetaRegistro";
 import { MapSidebar } from "../mapa/components/MapSidebar"; 
-import { useListaDestino } from "./useListaDestino"; 
+import { useListaDestino } from "./useListaDestino";
+
+import { IconClipBoard } from "../../components_svg/IconClipBoard";
 
 // Importación de tus estilos modulares
 import styles from "./ListaDestino.module.css";
 import styleBase from "../../components/FormBaseLayout.module.css";
+import styleRegisterFormGPS from "../registroPosicion/RegistroPosicionLayout.module.css";
 
 import SnackBarError from "../mapa/components/SnackBarError";
 
@@ -27,11 +30,23 @@ export const ListaDestino = () => {
   return (
     <>
         <div className={`${styleBase.form} ${styles.container}`}>
-        <h3 className={styleBase.titulo} style={
-            { color: "var(--color-negro)", 
-            fontWeight: 'bold' }}>
-                Lista de registros pendientes
-            </h3>
+
+            <section className={styleRegisterFormGPS.contenedorLogo}>
+               <IconClipBoard 
+                width={100}
+                height={120}
+                className={styles.svg}
+               />
+
+               <aside className={styleRegisterFormGPS.contadorContenedor}>
+                    <p className={styleRegisterFormGPS.contadorEtiqueta}>
+                        Lista de registros pendientes
+                    </p>
+                    <h2 className={`${styleRegisterFormGPS.contadorNumero} ${styles.contadorNumero}`}>
+                        {0}
+                    </h2>
+                </aside>
+            </section>
 
             <div className={styles.listaContainer}>
                 {registrosConDistancia.length === 0 ? (
