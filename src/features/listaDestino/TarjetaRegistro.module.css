@@ -1,7 +1,7 @@
 .tarjeta {
   background-color: var(--color-blanco);
   border-radius: 12px;
-  border: 1px solid #e0e5de;
+  border: 1px solid var(--color-gris-claro);
   box-shadow: 0 4px 12px color-mix(in srgb, var(--color-negro) 95%, transparent);
   padding: 16px;
   margin-bottom: 14px;
@@ -21,18 +21,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  border-bottom: 1px dashed #e6e9e4;
+  border-bottom: 2px dashed var(--color-gris-claro);
   padding-bottom: 8px;
-}
-
-.badgeConsecutivo {
-  background-color: #386641; /* --color-primario */
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
 }
 
 .statusBadge {
@@ -44,14 +34,14 @@
 }
 
 .pendiente {
-  background-color: #fffdeb; /* --color-main-container */
-  color: #b08000;
-  border: 1px solid #fbe7a1;
+  color: var(--color-negro);
+  background-color: color-mix(in srgb, var(--color-amarillo) 80%, var(--color-secundario));
+  border: 1px solid var(--color-gris-claro);
 }
 
 .sincronizado {
-  background-color: #e8f9e7;
-  color: #08cb00; /* --color-terciario */
+  background-color: var(--color-blanco);
+  color: var(--color-terciario);
 }
 
 .cuerpo {
@@ -64,7 +54,7 @@
 
 .etiqueta {
   font-size: 10px;
-  color: #666666; /* --color-texto-secundario */
+  color: var(--color-negro);
   font-weight: 700;
   letter-spacing: 0.8px;
   margin: 0 0 4px 0;
@@ -72,7 +62,7 @@
 
 .valorDestacado {
   font-size: 20px;
-  color: #1b211a; /* --color-negro */
+  color: var(--color-negro);
   font-weight: 800;
   margin: 0;
 }
@@ -90,13 +80,13 @@
 }
 
 .miniEtiqueta {
-  color: #666666;
+  color: var(--color-negro);
   margin-right: 4px;
 }
 
 .miniValor {
   font-weight: 600;
-  color: #1b211a;
+  color: var(--color-negro);
 }
 
 .pieCard {
@@ -105,8 +95,8 @@
 
 .botonNavegar {
   width: 100%;
-  background-color: #e07a5f; /* --color-secundario */
-  color: #ffffff;
+  background-color: var(--color-secundario);
+  color: var(--color-blanco);
   border: none;
   border-radius: 8px;
   padding: 14px;
@@ -123,7 +113,7 @@
 }
 
 .botonNavegar:active {
-  background-color: #c9654b;
+  background-color: var(--color-secundario);
 }
 
 .botonNavegar svg {
@@ -136,7 +126,7 @@
 
 /* Estado deshabilitado para el botón de navegación */
 .botonDeshabilitado {
-  background-color: var(--color-fondo-app, #454040) !important;
+  background-color: color-mix(in srgb, var(--color-gris-claro) 30%, var(--color-negro)) !important;
   color: var(--color-texto-deshabilitado, var(--color-blanco)) !important;
   cursor: not-allowed !important;
   box-shadow: none !important;

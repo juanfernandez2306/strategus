@@ -57,12 +57,8 @@ export const ListaDestino = () => {
             </section>
 
             <div className={styles.listaContainer}>
-                {registrosConDistancia.length === 0 ? (
-                    <p className={styles.mensajeInformativo}>
-                        No hay plantas pendientes por revisar.
-                    </p>
-                ) : (
-                    /* RENDERIZADO EXCLUSIVO DEL PRIMERO (MÁS CERCANO) */
+                {registrosConDistancia.length !== 0 && (
+                    
                     (() => {
                         const registroAdaptado = {
                             ...primerRegistroMasCercano,
@@ -78,7 +74,6 @@ export const ListaDestino = () => {
                             >
                                 <TarjetaRegistro 
                                     registro={registroAdaptado as any} 
-                                    consecutivo={1} // Es el primero y único visible
                                     distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
                                 />
                             </div>

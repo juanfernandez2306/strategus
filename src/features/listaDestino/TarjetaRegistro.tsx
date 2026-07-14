@@ -6,14 +6,12 @@ import { useSistemaStore } from '../mapa/hooks/useSistemaStore';
 // 1. Definimos la estructura de las propiedades
 interface TarjetaRegistroProps {
   registro: SidebarData;
-  consecutivo: number;
   distanciaMetros?: number;
 }
 
 // 2. Desestructuramos las props directamente en los parámetros asignando el tipo y valores por defecto
 export const TarjetaRegistro = ({
   registro,
-  consecutivo,
   distanciaMetros = 0,
 }: TarjetaRegistroProps) => {
 
@@ -21,8 +19,11 @@ export const TarjetaRegistro = ({
   
   const handleNavegar = (e: React.MouseEvent) => {
 
+    e.stopPropagation();
+
+    console.log(sistemaListo);
+
     if (!sistemaListo) {
-      e.stopPropagation();
       return;
     }
 
@@ -39,15 +40,12 @@ export const TarjetaRegistro = ({
     <article className={styles.tarjeta}>
       {/* Encabezado con el número consecutivo de registro */}
       <div className={styles.encabezado}>
-        <span className={styles.badgeConsecutivo}>
-          # {consecutivo}
-        </span>
         <span className={`${styles.statusBadge} ${registro.revision_planta ? styles.sincronizado : styles.pendiente}`}>
-          {registro.revision_planta ? 'Sincronizado' : 'Local'}
+          Almacenamiento {registro.revision_planta ? 'Sincronizado' : 'Local'}
         </span>
       </div>
 
-      {/* Cuerpo con la información clave */}
+      
       <div className={styles.cuerpo}>
         <div className={styles.datoGrupo}>
           <p className={styles.etiqueta}>DISTANCIA ESTIMADA</p>
@@ -57,8 +55,6 @@ export const TarjetaRegistro = ({
               : 'Calculando...'}
           </p>
         </div>
-
-        
       </div>
 
       {/* Botón de acción masivo para móviles */}
