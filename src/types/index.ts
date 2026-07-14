@@ -37,6 +37,7 @@ export type SidebarData = {
   lat: number;
   lng: number;
   revision_planta: boolean;
+  sincronizacion: boolean;
 }
 
 

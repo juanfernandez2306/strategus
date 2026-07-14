@@ -51,7 +51,8 @@ export const obtenerRegistroSidebarData = async (): Promise<SidebarData[]> => {
       uuid: reg.uuid,
       lat: reg.latitud,
       lng: reg.longitud,
-      revision_planta: reg.revision_planta
+      revision_planta: reg.revision_planta,
+      sincronizacion: reg.sincronizacion
     }));
 
   } catch (error) {

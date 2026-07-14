@@ -60,19 +60,13 @@ export const ListaDestino = () => {
                 {registrosConDistancia.length !== 0 && (
                     
                     (() => {
-                        const registroAdaptado = {
-                            ...primerRegistroMasCercano,
-                            latitud: primerRegistroMasCercano.lat,
-                            longitud: primerRegistroMasCercano.lng,
-                            galeria: 0
-                        };
-
+                        
                         return (
                             <div 
                                 className={styles.tarjetaWrapper}
                             >
                                 <TarjetaRegistro 
-                                    estadoRevision={primerRegistroMasCercano.revision_planta}
+                                    sincronizacion={primerRegistroMasCercano.sincronizacion}
                                     onNavegar={() => handleAbrirNavegacion(primerRegistroMasCercano)}
                                     distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
                                 />

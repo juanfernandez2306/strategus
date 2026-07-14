@@ -41,8 +41,11 @@
 }
 
 .sincronizado {
-  background-color: var(--color-blanco);
+  background-color: color-mix(in srgb, var(--color-secundario) 20%, transparent);
   color: var(--color-terciario);
+  -webkit-text-stroke: .8px var(--color-primario);
+  font-weight: 700;
+  font-family: var(--font-family-base);
 }
 
 .cuerpo {

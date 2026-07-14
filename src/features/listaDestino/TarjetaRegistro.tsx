@@ -4,15 +4,15 @@ import { useSistemaStore } from '../mapa/hooks/useSistemaStore';
 
 // 1. Definimos la estructura de las propiedades
 interface TarjetaRegistroProps {
-  estadoRevision: boolean;
   distanciaMetros?: number;
+  sincronizacion?: boolean;
   onNavegar?: () => void;
 }
 
 
 export const TarjetaRegistro = ({
-  estadoRevision,
   distanciaMetros = 0,
+  sincronizacion,
   onNavegar
 }: TarjetaRegistroProps) => {
 
@@ -38,8 +38,8 @@ export const TarjetaRegistro = ({
     <article className={styles.tarjeta}>
       {/* Encabezado con el número consecutivo de registro */}
       <div className={styles.encabezado}>
-        <span className={`${styles.statusBadge} ${estadoRevision ? styles.sincronizado : styles.pendiente}`}>
-          Almacenamiento {estadoRevision ? 'Sincronizado' : 'Local'}
+        <span className={`${styles.statusBadge} ${sincronizacion ? styles.sincronizado : styles.pendiente}`}>
+          Almacenamiento {sincronizacion ? 'Sincronizado' : 'Local'}
         </span>
       </div>
 
