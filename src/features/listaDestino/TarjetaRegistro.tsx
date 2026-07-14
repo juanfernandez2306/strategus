@@ -7,12 +7,14 @@ import { useSistemaStore } from '../mapa/hooks/useSistemaStore';
 interface TarjetaRegistroProps {
   registro: SidebarData;
   distanciaMetros?: number;
+  onNavegar?: () => void;
 }
 
 // 2. Desestructuramos las props directamente en los parámetros asignando el tipo y valores por defecto
 export const TarjetaRegistro = ({
   registro,
   distanciaMetros = 0,
+  onNavegar
 }: TarjetaRegistroProps) => {
 
     const sistemaListo = useSistemaStore((state) => state.sistemaListo);
@@ -21,7 +23,7 @@ export const TarjetaRegistro = ({
 
     e.stopPropagation();
 
-    console.log(sistemaListo);
+    console.log("¿Sistema listo?:", sistemaListo);
 
     if (!sistemaListo) {
       return;
@@ -30,6 +32,10 @@ export const TarjetaRegistro = ({
     if (registro.lat && registro.lng) {
 
         console.log(registro.uuid);
+
+        if (onNavegar) {
+          onNavegar();
+        }
 
     } else {
       alert("Coordenadas no disponibles para la navegación.");

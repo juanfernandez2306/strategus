@@ -69,11 +69,11 @@ export const ListaDestino = () => {
 
                         return (
                             <div 
-                                className={styles.tarjetaWrapper} // Aplica el feedback táctil en móviles (:active)
-                                onClick={() => handleAbrirNavegacion(primerRegistroMasCercano)} 
+                                className={styles.tarjetaWrapper}
                             >
                                 <TarjetaRegistro 
                                     registro={registroAdaptado as any} 
+                                    onNavegar={() => handleAbrirNavegacion(primerRegistroMasCercano)}
                                     distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
                                 />
                             </div>
