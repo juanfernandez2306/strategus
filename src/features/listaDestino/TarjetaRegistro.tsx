@@ -1,18 +1,17 @@
 import styles from './TarjetaRegistro.module.css';
-import { type SidebarData } from '../../types/index';
 
 import { useSistemaStore } from '../mapa/hooks/useSistemaStore'; 
 
 // 1. Definimos la estructura de las propiedades
 interface TarjetaRegistroProps {
-  registro: SidebarData;
+  estadoRevision: boolean;
   distanciaMetros?: number;
   onNavegar?: () => void;
 }
 
-// 2. Desestructuramos las props directamente en los parámetros asignando el tipo y valores por defecto
+
 export const TarjetaRegistro = ({
-  registro,
+  estadoRevision,
   distanciaMetros = 0,
   onNavegar
 }: TarjetaRegistroProps) => {
@@ -29,25 +28,18 @@ export const TarjetaRegistro = ({
       return;
     }
 
-    if (registro.lat && registro.lng) {
-
-        console.log(registro.uuid);
-
-        if (onNavegar) {
-          onNavegar();
-        }
-
-    } else {
-      alert("Coordenadas no disponibles para la navegación.");
+    if (onNavegar) {
+      onNavegar();
     }
+    
   };
 
   return (
     <article className={styles.tarjeta}>
       {/* Encabezado con el número consecutivo de registro */}
       <div className={styles.encabezado}>
-        <span className={`${styles.statusBadge} ${registro.revision_planta ? styles.sincronizado : styles.pendiente}`}>
-          Almacenamiento {registro.revision_planta ? 'Sincronizado' : 'Local'}
+        <span className={`${styles.statusBadge} ${estadoRevision ? styles.sincronizado : styles.pendiente}`}>
+          Almacenamiento {estadoRevision ? 'Sincronizado' : 'Local'}
         </span>
       </div>
 
@@ -56,7 +48,7 @@ export const TarjetaRegistro = ({
         <div className={styles.datoGrupo}>
           <p className={styles.etiqueta}>DISTANCIA ESTIMADA</p>
           <p className={styles.valorDestacado}>
-            {sistemaListo && distanciaMetros > 0 
+            {sistemaListo && (distanciaMetros > 0)
               ? `${distanciaMetros.toFixed(1)} metros` 
               : 'Calculando...'}
           </p>

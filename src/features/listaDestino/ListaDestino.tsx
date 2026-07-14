@@ -12,7 +12,7 @@ import styleRegisterFormGPS from "../registroPosicion/RegistroPosicionLayout.mod
 import SnackBarError from "../mapa/components/SnackBarError";
 
 export const ListaDestino = () => {
-  // Consumimos toda la lógica encapsulada en el hook
+  
   const {
     mensajeError,
     sistemaListo,
@@ -72,7 +72,7 @@ export const ListaDestino = () => {
                                 className={styles.tarjetaWrapper}
                             >
                                 <TarjetaRegistro 
-                                    registro={registroAdaptado as any} 
+                                    estadoRevision={primerRegistroMasCercano.revision_planta}
                                     onNavegar={() => handleAbrirNavegacion(primerRegistroMasCercano)}
                                     distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
                                 />
