@@ -62,7 +62,7 @@ export const ListaDestino = () => {
                                 <TarjetaRegistro 
                                     sincronizacion={primerRegistroMasCercano.sincronizacion}
                                     onNavegar={() => {handleAbrirNavegacion(primerRegistroMasCercano)} }
-                                    distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
+                                    distanciaMetros={primerRegistroMasCercano.distanciaCalculada ?? undefined}
                                 />
                             
                         

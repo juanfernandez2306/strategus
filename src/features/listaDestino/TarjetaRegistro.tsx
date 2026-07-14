@@ -4,7 +4,7 @@ import { useSistemaStore } from '../mapa/hooks/useSistemaStore';
 
 // 1. Definimos la estructura de las propiedades
 interface TarjetaRegistroProps {
-  distanciaMetros?: number;
+  distanciaMetros?: number | 0;
   sincronizacion?: boolean;
   onNavegar: () => void;
 }
@@ -49,7 +49,7 @@ export const TarjetaRegistro = ({
           <p className={styles.etiqueta}>DISTANCIA ESTIMADA</p>
           <p className={styles.valorDestacado}>
             {sistemaListo && (distanciaMetros > 0)
-              ? `${distanciaMetros.toFixed(1)} metros` 
+              ? `${distanciaMetros?.toFixed(1)} metros` 
               : 'Calculando...'}
           </p>
         </div>

@@ -78,40 +78,52 @@ export const useListaDestino = () => {
 
   // ─── MOTOR DE CÁLCULO Y ORDENAMIENTO EN TIEMPO REAL ───
   const registrosConDistancia = useMemo(() => {
-    if (!listaRegistros) return [];
+  if (!listaRegistros) return [];
 
-    const registrosPendientes = listaRegistros.filter(item => !item.revision_planta);
+  const registrosPendientes = listaRegistros.filter(item => !item.revision_planta);
 
-    const mapeados = registrosPendientes.map((item) => {
-      let distanciaFiltrada = 0;
+  // 🛡️ BANDERA DE PROTECCIÓN: Evaluamos si el GPS está en (0,0) o no está listo
+  const gpsEstaInicializando = !posicionUsuario || (posicionUsuario.lng === 0 && posicionUsuario.lat === 0);
 
-      if (posicionUsuario) {
-        if (!motoresNavegacionRef.current.has(item.uuid)) {
-          motoresNavegacionRef.current.set(item.uuid, new ServicioNavegacion());
-        }
+  if (gpsEstaInicializando) {
+    // Retornamos las tarjetas con distanciaCalculada en null de forma estable.
+    // Esto NO inicializa ni contamina los motores (ServicioNavegacion).
+    // Además, permite que en la interfaz visual puedas evaluar: 
+    // tarjeta.distanciaCalculada === null ? "Calculando..." : ...
+    return registrosPendientes.map((item) => ({
+      ...item,
+      distanciaCalculada: undefined 
+    }));
+  }
 
-        const motor = motoresNavegacionRef.current.get(item.uuid)!;
-        const resultado = motor.calcularNavegacion(
-          { lat: posicionUsuario.lat, lng: posicionUsuario.lng },
-          { lat: item.lat, lng: item.lng },
-          0
-        );
-
-        distanciaFiltrada = resultado.distanciaFiltrada;
-      }
-
-      return {
-        ...item,
-        distanciaCalculada: distanciaFiltrada
-      };
-    });
-
-    if (posicionUsuario.lng !== 0 && posicionUsuario.lat !== 0) {
-      mapeados.sort((a, b) => a.distanciaCalculada - b.distanciaCalculada);
+  // 🚀 HARDWARE ACCIONADO: Solo entra aquí cuando lat y lng son diferentes de 0
+  const mapeados = registrosPendientes.map((item) => {
+    if (!motoresNavegacionRef.current.has(item.uuid)) {
+      motoresNavegacionRef.current.set(item.uuid, new ServicioNavegacion());
     }
 
-    return mapeados;
-  }, [listaRegistros, posicionUsuario]);
+    const motor = motoresNavegacionRef.current.get(item.uuid)!;
+    const resultado = motor.calcularNavegacion(
+      { lat: posicionUsuario.lat, lng: posicionUsuario.lng },
+      { lat: item.lat, lng: item.lng },
+      0
+    );
+
+    return {
+      ...item,
+      distanciaCalculada: resultado.distanciaFiltrada
+    };
+  });
+
+  // Ordenamos de forma segura de menor a mayor distancia
+  mapeados.sort((a, b) => {
+    const distA = a.distanciaCalculada ?? Infinity;
+    const distB = b.distanciaCalculada ?? Infinity;
+    return distA - distB;
+  });
+
+  return mapeados;
+}, [listaRegistros, posicionUsuario]);
 
   const handleAbrirNavegacion = (item: SidebarData) => {
     setPuntoSeleccionado(item);
