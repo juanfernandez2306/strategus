@@ -1,11 +1,16 @@
 /* --- Snackbar de Error --- */
 .snackbarError {
-  position: absolute;
+  /* 🚀 CAMBIO CLAVE: Usamos fixed para que flote sobre la pantalla de forma independiente 
+     y no afecte el tamaño ni el scroll del documento */
+  position: fixed; 
   bottom: 30px;
   left: 50%;
-  transform: translate(-50%, 100px);
+  
+  /* Iniciamos oculto totalmente abajo usando porcentaje para que sea preciso */
+  transform: translate(-50%, calc(100% + 40px)); 
+  
   width: 90%;
-  max-width: 500px;
+  max-width: 400px;
   background-color: color-mix(in srgb, var(--color-rojo) 80%, transparent);
   color: var(--color-blanco);
   padding: 14px 20px;
@@ -17,21 +22,26 @@
   backdrop-filter: blur(8px);
   
   /* Transición suave */
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              opacity 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.3s ease,
+              visibility 0.3s ease; /* Evita cualquier cálculo de render en el DOM */
+  
   opacity: 0;
+  visibility: hidden; /* 🛡️ Oculta el elemento del árbol de renderizado mientras no se use */
   z-index: 2000;
   pointer-events: none;
 }
 
 .visible {
   opacity: 1;
-  transform: translate(-50%, 0); /* Sube a su posición */
+  visibility: visible;
+  transform: translate(-50%, 0); /* Sube elegantemente a su posición */
   pointer-events: auto;
 }
 
 .hidden {
   opacity: 0;
-  transform: translate(-50%, 100px); /* Baja y desaparece */
+  visibility: hidden;
+  transform: translate(-50%, calc(100% + 40px)); /* Baja y desaparece sin empujar el layout */
   pointer-events: none;
 }
