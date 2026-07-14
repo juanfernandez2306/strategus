@@ -6,7 +6,10 @@ import { useSistemaStore } from "../mapa/hooks/useSistemaStore";
 import { type SidebarData } from "../../types"; 
 import { ServicioNavegacion } from "../mapa/sensor/navegacion/ServicioNavegacion";
 import { actualizarEstadoRevisionDB, eliminarPalmaYRegistroDB } from "../../services/indexedbd/palmaActions";
-// Variable global al archivo para contar cuántas instancias de la pantalla están pidiendo hardware
+
+
+
+
 let instanciasMontadasGlobal = 0;
 
 export const useListaDestino = () => {
@@ -103,7 +106,7 @@ export const useListaDestino = () => {
       };
     });
 
-    if (posicionUsuario) {
+    if (posicionUsuario.lng !== 0 && posicionUsuario.lat !== 0) {
       mapeados.sort((a, b) => a.distanciaCalculada - b.distanciaCalculada);
     }
 
