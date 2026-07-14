@@ -26,7 +26,10 @@
     color: var(--color-negro);
 }
 
-.colorPendiente { background-color: var(--color-error); }
+.colorPendiente { 
+  background-color: color-mix(in srgb, var(--color-rojo) 70%, var(--color-blanco)) 
+}
+
 .colorPendiente:hover { 
     background-color: var(--color-secundario);
     color: var(--color-negro); 
