@@ -6,7 +6,7 @@ import { useListaDestino } from "./useListaDestino";
 import styles from "./ListaDestino.module.css";
 import styleBase from "../../components/FormBaseLayout.module.css";
 
-import SnackBarError from "../mapa/components/snackbarError";
+import SnackBarError from "../mapa/components/SnackBarError";
 
 export const ListaDestino = () => {
   // Consumimos toda la lógica encapsulada en el hook

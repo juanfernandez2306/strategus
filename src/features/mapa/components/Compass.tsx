@@ -65,13 +65,13 @@ const Compass = forwardRef<CompassHandle, CompassProps>(({ size = 260 }, ref) =>
           style={{ width: '85%', height: '85%', overflow: 'visible' }}
         >
           {/* Marcador Norte fijo */}
-          <path d="M50 5 L50 25" stroke="var(--color-error)" strokeWidth="6" strokeLinecap="round" />
+          <path d="M50 5 L50 25" stroke="var(--color-rojo)" strokeWidth="6" strokeLinecap="round" />
           
           <circle cx="50" cy="100" r="65" fill="none" stroke="var(--color-terciario)" strokeWidth="1.5" strokeDasharray="3 3" />
 
           {/* Aguja móvil */}
           <g ref={needleRef} style={needleStyle}>
-            <path fill="var(--color-error)" stroke="var(--color-negro)" strokeWidth="3" d="M50 35 L42 100 H58 Z" />
+            <path fill="var(--color-rojo)" stroke="var(--color-negro)" strokeWidth="3" d="M50 35 L42 100 H58 Z" />
             <path fill="#FFF" stroke="var(--color-negro)" strokeWidth="3" d="M50 165 L42 100 H58 Z" />
             <circle cx="50" cy="100" r="5" fill="var(--color-negro)" />
           </g>
