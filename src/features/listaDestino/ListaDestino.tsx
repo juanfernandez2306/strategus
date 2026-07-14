@@ -26,7 +26,14 @@ export const ListaDestino = () => {
     handleEliminarPunto
   } = useListaDestino();
 
- 
+  // 1. Ordenamos por distancia (menor a mayor) para asegurar que el primero sea siempre el más cercano
+  const registrosOrdenados = [...registrosConDistancia].sort(
+    (a, b) => (a.distanciaCalculada || 0) - (b.distanciaCalculada || 0)
+  );
+
+  // 2. Extraemos únicamente el primer registro (el más cercano)
+  const primerRegistroMasCercano = registrosOrdenados[0];
+
   return (
     <>
         <div className={`${styleBase.form} ${styles.container}`}>
@@ -42,8 +49,9 @@ export const ListaDestino = () => {
                     <p className={styleRegisterFormGPS.contadorEtiqueta}>
                         Lista de registros pendientes
                     </p>
+                    {/* CONTADOR REAL: Muestra la cantidad total de registros pendientes en la cola */}
                     <h2 className={`${styleRegisterFormGPS.contadorNumero} ${styles.contadorNumero}`}>
-                        {0}
+                        {registrosConDistancia.length}
                     </h2>
                 </aside>
             </section>
@@ -54,29 +62,29 @@ export const ListaDestino = () => {
                         No hay plantas pendientes por revisar.
                     </p>
                 ) : (
-                registrosConDistancia.map((item, indice) => {
-                const registroAdaptado = {
-                    ...item,
-                    latitud: item.lat,
-                    longitud: item.lng,
-                    galeria: 0
-                };
+                    /* RENDERIZADO EXCLUSIVO DEL PRIMERO (MÁS CERCANO) */
+                    (() => {
+                        const registroAdaptado = {
+                            ...primerRegistroMasCercano,
+                            latitud: primerRegistroMasCercano.lat,
+                            longitud: primerRegistroMasCercano.lng,
+                            galeria: 0
+                        };
 
-                    return (
-                        <div 
-                        key={item.uuid} 
-                        className={styles.tarjetaWrapper} // Aplica el feedback táctil en móviles (:active)
-                        onClick={() => handleAbrirNavegacion(item)} 
-                        >
-                        <TarjetaRegistro 
-                            registro={registroAdaptado as any} 
-                            consecutivo={indice + 1} 
-                            distanciaMetros={item.distanciaCalculada} 
-                        />
-                        </div>
-                    );
-                })
-            )}
+                        return (
+                            <div 
+                                className={styles.tarjetaWrapper} // Aplica el feedback táctil en móviles (:active)
+                                onClick={() => handleAbrirNavegacion(primerRegistroMasCercano)} 
+                            >
+                                <TarjetaRegistro 
+                                    registro={registroAdaptado as any} 
+                                    consecutivo={1} // Es el primero y único visible
+                                    distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
+                                />
+                            </div>
+                        );
+                    })()
+                )}
             </div>
 
         </div>
