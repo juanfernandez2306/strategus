@@ -9,7 +9,6 @@
   display: block;
   box-sizing: border-box;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  pointer-events: none;
 }
 
 .tarjeta:active {

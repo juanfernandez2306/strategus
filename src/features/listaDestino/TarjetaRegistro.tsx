@@ -6,7 +6,7 @@ import { useSistemaStore } from '../mapa/hooks/useSistemaStore';
 interface TarjetaRegistroProps {
   distanciaMetros?: number;
   sincronizacion?: boolean;
-  onNavegar?: () => void;
+  onNavegar: () => void;
 }
 
 
@@ -20,17 +20,17 @@ export const TarjetaRegistro = ({
   
   const handleNavegar = (e: React.MouseEvent) => {
 
-    e.stopPropagation();
-
+    
     console.log("¿Sistema listo?:", sistemaListo);
 
     if (!sistemaListo) {
+      e.stopPropagation();
       return;
     }
 
-    if (onNavegar) {
-      onNavegar();
-    }
+    
+    onNavegar();
+    
     
   };
 

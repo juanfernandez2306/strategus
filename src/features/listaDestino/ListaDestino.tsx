@@ -27,12 +27,10 @@ export const ListaDestino = () => {
   } = useListaDestino();
 
   // 1. Ordenamos por distancia (menor a mayor) para asegurar que el primero sea siempre el más cercano
-  const registrosOrdenados = [...registrosConDistancia].sort(
-    (a, b) => (a.distanciaCalculada || 0) - (b.distanciaCalculada || 0)
-  );
+  
 
   // 2. Extraemos únicamente el primer registro (el más cercano)
-  const primerRegistroMasCercano = registrosOrdenados[0];
+  const primerRegistroMasCercano = registrosConDistancia[0];
 
   return (
     <>
@@ -59,20 +57,15 @@ export const ListaDestino = () => {
             <div className={styles.listaContainer}>
                 {registrosConDistancia.length !== 0 && (
                     
-                    (() => {
-                        
-                        return (
-                            <div 
-                                className={styles.tarjetaWrapper}
-                            >
+                    
+                            
                                 <TarjetaRegistro 
                                     sincronizacion={primerRegistroMasCercano.sincronizacion}
-                                    onNavegar={() => handleAbrirNavegacion(primerRegistroMasCercano)}
+                                    onNavegar={() => {handleAbrirNavegacion(primerRegistroMasCercano)} }
                                     distanciaMetros={primerRegistroMasCercano.distanciaCalculada} 
                                 />
-                            </div>
-                        );
-                    })()
+                            
+                        
                 )}
             </div>
 

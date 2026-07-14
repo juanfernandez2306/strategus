@@ -51,7 +51,7 @@ export const useListaDestino = () => {
         
         // 1. Recorremos cada motor individual y llamamos a su método nativo de limpieza
         motoresNavegacionRef.current.forEach((motor) => {
-          motor.resetearNavegacion(); // 👈 Borra el caché de distancias y primer pulso
+          motor.resetearNavegacion();
         });
 
         // 2. Vaciamos por completo el Map para liberar memoria RAM del dispositivo
