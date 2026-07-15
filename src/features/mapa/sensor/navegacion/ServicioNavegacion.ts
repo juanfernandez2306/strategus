@@ -13,6 +13,9 @@ export class ServicioNavegacion {
 
   private esPrimerPulso: boolean = true;
 
+  private currentHeading: number = 0; 
+  private readonly suavizadoOrientacion = 0.2;
+
   /**
    * Algoritmo LERP corregido para evitar saltos bruscos en el paso por el Norte (0°/360°)
    */
@@ -64,6 +67,16 @@ export class ServicioNavegacion {
       anguloFiltrado: Math.round(this.currentLerpAngle),
       proximidadModo: this.lastStoredDistance <= 12
     };
+  }
+
+  public procesarHeading(directo: number): number {
+    
+    let diff = directo - this.currentHeading;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    
+    this.currentHeading += this.suavizadoOrientacion * diff;
+    return (this.currentHeading + 360) % 360;
   }
 
   public resetearNavegacion() {

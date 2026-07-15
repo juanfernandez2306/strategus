@@ -1,5 +1,5 @@
 import { type Map as MapLibreMap, type GeoJSONSource } from 'maplibre-gl';
-import { navService } from '../../../services/sensors/brujula/navigation.ts';
+import { ServicioNavegacion } from '../sensor/navegacion/ServicioNavegacion';
 import { useRef } from 'react';
 
 export const userGeoJSON = {
@@ -37,8 +37,10 @@ export const updateUserVisuals = (
 
     if (!source || (lng === 0 && lat === 0)) return;
 
+    const servicioNavegacion = new ServicioNavegacion();
+
     const headingParaMapa = (headingRaw !== null) 
-        ? navService.procesarHeading(headingRaw) 
+        ? servicioNavegacion.procesarHeading(headingRaw)
         : 9999;
 
     userGeoJSON.features[0].geometry.coordinates = [lng, lat];
