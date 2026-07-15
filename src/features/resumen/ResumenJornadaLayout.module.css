@@ -89,7 +89,7 @@
     align-items: center;
     width: 100%;
     padding: 10px 12px;
-    background-color: var(--color-body-container);
+    background-color: var(--color-gris-claro);
     border-radius: 10px;
     margin-bottom: 1rem;
     box-sizing: border-box;
@@ -107,7 +107,7 @@
 .botonLogout {
     background-color: transparent;
     color: var(--color-error);
-    border: 2px solid var(--color-error);
+    border: 2px solid var(--color-rojo);
     padding: 10px 14px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -118,6 +118,6 @@
 }
 
 .botonLogout:active {
-    background-color: var(--color-error);
+    background-color: var(--color-rojo);
     color: var(--color-fondo);
 }

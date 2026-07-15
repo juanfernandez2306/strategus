@@ -38,9 +38,11 @@ const ImportarGeojson = () => {
         </section>
 
         <aside className={estiloRegistro.groupInput}>
-            <label htmlFor="import_geojson">Cargar archivos de GeoJSON</label>
+            <label className={estiloRegistro.label} 
+                htmlFor="import_geojson">Cargar archivos de GeoJSON</label>
             <input
                 ref={fileInputRef}
+                className={estiloRegistro.input}
                 id="import_geojson"
                 type="file"
                 multiple
@@ -49,7 +51,7 @@ const ImportarGeojson = () => {
             />
             <p style={{ fontSize: '0.85rem', 
                 opacity: 0.8, 
-                marginTop: '8px',
+                marginTop: '10px',
                 color: 'var(--color-negro)'}}>
                 {fileList 
                     ? `${fileList.length} archivo(s) seleccionados` 

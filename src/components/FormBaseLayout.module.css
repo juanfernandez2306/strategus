@@ -42,7 +42,7 @@
    ========================================================================== */
 button.submit {
   width: 100%;
-  font-family: var(--font-header);
+  font-family: var(--font-family-base);
   background-color: var(--color-primario);
   color: var(--color-blanco);
   border: none;

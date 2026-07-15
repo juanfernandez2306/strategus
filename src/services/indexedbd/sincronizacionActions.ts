@@ -1,6 +1,6 @@
 import { obtenerRegistroFiltro } from "./queries";
 import { escribirRegistro, borrarRegistroPorUUID } from "./actions";
-import { useAuthStore } from "../../hooks/useAuthStore";
+import { useAuthStore } from "../../features/login/hooks/useAuthStore";
 import { type RegistroPosicion } from "../../types/index";
 
 import { URL_API_BACKEND } from "../../data/finca/info";

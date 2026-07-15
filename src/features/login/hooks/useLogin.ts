@@ -1,4 +1,4 @@
-import { URL_API_BACKEND } from "../data/finca/info";
+import { URL_API_BACKEND } from "../../../data/finca/info";
 
 export const useLogin = () => {
   const autenticar = async (email: string, password: string): Promise<string> => {

@@ -62,17 +62,15 @@ const GenerarQrJornada = () => {
                 </section>
                 
                 <aside className={styleRegistro.groupInput}>
-                    <label htmlFor="fecha">Fecha de la Jornada</label>
+                    <label 
+                        className={styleRegistro.label}
+                        htmlFor="fecha">Fecha de la Jornada</label>
                     <input 
                         id="fecha" 
+                        className={styleRegistro.input}
                         type="date"  
                         value={fecha}
                         onChange={(e) => setFecha(e.target.value)}
-                        style={{ padding: '10px', 
-                            borderRadius: '8px', 
-                            border: '2px solid var(--color-primario)',
-                            color: 'var(--color-negro)'
-                        }}
                     />
                 </aside>
             </FormBaseLayout>

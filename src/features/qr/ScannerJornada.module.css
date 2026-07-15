@@ -6,7 +6,7 @@
     border-radius: 5px;
     align-items: center;
     justify-content: center;
-    background: var(--color-fondo);
+    background: var(--color-blanco);
     gap: 1rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -17,7 +17,7 @@
 .contenedorLogo{
     display: flex;
     flex-direction: row;
-    background-color: var(--color-body-container);
+    background-color: var(--color-gris-claro);
     width: 90%;
     justify-content: flex-start;
     align-items: center;
@@ -129,13 +129,13 @@
     width: 100%;
     padding: 1rem;
     background-color: var(--color-primario);
-    color: var(--color-fondo);
+    color: var(--color-blanco);
     font-size: 1.2rem;
     margin: 0;
 }
 
 .reset{
-    background-color: var(--color-error);
+    background-color: color-mix(in srgb, var(--color-rojo) 90%, transparent);
 }
 
 /* Tu clase base (mantiene lo que ya tenías) */
@@ -146,13 +146,13 @@
     text-align: center;
     font-weight: bold;
     font-size: 1rem;
-    color: var(--color-fondo);
+    color: var(--color-gris-claro);
     width: 90%;
 }
 
 
 .statusError {
-    background-color: var(--color-error);
+    background-color: color-mix(in srgb, var(--color-rojo) 60%, transparent);
 }
 
 

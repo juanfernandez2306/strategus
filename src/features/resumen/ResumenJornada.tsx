@@ -10,9 +10,11 @@ import styleRegistro from "../registroPosicion/RegistroPosicionLayout.module.css
 
 import IconFumigadora from "../../components_svg/IconFumigadora";
 
-import { useAuthStore } from "../../hooks/useAuthStore";
+import { useAuthStore } from "../login/hooks/useAuthStore";
 
 import { sincronizarRegistrosPendientes } from "../../services/indexedbd/sincronizacionActions";
+
+import stylesLogout from "../login/LoginLayout.module.css";
 
 import { URL_API_BACKEND } from "../../data/finca/info";
 
@@ -67,7 +69,7 @@ const ResumenJornadaLayout = () => {
         </p>
         <button 
           type="button" 
-          className={styleLocal.botonLogout} 
+          className={stylesLogout.btnCerrarSesion} 
           onClick={handleLogout}
         >
           Cerrar Sesión

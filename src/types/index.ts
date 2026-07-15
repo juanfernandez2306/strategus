@@ -63,6 +63,7 @@ export interface GpsConfig {
 export interface IconProps {
   width?: number;
   height?: number;
+  className?: string;
 }
 
 export interface ConfigVector {

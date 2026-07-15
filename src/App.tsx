@@ -18,9 +18,11 @@ import { NOMBRE_APP } from './data/finca/appConfig';
 
 import { MapLibreGL } from './features/mapa/MapLibreGL';
 
-import LoginLayout from './layouts/LoginLayout';
+import LoginLayout from './features/login/LoginLayout';
 
-import { useAuthStore } from './hooks/useAuthStore';
+import { useAuthStore } from './features/login/hooks/useAuthStore';
+
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
 
@@ -49,9 +51,35 @@ function App() {
         return <MapLibreGL />
 
       case "Resumen":
-        return isLogged ? 
-        <ResumenJornadaLayout /> : 
-        <LoginLayout />;
+        return (
+          /* AnimatePresence mode="wait" asegura que la pantalla vieja termine 
+             de desaparecer antes de que la nueva empiece a entrar */
+          <AnimatePresence mode="wait">
+            {isLogged ? (
+              <motion.div
+                key="resumen-jornada" // Clave única indispensable
+                initial={{ opacity: 0, y: 15 }} // Estado inicial (invisible y un poco desplazado abajo)
+                animate={{ opacity: 1, y: 0 }}   // Estado visible
+                exit={{ opacity: 0, y: -15 }}    // Estado de salida (se va desvaneciendo hacia arriba)
+                transition={{ duration: 0.35, ease: 'easeInOut' }} // Transición suave
+                style={{ width: '100%', height: '100%' }} // Evita descuadres visuales
+              >
+                <ResumenJornadaLayout />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="login-layout" // Clave única indispensable
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+                style={{ width: '100%', height: '100%' }}
+              >
+                <LoginLayout />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        );
       case "ListaPendiente":
         return <ListaDestino />
       default:

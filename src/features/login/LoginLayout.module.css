@@ -1,0 +1,246 @@
+/* LoginLayout.module.css */
+
+/* Contenedor principal que centra las tarjetas en pantalla completa */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100dvw;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, var(--fourth-color, #EDE6DB) 0%, var(--second-color, #DFDFDE) 100%);
+}
+
+/* Envoltura interna que simula una tarjeta elegante */
+.tarjetaFormulario {
+  background-color: #67C090;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 8px rgba(56, 102, 65, 0.03);
+  width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+/* Encabezados y títulos */
+.encabezadoSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tituloForm {
+  font-family: var(--font-family-base);
+  font-size: 1.8rem;
+  color: var(--color-primario);
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.subtituloForm {
+  font-family: var(--font-family-base);
+  font-size: 0.95rem;
+  color: #666666;
+  margin: 0;
+}
+
+/* Campos de entrada e interfaz semántica */
+.groupInput {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.groupInput label {
+  font-family: var(--font-family-base);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-negro, #222222);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-left: 2px;
+}
+
+.groupInput input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: var(--font-family-base);
+  color: var(--color-negro, #222222);
+  background-color: #fafafa;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+/* Efectos Focus estilizados con la temática verde */
+.groupInput input:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(56, 102, 65, 0.12);
+}
+
+.groupInput input::placeholder {
+  color: #a0aec0;
+  font-size: 0.95rem;
+}
+
+/* Enlaces de pie de formulario */
+
+.contenedorEnlacesPie {
+  display: flex;
+  justify-content: space-between; /* Uno a la izquierda y otro a la derecha */
+  align-items: center;
+  width: 100%;
+  margin-top: 1.25rem;            /* Espaciado controlado respecto al input */
+  gap: 10px;                      /* Espacio de seguridad si la pantalla se achica */
+}
+
+.pieEnlace {
+  text-align: center;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+.enlaceAccion {
+  color: var(--color-primario);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
+  transition: color 0.2s ease;
+}
+
+.enlaceAccion:hover {
+  text-decoration: underline;
+  color: var(--color-primario, #2c5233);
+}
+
+
+/* Estilo para el mensaje de ayuda/validación */
+.notas, .notasError {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    font-style: normal;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.notas{
+  color: #64748b;
+}
+
+.notasError{
+  color: var(--color-rojo);
+}
+
+/* Opcional: Si el input tiene el foco, el texto se vuelve un poco más oscuro para guiar la vista */
+input:focus {
+    color: #334155; /* Gris más oscuro (Slate 700) */
+}
+
+
+/* LoginLayout.module.css (Añade estas reglas al final) */
+
+/* Contenedor para el input y el icono */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estilo específico para el input con icono */
+.inputWithIcon {
+  width: 100%;
+  padding: 14px 16px;
+  /* Deja espacio a la derecha para el icono */
+  padding-right: 3rem !important; 
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: var(--font-family-base);
+  color: var(--color-negro, #222222);
+  background-color: #fafafa;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+/* Efectos Focus para .inputWithIcon, reutilizando la lógica existente */
+.inputWithIcon:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(56, 102, 65, 0.12);
+}
+
+/* Estilo para el botón del icono */
+.iconButton {
+  position: absolute;
+  right: 12px; /* Posicionamiento a la derecha */
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* El color inicial puede ser un gris suave */
+  color: #a0aec0; 
+  transition: color 0.2s ease;
+}
+
+/* Cambia el color del icono al pasar el ratón */
+.iconButton:hover {
+  color: var(--color-primario);
+}
+
+/* Estilo para el icono en sí (si usas react-icons) */
+.icon {
+  fill: #a0aec0;
+}
+
+.icon:hover{
+  fill: var(--color-primario);
+}
+
+.img{
+  width: 60%;
+}
+
+
+.btnCerrarSesion {
+  font-family: var(--font-family-base); /* Usa la fuente del header */
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--color-rojo);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--color-rojo); /* Borde suave usando tu --second-color */
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Efecto al pasar el mouse por encima */
+.btnCerrarSesion:hover {
+  background-color: color-mix(var(--color-rojo) 60%, transparent);
+  color: var(--color-blanco); 
+  border-color: var(--color-secundario);
+}
+
+/* Efecto al hacer click */
+.btnCerrarSesion:active {
+  transform: scale(0.96); /* Un pequeño efecto de hundimiento */
+}
+
+.svg{
+  fill: var(--color-primario);
+}
