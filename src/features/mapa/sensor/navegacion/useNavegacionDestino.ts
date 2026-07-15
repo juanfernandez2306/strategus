@@ -76,8 +76,7 @@ export const useNavegacionDestino = () => {
             posicionDestinoActualRef.current,
             headingCrudo
         );
-
-        console.log('distancia: ', distanciaFiltrada, ' | angulo: ', anguloFiltrado, ' | proximidad: ', proximidadModo)
+        
         compassRef.current.updateDistance(distanciaFiltrada);
         compassRef.current.updateAngle(anguloFiltrado);
         compassRef.current.setProximityMode(proximidadModo);
