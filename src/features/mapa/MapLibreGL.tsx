@@ -7,7 +7,7 @@ import { MapSidebar } from './components/MapSidebar';
 
 import LegendMap from './components/LegendMap';
 
-import SnackBarError from './components/snackbarError';
+import SnackBarError from './components/SnackBarError';
 
 
 export const MapLibreGL = () => {

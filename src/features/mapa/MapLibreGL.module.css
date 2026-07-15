@@ -2,7 +2,6 @@
    1. DIMENSIONES BASE (Heredan el tamaño y centrado dictados por App.css)
    ========================================================================== */
 .screenContainer {
-  /* CAMBIO: De 'relative' a 'absolute' con anclajes para rellenar al padre */
   position: absolute;
   top: 0;
   left: 0;
@@ -26,20 +25,9 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-
-  /* --- CAMBIO AQUÍ --- */
-  opacity: 0;
-  visibility: hidden;
-  /* El transition-delay en visibility es el truco para que no desaparezca de golpe */
-  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 
-.overlayActive {
-  opacity: 1;
-  visibility: visible;
-  /* Al activarse, quitamos el delay para que aparezca al instante */
-  transition: opacity 0.4s ease, visibility 0s linear 0s;
-}
+
 
 .drawerPaper {
   width: 100%;
@@ -55,18 +43,7 @@
   align-items: center;
   gap: 32px;
 
-  /* Estado inicial: abajo */
-  transform: translateY(105%); 
-  /* Curva de salida más natural (acelerada al final) */
-  transition: transform 0.4s ease-in;
 }
-
-.drawerOpen {
-  transform: translateY(0);
-  transition: transform 0.5s ease-out;
-}
-
-/* ------------------------------------- */
 
 .btnClose {
   position: absolute;

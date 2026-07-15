@@ -88,11 +88,11 @@ export const MapSidebar = ({
 
   return (
     <section
-      className={`${mapStyles.drawerOverlay} ${isOpen ? mapStyles.overlayActive : ''}`}
+      className={mapStyles.drawerOverlay}
       onClick={handleCloseClick}
     >
       <div
-        className={`${mapStyles.drawerPaper} ${isOpen ? mapStyles.drawerOpen : ''}`}
+        className={mapStyles.drawerPaper}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón superior derecho de cierre (Deshabilitado durante procesos críticos) */}
