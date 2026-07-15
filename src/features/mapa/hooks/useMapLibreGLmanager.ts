@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { useSistemaStore } from '../hooks/useSistemaStore';
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -24,26 +24,14 @@ export const useMapLibreGLmanager = () => {
 
     const mensajeError = useSistemaStore((s) => s.mensajeError);
 
-    const {setPosicionDestino} = useSistemaStore();
-
     const detallePunto = useSistemaStore((s) => s.detallePunto);
     const setDetallePunto = useSistemaStore((s) => s.setDetallePunto);
-
-    
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    
     
     const sistemaListo = useSistemaStore((s) => s.sistemaListo);
 
     const handlePointClick = useCallback((datos: SidebarData) => {
         
-            
         setDetallePunto(datos);
-        setIsSidebarOpen(true);
-        setPosicionDestino({
-            lng: datos.lng,
-            lat: datos.lat
-        })
     
       }, []);
 
@@ -99,10 +87,9 @@ export const useMapLibreGLmanager = () => {
     
     const handleCerrarSidebar = useCallback(() => {
 
-        setIsSidebarOpen(false);
         setDetallePunto(null);
         
-    }, [setPosicionDestino]);
+    }, [setDetallePunto]);
 
     /** */
     
@@ -186,8 +173,6 @@ export const useMapLibreGLmanager = () => {
     return {
         mapDivRef,
         mensajeError,
-        detallePunto,
-        isSidebarOpen,
         handleCerrarSidebar,
         handleConfirmarVisita,
         handleEliminarPunto,
