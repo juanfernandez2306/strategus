@@ -16,9 +16,6 @@ export const MapLibreGL = () => {
         mapDivRef, 
         mensajeError,
         sistemaListo,
-        isSidebarOpen,
-        handleCerrarSidebar,
-        detallePunto,
         handleConfirmarVisita,
         handleEliminarPunto,
         compassRef
@@ -39,11 +36,8 @@ export const MapLibreGL = () => {
             />
 
             <MapSidebar 
-                isOpen={isSidebarOpen}
-                detallePunto={detallePunto}
-                onClose={handleCerrarSidebar}
                 onConfirmarVisita={handleConfirmarVisita}
-                onEliminarPunto={handleEliminarPunto} // <-- TS comprobará que las firmas coinciden perfectamente
+                onEliminarPunto={handleEliminarPunto}
                 compassRef={compassRef}
             />
 

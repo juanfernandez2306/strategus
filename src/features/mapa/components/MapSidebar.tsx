@@ -1,7 +1,7 @@
 // src/mapa/components/MapSidebar.tsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { type SidebarData } from '../../../types';
+import { useSistemaStore } from '../hooks/useSistemaStore';
 
 import { SidebarNavigation } from './SidebarMap/SidebarNavigation';
 import { SidebarAdministration } from './SidebarMap/SidebarAdministration';
@@ -10,9 +10,6 @@ import mapStyles from '../MapLibreGL.module.css';
 import sidebarStyles from './MapSidebar.module.css';
 
 interface MapSidebarProps {
-  isOpen: boolean; // Ahora controla la animación de posición, no el montaje
-  detallePunto: SidebarData | null;
-  onClose: () => void;
   onConfirmarVisita: () => Promise<void>;
   onEliminarPunto: (uuid: string) => Promise<string>; 
   refrescarMapa?: () => void; 
@@ -20,9 +17,6 @@ interface MapSidebarProps {
 }
 
 export const MapSidebar = ({
-  isOpen,
-  detallePunto,
-  onClose,
   onConfirmarVisita,
   onEliminarPunto,
   refrescarMapa,
@@ -31,9 +25,14 @@ export const MapSidebar = ({
   const [activeTab, setActiveTab] = useState<'navigation' | 'administration'>('navigation');
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  // 💡 CACHÉ LOCAL: Retiene los datos del punto para que el contenido no quede vacío
-  // inmediatamente cuando 'detallePunto' pase a ser null al cerrar.
-  const [copiaPunto, setCopiaPunto] = useState<SidebarData | null>(detallePunto);
+   
+  const detallePunto = useSistemaStore((s) => s.detallePunto);
+  const setDetallePunto = useSistemaStore((s) => s.setDetallePunto);
+
+  const isOpen = detallePunto !== null;
+
+  
+  const [copiaPunto, setCopiaPunto] = useState(detallePunto);
 
   useEffect(() => {
     if (detallePunto) {
@@ -41,7 +40,7 @@ export const MapSidebar = ({
     }
   }, [detallePunto]);
 
-  // Restablecer la pestaña activa al abrir el componente
+  // Restablecer la pestaña activa al abrir
   useEffect(() => {
     if (isOpen) {
       setActiveTab('navigation');
@@ -51,27 +50,30 @@ export const MapSidebar = ({
 
   const handleCloseClick = () => {
     if (isDeleting) return; 
-    onClose();
+    setDetallePunto(null);
   };
 
   return (
     <motion.section
       className={mapStyles.drawerOverlay}
       onClick={handleCloseClick}
-      // Controlamos la opacidad del fondo oscuro (overlay)
       animate={{ 
         opacity: isOpen ? 1 : 0,
-        pointerEvents: isOpen ? 'auto' : 'none' // Evita que bloquee clics en el mapa al estar oculto
+        pointerEvents: isOpen ? 'auto' : 'none' 
       }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
     >
       <motion.div
         className={mapStyles.drawerPaper}
         onClick={(e) => e.stopPropagation()}
-        // Animación de deslizamiento basada en el estado isOpen
         initial={{ y: '100%' }}
         animate={{ y: isOpen ? 0 : '100%' }}
-        transition={{ type: 'spring', damping: 30, stiffness: 250 }}
+        // 🌟 TRANSICIÓN MÁS SUAVE Y PAUSADA (600ms en salida, resorte ágil en entrada)
+        transition={
+          isOpen
+            ? { type: 'spring', stiffness: 220, damping: 26 } 
+            : { type: 'tween', duration: 0.55, ease: 'easeOut' }
+        }
       >
         {/* Botón superior derecho de cierre */}
         <button 
@@ -107,7 +109,6 @@ export const MapSidebar = ({
 
         {/* --- Contenedor de Contenido Activo --- */}
         <div className={sidebarStyles.tabContent}>
-          {/* Renderiza usando la copia cacheada para evitar que los textos desaparezcan durante el cierre */}
           {copiaPunto && (
             activeTab === 'navigation' ? (
               <SidebarNavigation
@@ -119,7 +120,7 @@ export const MapSidebar = ({
               <SidebarAdministration
                 detallePunto={copiaPunto}
                 onEliminarPunto={onEliminarPunto}
-                onClose={onClose}
+                onClose={handleCloseClick}
                 refrescarMapa={refrescarMapa}
                 onStartDeleting={setIsDeleting}
               />
