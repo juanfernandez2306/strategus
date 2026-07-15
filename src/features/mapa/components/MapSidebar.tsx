@@ -1,19 +1,16 @@
+// src/mapa/components/MapSidebar.tsx
 import { useState, useEffect } from 'react';
-// 🚀 Importamos framer-motion para las animaciones físicas
-import { motion, AnimatePresence } from 'framer-motion';
-import Compass from './Compass';
-import { ConfirmButton } from './BtnRevision';
+import { motion } from 'framer-motion';
 import { type SidebarData } from '../../../types';
-import { useSistemaStore } from '../hooks/useSistemaStore'; 
 
-// Importación modular de estilos usando Alias para evitar colisiones
+import { SidebarNavigation } from './SidebarMap/SidebarNavigation';
+import { SidebarAdministration } from './SidebarMap/SidebarAdministration';
+
 import mapStyles from '../MapLibreGL.module.css';
 import sidebarStyles from './MapSidebar.module.css';
-import formStyles from '../../../components/FormBaseLayout.module.css'; 
-import IconDeleteDB from '../../../components_svg/IconDeleteDB';
 
 interface MapSidebarProps {
-  isOpen: boolean;
+  isOpen: boolean; // Ahora controla la animación de posición, no el montaje
   detallePunto: SidebarData | null;
   onClose: () => void;
   onConfirmarVisita: () => Promise<void>;
@@ -32,81 +29,51 @@ export const MapSidebar = ({
   compassRef,
 }: MapSidebarProps) => {
   const [activeTab, setActiveTab] = useState<'navigation' | 'administration'>('navigation');
-  
-  // Estados de control de flujo transaccional
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [mensajeFeedback, setMensajeFeedback] = useState<string | null>(null);
-  const [isError, setIsError] = useState<boolean>(false);
 
-  // Acciones globales de Zustand para desactivar tracking al borrar
-  const { setProximityMode, setPosicionDestino } = useSistemaStore();
+  // 💡 CACHÉ LOCAL: Retiene los datos del punto para que el contenido no quede vacío
+  // inmediatamente cuando 'detallePunto' pase a ser null al cerrar.
+  const [copiaPunto, setCopiaPunto] = useState<SidebarData | null>(detallePunto);
 
-  // Reiniciar la máquina de estados local al abrir una nueva palma
+  useEffect(() => {
+    if (detallePunto) {
+      setCopiaPunto(detallePunto);
+    }
+  }, [detallePunto]);
+
+  // Restablecer la pestaña activa al abrir el componente
   useEffect(() => {
     if (isOpen) {
       setActiveTab('navigation');
       setIsDeleting(false);
-      setMensajeFeedback(null);
-      setIsError(false);
     }
-  }, [isOpen, detallePunto?.uuid]);
-
-  if (!detallePunto) return null;
+  }, [isOpen]);
 
   const handleCloseClick = () => {
-    if (isDeleting) return; // Bloquear cierre accidental a mitad del borrado en IndexedDB
+    if (isDeleting) return; 
     onClose();
   };
 
-  const handleDeleteClick = async () => {
-    const confirmar = window.confirm(
-      `¿ESTÁS SEGURO?\nEsta acción eliminará permanentemente la palma y todo su registro local.\n\nUUID: ${detallePunto.uuid}`
-    );
-    
-    if (!confirmar) return;
-
-    setIsDeleting(true);
-    setIsError(false);
-    
-    // Apagar sensores de navegación inmediatamente
-    setPosicionDestino(null);
-    setProximityMode(false);
-
-    try {
-      const respuesta = await onEliminarPunto(detallePunto.uuid);
-      setMensajeFeedback(respuesta);
-      
-      // Actualizar en caliente las capas GeoJSON del mapa
-      refrescarMapa?.();
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : "No se pudo eliminar el punto del almacenamiento local";
-      setMensajeFeedback(msg);
-      setIsError(true);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
   return (
-    /* 🚀 Fondo translúcido con animación de fundido (fade-in/out) */
     <motion.section
       className={mapStyles.drawerOverlay}
       onClick={handleCloseClick}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
+      // Controlamos la opacidad del fondo oscuro (overlay)
+      animate={{ 
+        opacity: isOpen ? 1 : 0,
+        pointerEvents: isOpen ? 'auto' : 'none' // Evita que bloquee clics en el mapa al estar oculto
+      }}
+      transition={{ duration: 0.4 }}
     >
-      {/* 🚀 Panel blanco que se desliza desde abajo con un efecto amortiguado (spring) */}
       <motion.div
         className={mapStyles.drawerPaper}
         onClick={(e) => e.stopPropagation()}
+        // Animación de deslizamiento basada en el estado isOpen
         initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 26, stiffness: 230 }}
+        animate={{ y: isOpen ? 0 : '100%' }}
+        transition={{ type: 'spring', damping: 30, stiffness: 250 }}
       >
-        {/* Botón superior derecho de cierre (Deshabilitado durante procesos críticos) */}
+        {/* Botón superior derecho de cierre */}
         <button 
           className={mapStyles.btnClose} 
           onClick={handleCloseClick}
@@ -118,8 +85,8 @@ export const MapSidebar = ({
           </svg>
         </button>
 
-        {/* --- Menú de Pestañas (Se oculta durante la carga o feedback) --- */}
-        {!mensajeFeedback && !isDeleting && (
+        {/* --- Menú de Pestañas --- */}
+        {!isDeleting && (
           <nav className={sidebarStyles.tabsContainer}>
             <button
               type="button"
@@ -138,102 +105,26 @@ export const MapSidebar = ({
           </nav>
         )}
 
-        {/* --- Cuerpo Dinámico del Panel --- */}
+        {/* --- Contenedor de Contenido Activo --- */}
         <div className={sidebarStyles.tabContent}>
-          
-          {/* CASO A: Spinner de carga procesando eliminación */}
-          {isDeleting && (
-            <motion.div 
-              className={sidebarStyles.spinnerContainer}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <div className={formStyles.spinner} />
-              <p style={{ fontWeight: '500', color: '#4a5568', marginTop: '0.5rem' }}>Procesando eliminación local...</p>
-            </motion.div>
+          {/* Renderiza usando la copia cacheada para evitar que los textos desaparezcan durante el cierre */}
+          {copiaPunto && (
+            activeTab === 'navigation' ? (
+              <SidebarNavigation
+                detallePunto={copiaPunto}
+                onConfirmarVisita={onConfirmarVisita}
+                compassRef={compassRef}
+              />
+            ) : (
+              <SidebarAdministration
+                detallePunto={copiaPunto}
+                onEliminarPunto={onEliminarPunto}
+                onClose={onClose}
+                refrescarMapa={refrescarMapa}
+                onStartDeleting={setIsDeleting}
+              />
+            )
           )}
-
-          {/* CASO B: Renderizado de Mensaje de Éxito / Error */}
-          {!isDeleting && mensajeFeedback && (
-            <motion.div 
-              className={sidebarStyles.feedbackWrapper}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {isError ? (
-                <div className={`${formStyles.iconWrapper} ${formStyles.error}`}>
-                  <div className={formStyles.errorIcon} />
-                </div>
-              ) : (
-                <div className={`${formStyles.iconWrapper} ${formStyles.success}`}>
-                  <div className={formStyles.checkIcon} />
-                </div>
-              )}
-              
-              <p className={isError ? formStyles.errorText : formStyles.successText}>
-                {mensajeFeedback}
-              </p>
-              
-              <button 
-                type="button" 
-                className={formStyles.closeButton}
-                onClick={onClose}
-              >
-                Cerrar
-              </button>
-            </motion.div>
-          )}
-
-          {/* CASO C: Vistas de Operación Regular con animación al cambiar de pestaña */}
-          {!isDeleting && !mensajeFeedback && (
-            <AnimatePresence mode="wait">
-              {activeTab === 'navigation' ? (
-                <motion.div
-                  key="nav-tab-content"
-                  style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 15 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <Compass size={240} ref={compassRef} />
-                  <div style={{ marginTop: '1rem', width: '100%' }}>
-                    <ConfirmButton 
-                      onClick={onConfirmarVisita} 
-                      detallePunto={detallePunto} 
-                    />
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="admin-tab-content"
-                  className={sidebarStyles.adminPanel}
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -15 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <IconDeleteDB size={100} />
-                  <h4 className={sidebarStyles.adminTitle}>Gestión del Punto</h4>
-                  <p className={sidebarStyles.adminMeta}>
-                    <strong>UUID:</strong> {detallePunto.uuid} <br />
-                    <strong>Coordenadas:</strong> {detallePunto.lat.toFixed(6)}, {detallePunto.lng.toFixed(6)}
-                  </p>
-
-                  <button
-                    type="button"
-                    className={sidebarStyles.btnDelete}
-                    onClick={handleDeleteClick}
-                    disabled={isDeleting}
-                  >
-                    ELIMINAR PUNTO Y REGISTRO
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          )}
-
         </div>
       </motion.div>
     </motion.section>

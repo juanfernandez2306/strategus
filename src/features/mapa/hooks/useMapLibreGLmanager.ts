@@ -24,14 +24,12 @@ export const useMapLibreGLmanager = () => {
 
     const mensajeError = useSistemaStore((s) => s.mensajeError);
 
-    const {setProximityMode, setPosicionDestino} = useSistemaStore()
+    const {setPosicionDestino} = useSistemaStore();
+
+    const detallePunto = useSistemaStore((s) => s.detallePunto);
+    const setDetallePunto = useSistemaStore((s) => s.setDetallePunto);
 
     
-
-    /** */
-    
-
-    const [detallePunto, setDetallePunto] = useState<SidebarData | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
     
@@ -103,8 +101,6 @@ export const useMapLibreGLmanager = () => {
 
         setIsSidebarOpen(false);
         setDetallePunto(null);
-        setPosicionDestino(null);
-        setProximityMode(false);
         
     }, [setPosicionDestino]);
 
