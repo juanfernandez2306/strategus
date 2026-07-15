@@ -17,10 +17,7 @@ export const ListaDestino = () => {
     mensajeError,
     sistemaListo,
     registrosConDistancia,
-    sidebarOpen,
-    puntoSeleccionado,
     compassRef,
-    setSidebarOpen,
     handleAbrirNavegacion,
     handleConfirmarVisita,
     handleEliminarPunto
@@ -72,9 +69,6 @@ export const ListaDestino = () => {
         </div>
 
         <MapSidebar
-            isOpen={sidebarOpen}
-            detallePunto={puntoSeleccionado}
-            onClose={() => setSidebarOpen(false)}
             onConfirmarVisita={handleConfirmarVisita}
             onEliminarPunto={handleEliminarPunto}
             compassRef={compassRef} 
