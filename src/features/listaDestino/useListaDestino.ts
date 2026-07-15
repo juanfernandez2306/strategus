@@ -82,7 +82,7 @@ export const useListaDestino = () => {
 
   const registrosPendientes = listaRegistros.filter(item => !item.revision_planta);
 
-  // 🛡️ BANDERA DE PROTECCIÓN: Evaluamos si el GPS está en (0,0) o no está listo
+  
   const gpsEstaInicializando = !posicionUsuario || (posicionUsuario.lng === 0 && posicionUsuario.lat === 0);
 
   if (gpsEstaInicializando) {
