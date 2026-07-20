@@ -129,7 +129,8 @@ export const configurarClusteresEnMapa = (
                 uuid: f.properties?.uuid,
                 revision_planta: f.properties?.revision_planta,
                 lng: coords[0],
-                lat: coords[1]
+                lat: coords[1],
+                sincronizacion: f.properties?.sincronizacion
             });
         }
     });
