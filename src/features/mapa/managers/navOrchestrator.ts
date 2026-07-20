@@ -1,5 +1,6 @@
-import { navService } from '../../../services/sensors/brujula/navigation';
+import { ServicioNavegacion } from '../sensor/navegacion/ServicioNavegacion';
 import { type CompassHandle } from '../components/Compass';
+import type { CoordenadasGeograficas } from '../sensor/sensorTypes';
 
 
 /**
@@ -27,13 +28,19 @@ export const setupNavOrchestrator = (
         return;
     }
 
-    const result = navService.calcularNav(lat, lng, destLat, destLon, headingRaw);
+    const servicio = new ServicioNavegacion();
+
+    const coordenadasUsuario: CoordenadasGeograficas = { lat, lng };
+
+    const coordenadasDestino: CoordenadasGeograficas = { lat: destLat, lng: destLon };
+
+    const result = servicio.calcularNavegacion(coordenadasUsuario, coordenadasDestino, headingRaw);
     
     if (!result) return;
 
-    compassRef.current?.updateDistance(result.distancia);
+    compassRef.current?.updateDistance(result.distanciaFiltrada);
 
-    const isNear = result.distancia <= 12;
+    const isNear = result.distanciaFiltrada <= 12;
 
     if (isNear) {
         compassRef.current?.setProximityMode(true);
@@ -43,8 +50,8 @@ export const setupNavOrchestrator = (
         }
     } else {
         compassRef.current?.setProximityMode(false);
-        compassRef.current?.updateAngle(result.anguloAguja);
-        if (result.distancia > 20) hasVibratedRef.current = false;
+        compassRef.current?.updateAngle(result.anguloFiltrado);
+        if (result.distanciaFiltrada > 20) hasVibratedRef.current = false;
     }
 
     setCanUpdate(isNear);
