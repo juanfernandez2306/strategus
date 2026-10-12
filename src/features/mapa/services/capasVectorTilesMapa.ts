@@ -28,7 +28,21 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     const capaRelieve = crearCapaPoligonos({
         id: 'relieve-danubio-fill',
         nombreCapa: 'relieve',
-        colorFill: ['concat', 'rgb(', ['get', 'color'], ')'], // Expresión dinámica nativa
+        colorFill: [
+            'match',
+            ['get', 'level_category'],
+            '1', '#1b5e20',
+            '2', '#66bb6a',
+            '3', '#a5d6a7',
+            '4', '#b7b89f',
+            '5', '#c5c7bc',
+            '6', '#deded1',
+            '7', '#fbf3d1',
+            '8', '#49a4bb',
+            '9', '#2e6fa0',
+            '10', '#2f39a9',
+            '#8d5a99'
+        ], 
         opacidadFill: 0.5,
         configVector
     });
@@ -38,7 +52,15 @@ export const configurarCapasBase = (map: MapLibreMap) => {
     const capaLotesRelleno = crearCapaPoligonos({
         id: 'lotes-danubio-fill',
         nombreCapa: 'lotes',
-        colorFill: ['concat', 'rgb(', ['get', 'color'], ')'], 
+        colorFill: [
+            'match',
+            ['get', 'level_category'],
+            '1', '#fff7cd',
+            '2', '#ffd8df',
+            '3', '#adeed9',
+            '4', '#c5baff',
+            '#e41a1c'
+        ], 
         opacidadFill: 0.6,
         configVector
     });
@@ -195,9 +217,10 @@ export const configurarCapasBase = (map: MapLibreMap) => {
         crearEtiquetasPoligonos({
             id: 'labels-lotes-zoom-bajo',
             nombreCapa: 'lotes',
-            filter: ['==', ['get', 'clasificacion'], 'LOTE'],
-            minzoom: 0, maxzoom: 15,
-            caracteresWrap: 8, // Exclusivo de polígonos
+            minzoom: 0, 
+            maxzoom: 15,
+            caracteresWrap: 8,
+            campoContenedorTexto: ['concat', 'LOTE # ', ['get', 'growing_area_code']],
             configVector
         }),
 

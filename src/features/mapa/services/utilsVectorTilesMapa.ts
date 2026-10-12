@@ -128,8 +128,14 @@ export function crearCapaPoligonos({
 }
 
 /** Helper privado para resolver la expresión de texto común */
-const obtenerExpresionTexto = (estatico: string | null | undefined, campo: string | null | undefined) => {
-    return estatico != null ? estatico : ['get', campo || 'desc'];
+const obtenerExpresionTexto = (estatico: string | null | undefined, campo: string | any[] | null | undefined) => {
+    if (estatico != null) return estatico;
+    
+    // Si el campo ya es un arreglo (como tu expresion de concat), lo devuelve tal cual
+    if (Array.isArray(campo)) return campo;
+    
+    // Si es un string plano, lo envuelve en ['get', campo]
+    return ['get', campo];
 };
 
 /** Helper privado para resolver el text-size dinámico común */
@@ -217,8 +223,13 @@ export function crearEtiquetasPoligonos({
     caracteresWrap = 8
 }: OpcionesEtiquetaPoligono): SymbolLayerSpecification {
     return {
-        id, 'type': 'symbol', 'source': 'finca-danubio-source', 'source-layer': configVector.capas[nombreCapa],
-        ...(minzoom != null && { minzoom }), ...(maxzoom != null && { maxzoom }), ...(filter != null && { filter }),
+        id, 
+        'type': 'symbol', 
+        'source': 'finca-danubio-source', 
+        'source-layer': configVector.capas[nombreCapa],
+        ...(minzoom != null && { minzoom }), 
+        ...(maxzoom != null && { maxzoom }), 
+        ...(filter != null && { filter }),
         'layout': {
             'text-field': obtenerExpresionTexto(null, campoContenedorTexto) as any,
             'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
